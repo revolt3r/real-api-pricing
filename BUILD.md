@@ -27,8 +27,9 @@ On Windows, set `PYTHONIOENCODING=utf-8` if the console cannot print Chinese fil
 - `data/research/`: append-only evidence and dated leaderboard snapshots. Historical claims may disagree with current adoption decisions.
 - `data/raw/`: aggregate usage evidence, retained for traceability.
 - `data/conventions.json`: shared calculation conventions and exchange rate.
+- `data/research/list-prices-*.json`: dated official API list prices, oldest to newest, listed in `compute.py`'s `LIST_PRICE_FILES`. A later archive overrides a model's rate; models it omits keep the earlier rate. These feed `list_blended_usd_per_mtok` and the API cost column. To refresh prices, add a new dated archive and append it to that tuple rather than editing an existing one.
 - `scripts/build_adopted.py`: adopted values, confidence and rationale; generates `data/adopted.csv`.
-- `derived/`: price/score summary pairs, lossless benchmark configurations and explicit plan/configuration reference mappings. Run `compute.py` to regenerate all four benchmark JSON/CSV files.
+- `derived/`: price/score summary pairs, lossless benchmark configurations, explicit plan/configuration reference mappings and `plan-value.*` (per-subscription value: the shared multiple plus each exception group). Run `compute.py` to regenerate all of them. `plot_quotas.py` reads `plan-value.json` for the plan-value chart, and a web test asserts the site's client-side grouping matches it.
 - `charts/`: public bilingual charts and tables; start with `charts/README.md`. English and Chinese filenames live in `en/` and `zh/`, grouped into `pareto/`, `overview/` and `frontier/`.
 - `_build/`: ignored intermediate renders, interactive HTML and audit reports. `publish_charts.py` exports full-data Pareto charts and all overview/frontier figures to `charts/`. Selected-data renders are never published.
 - `scripts/checks/`: coordinate, frontier and language checks.

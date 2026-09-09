@@ -1,0 +1,124 @@
+订阅性价比排名 · 一个套餐值几倍月费
+每个套餐一条：多数模型共享的倍数；浅色延伸到该套餐最优模型；同套餐额度是互斥选项，不可相加
+主数字 = 该套餐多数模型共享的倍数；深色条为主数字，浅色延伸段到该套餐最优模型，竖线为最差模型。多数模型共享同一数值，是因为它们的采用额度本就由同一基准模型按标价比推导，不是多次独立测量。
+⚠ = 主数字覆盖不到一半模型，只是最常见值，须按区间读；* = 标价非厂商一手价目表；‡ = 主数字整组沿用同套餐基准模型。逐个模型的例外见同名文字表。不含缓存写入费，故均为下限。
+同套餐各模型额度不可相加。Claude Max (9/14+)：2026-09-14起永久额度估算，非当前活动期上限。数据：adopted.csv。
+汇率：1 USD = 6.7787 CNY（2026-09-04，中国外汇交易中心中间价，新华社转载）；人民币月费 ÷ 汇率换算美元。
+汇率来源：https://www.xinhuanet.com/20260904/4c1ce1cbf39d416997cb9c237d6f5024/c.html
+序号  套餐                               渠道          价格/月     口径  倍数     API标价成本/月  模型
+----  ---------------------------------  ------------  ----------  ----  -------  --------------  -------------------------------------------------------------------------------------------------------------------------------------
+1     Claude Pro                         Anthropic     USD 20      共享  54.19×   1,084           Claude Opus 4.8, Claude Sonnet 5
+2     Claude Max 20x (9/14+)             Anthropic     USD 200     共享  53.58×   10,715          Claude Opus 4.8, Claude Opus 5, Claude Sonnet 5
+                                                                   例外  8.24×    1,649           Claude Fable 5
+3     Claude Max 5x (9/14+)              Anthropic     USD 100     共享  53.58×   5,358           Claude Opus 5, Claude Sonnet 5
+                                                                   例外  12.61×   1,261           Claude Fable 5
+4     GLM Coding Pro (v2 ¥149) 闲时      Zhipu         USD 21.98   共享  34.55×   759             GLM 5.3
+                                                                   例外  11.99×   264             GLM 5.3 Flash
+5     ChatGPT Pro 20x                    OpenAI        USD 200     共享  33.63×   6,727           GPT 5.5, GPT 5.6 Sol, GPT 5.6 Terra
+                                                                   例外  21.03×   4,206           GPT 5.6 Luna
+6     GLM Coding Pro (v2 ¥149) 中间值    Zhipu         USD 21.98   共享  25.91×   570             GLM 5.3
+                                                                   例外  8.99×    198             GLM 5.3 Flash
+7     GLM Coding Max (v2 ¥469) 闲时      Zhipu         USD 69.19   共享  25.61×   1,772           GLM 5.3
+                                                                   例外  8.89×    615             GLM 5.3 Flash
+8     Cursor Ultra                       Cursor        USD 200     共享  21.33×   4,267           Composer 2.5, Grok 4.6
+                                                                   例外  13.79×   2,758           Grok 4.5
+9     Kimi 会员 199 †                    Kimi          USD 29.36   共享  20.24×   594             Kimi K3
+                                                                   例外  11.73×   344             Kimi K2.7 Code
+10    GLM Coding Max (v2 ¥469) 中间值    Zhipu         USD 69.19   共享  19.21×   1,329           GLM 5.3
+                                                                   例外  6.66×    461             GLM 5.3 Flash
+11    Cursor Pro+                        Cursor        USD 60      共享  18.96×   1,138           Composer 2.5, Grok 4.6
+12    GLM Coding Lite (v2 ¥49) 闲时      Zhipu         USD 7.23    共享  17.49×   126             GLM 5.3
+                                                                   例外  6.07×    44              GLM 5.3 Flash
+13    Kimi 会员 699 †                    Kimi          USD 103.12  共享  17.29×   1,783           Kimi K3
+                                                                   例外  10.02×   1,033           Kimi K2.7 Code
+14    GLM Coding Pro (v2 ¥149) 忙时      Zhipu         USD 21.98   共享  17.28×   380             GLM 5.3
+                                                                   例外  5.99×    132             GLM 5.3 Flash
+15    ChatGPT Plus                       OpenAI        USD 20      共享  16.82×   336             GPT 5.5, GPT 5.6 Sol, GPT 5.6 Terra
+                                                                   例外  10.52×   210             GPT 5.6 Luna
+16    ChatGPT Pro 5x                     OpenAI        USD 100     共享  16.82×   1,682           GPT 5.5, GPT 5.6 Sol, GPT 5.6 Terra
+                                                                   例外  10.52×   1,052           GPT 5.6 Luna
+17    GLM Coding Lite (v2 ¥49) 中间值    Zhipu         USD 7.23    共享  13.11×   95              GLM 5.3
+                                                                   例外  4.55×    33              GLM 5.3 Flash
+18    Cursor Pro                         Cursor        USD 20      共享  12.96×   259             Composer 2.5, Grok 4.6
+19    GLM Coding Max (v2 ¥469) 忙时      Zhipu         USD 69.19   共享  12.8×    886             GLM 5.3
+                                                                   例外  4.44×    307             GLM 5.3 Flash
+20    SuperGrok Plus                     xAI           USD 100     共享  11.25×   1,125           Grok 4.6
+21    GLM Coding Max (v3 ¥1078) 闲时     Zhipu         USD 159.03  共享  11.14×   1,772           GLM 5.3
+                                                                   例外  3.87×    615             GLM 5.3 Flash
+22    GLM Coding Pro (v3 ¥538) 闲时      Zhipu         USD 79.37   共享  9.57×    759             GLM 5.3
+                                                                   例外  3.32×    264             GLM 5.3 Flash
+23    SuperGrok                          xAI           USD 30      共享  9.36×    281             Grok 4.6
+                                                                   例外  6.05×    181             Grok 4.5
+24    SuperGrok Heavy                    xAI           USD 300     共享  9.36×    2,807           Grok 4.6
+                                                                   例外  6.05×    1,815           Grok 4.5
+25    GLM Coding Lite (v2 ¥49) 忙时      Zhipu         USD 7.23    共享  8.77×    63              GLM 5.3
+                                                                   例外  3.04×    22              GLM 5.3 Flash
+26    Cursor Ultra (Fast)                Cursor        USD 200     共享  8.48×    1,695           Grok 4.6
+27    GLM Coding Max (v3 ¥1078) 中间值   Zhipu         USD 159.03  共享  8.36×    1,329           GLM 5.3
+                                                                   例外  2.9×     461             GLM 5.3 Flash
+28    SuperGrok Lite                     xAI           USD 10      共享  8.27×    83              Grok 4.6
+29    Kimi 会员 99 †                     Kimi          USD 14.6    共享  8.13×    119             Kimi K3
+                                                                   例外  4.72×    69              Kimi K2.7 Code
+30    Cursor Ultra (Composer Fast)       Cursor        USD 200     共享  7.57×    1,514           Composer 2.5
+31    GLM Coding Lite (v3 ¥118) 闲时     Zhipu         USD 17.41   共享  7.26×    126             GLM 5.3
+                                                                   例外  2.52×    44              GLM 5.3 Flash
+32    GLM Coding Pro (v3 ¥538) 中间值    Zhipu         USD 79.37   共享  7.18×    570             GLM 5.3
+                                                                   例外  2.49×    198             GLM 5.3 Flash
+33    MiniMax Token Plan Ultra           MiniMax       USD 69.19   共享  7.1×     491             MiniMax M3
+34    MiniMax Token Plan Max             MiniMax       USD 17.55   共享  7.09×    124             MiniMax M3
+35    Cursor Pro+ (Composer Fast)        Cursor        USD 60      共享  6.73×    404             Composer 2.5
+36    MiniMax Token Plan Max (Global)    MiniMax       USD 55      共享  6.41×    353             MiniMax M3
+37    OpenCode Go⚠*                      OpenCode      USD 10      共享  6×*      60              DeepSeek V4 Flash, GLM 5.1, GLM 5.2, Kimi K2.6, Kimi K2.7 Code, MiniMax M2.7, MiniMax M3, Muse Spark 1.2 Contributor, Qwen3.6 Plus
+                                                                   例外  21.37×*  214             MiMo V2.5 Pro
+                                                                   例外  15.75×*  158             MiMo V2.5
+                                                                   例外  14.94×*  149             LongCat 2.0
+                                                                   例外  10.4×    104             Qwen3.7 Plus
+                                                                   例外  3.46×    35              MiniMax M2.5
+                                                                   例外  3×       30              DeepSeek V4 Flash Vision Exp, DeepSeek V4 Pro, Hy4 Preview
+                                                                   例外  2.86×    29              Qwen3.8 Flash
+                                                                   例外  1.71×    17              Qwen3.7 Max
+                                                                   例外  1.64×*   16              Hy3
+                                                                   例外  1.5×     15              GLM 5.3, GLM 5.3 Flash, GPT 5.6 Luna, Grok 4.6, Kimi K3
+                                                                   例外  1.26×    13              Qwen3.8 Max
+38    MiniMax Token Plan Plus            MiniMax       USD 7.23    共享  5.74×    41              MiniMax M2.7, MiniMax M3
+39    GLM Coding Max (v3 ¥1078) 忙时     Zhipu         USD 159.03  共享  5.57×    886             GLM 5.3
+                                                                   例外  1.93×    307             GLM 5.3 Flash
+40    GLM Coding Lite (v3 ¥118) 中间值   Zhipu         USD 17.41   共享  5.44×    95              GLM 5.3
+                                                                   例外  1.89×    33              GLM 5.3 Flash
+41    MiniMax Token Plan Plus (Global)   MiniMax       USD 22      共享  5.34×    118             MiniMax M2.7, MiniMax M3
+42    MiniMax Token Plan Ultra (Global)  MiniMax       USD 132     共享  5.13×    678             MiniMax M3
+43    GLM Coding Pro (v3 ¥538) 忙时      Zhipu         USD 79.37   共享  4.78×    380             GLM 5.3
+                                                                   例外  1.66×    132             GLM 5.3 Flash
+44    Cursor Pro (Composer Fast)         Cursor        USD 20      共享  4.6×     92              Composer 2.5
+45    GLM Coding Lite (v3 ¥118) 忙时     Zhipu         USD 17.41   共享  3.64×    63              GLM 5.3
+                                                                   例外  1.26×    22              GLM 5.3 Flash
+46    Ollama Max                         Ollama        USD 100     共享  3×       300             GLM 5.2, GLM 5.3, GLM 5.3 Flash, Kimi K2.7 Code, Kimi K3, MiniMax M2.7
+                                                                   例外  6×       600             DeepSeek V4 Flash, DeepSeek V4 Pro
+                                                                   例外  3.94×    394             GLM 5.1
+                                                                   例外  1.5×     150             MiniMax M3
+47    Ollama Pro                         Ollama        USD 20      共享  3×       60              GLM 5.2, GLM 5.3, GLM 5.3 Flash, Kimi K2.7 Code, Kimi K3, MiniMax M2.7
+                                                                   例外  6×       120             DeepSeek V4 Flash, DeepSeek V4 Pro
+                                                                   例外  3.94×    79              GLM 5.1
+                                                                   例外  1.5×     30              MiniMax M3
+48    Kimi 会员 49 †                     Kimi          USD 7.23    共享  2.37×    17              Kimi K2.7 Code
+49    Command Code GOAT⚠*                Command Code  USD 10      共享  2×*      20              GLM 5.3, GPT 5.6 Luna, Gemini 3.7 Flash, Gemini 3.8 Flash, Grok 4.6, Hy4 Preview, Kimi K3, Muse Spark 1.2, Muse Spark 1.2 Contributor
+                                                                   例外  28.54×*  285             MiMo V2.5 Pro
+                                                                   例外  12×      120             DeepSeek V4 Flash
+                                                                   例外  8.43×    84              Qwen3.8 27B
+                                                                   例外  7.88×*   79              MiMo V2.5
+                                                                   例外  7×       70              GLM 5.2
+                                                                   例外  6×       60              Kimi K2.7 Code
+                                                                   例外  5.46×    55              GPT 5.6 Sol
+                                                                   例外  4.7×     47              MiniMax M3
+                                                                   例外  4×       40              DeepSeek V4 Flash Vision Exp, DeepSeek V4 Pro, GLM 5.3 Flash
+                                                                   例外  3.3×     33              Qwen3.7 Plus
+                                                                   例外  1.94×    19              Qwen3.6 Plus
+                                                                   例外  1.91×*   19              Hy3
+                                                                   例外  1.89×    19              Qwen3.8 Flash
+                                                                   例外  1.88×    19              Qwen3.7 Max
+                                                                   例外  1.68×*   17              Nemotron 3 Ultra, Qwen3.8 Max, Qwen3.8 Max 0902
+                                                                   例外  1.29×    13              Grok 4.5
+                                                                   例外  1.18×*   12              Step 3.7 Flash
+                                                                   例外  1.04×*   10              Step 3.5 Flash
+50    阿里云百炼 Coding Plan Pro         Alibaba       USD 29.5    共享  0.62×    18              Qwen3.7 Plus
+51    Alibaba Cloud Coding Plan Pro      Alibaba       USD 50      共享  0.37×    18              Qwen3.7 Plus

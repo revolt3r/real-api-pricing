@@ -35,4 +35,14 @@ The project's original software is licensed under [MIT](LICENSE). This does not 
 - [Artificial Analysis Intelligence Index](https://artificialanalysis.ai/leaderboards/models) and [Coding Agent Index](https://artificialanalysis.ai/agents/coding-agents): separate score snapshots; coding-agent configuration names are retained.
 - Official pricing and quota documents, community reports and aggregate local usage measurements: individual sources and adoption rationale are recorded in the data and adoption script.
 
+## API list prices (the API cost column)
+
+Rates re-checked 2026-09-09 and archived in [`data/research/list-prices-round2-2026-09-09.json`](data/research/list-prices-round2-2026-09-09.json), which records the tier, confidence and URL for every model.
+
+First-party pricing pages: [OpenAI](https://developers.openai.com/api/docs/pricing) · [Anthropic](https://platform.claude.com/docs/en/about-claude/pricing) · [xAI](https://docs.x.ai/developers/models) · [Kimi](https://platform.kimi.ai/) · [Z.ai / Zhipu](https://docs.z.ai/guides/overview/pricing) · [MiniMax](https://platform.minimax.io/docs/guides/pricing-paygo) · [Alibaba Cloud Model Studio](https://www.alibabacloud.com/help/en/model-studio/model-pricing) · [DeepSeek](https://api-docs.deepseek.com/quick_start/pricing/) · [Google Gemini](https://ai.google.dev/gemini-api/docs/pricing) · [Cursor](https://cursor.com/docs/models/cursor-composer-2-5) · [Tencent Hunyuan](https://hy.tencent.ai/research/hy4-preview).
+
+Where a model has no first-party rate card, a named third-party rate is recorded and marked as such, never presented as official: [OpenRouter](https://openrouter.ai/) (MiMo V2.5, LongCat 2.0, Nemotron 3 Ultra), [pricepertoken](https://pricepertoken.com/pricing-page/provider/stepfun-ai) (Step 3.5/3.7 Flash), [Layer3Labs](https://www.layer3labs.io/guides/muse-spark-1-3-pricing) (Muse Spark 1.2 tiers), [Tencent Cloud TokenHub](https://www.tencentcloud.com/techpedia/145748?lang=en) (Hy3 blended cross-check only). [AI Pricing Guru](https://www.aipricing.guru/pricing/) was used only to find candidate rates for models missing a first-party page; where it disagreed with a vendor page the vendor page was adopted, and each disagreement is listed in the archive's `crossChecks` block.
+
+These pages are cited for provenance. Their rate tables remain the property of the respective providers and are not covered by this project's MIT license.
+
 Source links are attribution and provenance, not a claim that third-party datasets are MIT-licensed. The public edition removes the contributor's account email, machine-specific directories and duplicate verbatim Caijing excerpts. Relevant numeric observations, source URLs, dates and analytical notes remain. Required public author attribution above is intentionally retained. See [PUBLICATION.md](PUBLICATION.md).

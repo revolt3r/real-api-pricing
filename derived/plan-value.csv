@@ -1,0 +1,116 @@
+﻿plan_id,plan,channel,fee_usd,group,multiple,cost_usd_month,models,model_count_in_group,inherited,third_party_rate,plan_model_count,plan_value_group_count,plan_varies,plan_best_multiple,plan_best_model,plan_worst_multiple,plan_worst_model
+claude_pro,Claude Pro,Anthropic,20.0,shared,54.19,1083.81,Claude Opus 4.8 | Claude Sonnet 5,2,False,False,2,1,False,54.19,Claude Opus 4.8,54.19,Claude Sonnet 5
+claude_max_20x,Claude Max 20x (9/14+),Anthropic,200.0,shared,53.58,10715.25,Claude Opus 4.8 | Claude Opus 5 | Claude Sonnet 5,3,False,False,4,2,False,53.58,Claude Opus 5,8.24,Claude Fable 5
+claude_max_20x,Claude Max 20x (9/14+),Anthropic,200.0,exception,8.24,1648.51,Claude Fable 5,1,False,False,4,2,False,53.58,Claude Opus 5,8.24,Claude Fable 5
+claude_max_5x,Claude Max 5x (9/14+),Anthropic,100.0,shared,53.58,5357.62,Claude Opus 5 | Claude Sonnet 5,2,False,False,3,2,False,53.58,Claude Opus 5,12.61,Claude Fable 5
+claude_max_5x,Claude Max 5x (9/14+),Anthropic,100.0,exception,12.61,1260.58,Claude Fable 5,1,False,False,3,2,False,53.58,Claude Opus 5,12.61,Claude Fable 5
+glm_coding_pro_cn_old_offpeak,GLM Coding Pro (老客 ¥149) 闲时,Zhipu,21.98,shared,34.55,759.46,GLM 5.3,1,False,False,2,2,False,34.55,GLM 5.3,11.99,GLM 5.3 Flash
+glm_coding_pro_cn_old_offpeak,GLM Coding Pro (老客 ¥149) 闲时,Zhipu,21.98,exception,11.99,263.5,GLM 5.3 Flash,1,False,False,2,2,False,34.55,GLM 5.3,11.99,GLM 5.3 Flash
+chatgpt_pro_20x,ChatGPT Pro 20x,OpenAI,200.0,shared,33.63,6726.72,GPT 5.5 | GPT 5.6 Sol | GPT 5.6 Terra,3,False,False,4,2,False,33.63,GPT 5.6 Sol,21.03,GPT 5.6 Luna
+chatgpt_pro_20x,ChatGPT Pro 20x,OpenAI,200.0,exception,21.03,4206.22,GPT 5.6 Luna,1,False,False,4,2,False,33.63,GPT 5.6 Sol,21.03,GPT 5.6 Luna
+glm_coding_pro_cn_old_mid,GLM Coding Pro (老客 ¥149) 中间值,Zhipu,21.98,shared,25.91,569.6,GLM 5.3,1,False,False,2,2,False,25.91,GLM 5.3,8.99,GLM 5.3 Flash
+glm_coding_pro_cn_old_mid,GLM Coding Pro (老客 ¥149) 中间值,Zhipu,21.98,exception,8.99,197.62,GLM 5.3 Flash,1,False,False,2,2,False,25.91,GLM 5.3,8.99,GLM 5.3 Flash
+glm_coding_max_cn_old_offpeak,GLM Coding Max (老客 ¥469) 闲时,Zhipu,69.19,shared,25.61,1771.87,GLM 5.3,1,False,False,2,2,False,25.61,GLM 5.3,8.89,GLM 5.3 Flash
+glm_coding_max_cn_old_offpeak,GLM Coding Max (老客 ¥469) 闲时,Zhipu,69.19,exception,8.89,614.85,GLM 5.3 Flash,1,False,False,2,2,False,25.61,GLM 5.3,8.89,GLM 5.3 Flash
+cursor_ultra,Cursor Ultra,Cursor,200.0,shared,21.33,4266.96,Composer 2.5 | Grok 4.6,2,False,False,3,2,False,21.33,Grok 4.6,13.79,Grok 4.5
+cursor_ultra,Cursor Ultra,Cursor,200.0,exception,13.79,2758.24,Grok 4.5,1,False,False,3,2,False,21.33,Grok 4.6,13.79,Grok 4.5
+kimi_allegretto_cn,Kimi 会员 199,Kimi,29.36,shared,20.24,594.18,Kimi K3,1,False,False,2,2,False,20.24,Kimi K3,11.73,Kimi K2.7 Code
+kimi_allegretto_cn,Kimi 会员 199,Kimi,29.36,exception,11.73,344.45,Kimi K2.7 Code,1,False,False,2,2,False,20.24,Kimi K3,11.73,Kimi K2.7 Code
+glm_coding_max_cn_old_mid,GLM Coding Max (老客 ¥469) 中间值,Zhipu,69.19,shared,19.21,1329.05,GLM 5.3,1,False,False,2,2,False,19.21,GLM 5.3,6.66,GLM 5.3 Flash
+glm_coding_max_cn_old_mid,GLM Coding Max (老客 ¥469) 中间值,Zhipu,69.19,exception,6.66,461.11,GLM 5.3 Flash,1,False,False,2,2,False,19.21,GLM 5.3,6.66,GLM 5.3 Flash
+cursor_pro_plus,Cursor Pro+,Cursor,60.0,shared,18.96,1137.85,Composer 2.5 | Grok 4.6,2,False,False,2,1,False,18.96,Grok 4.6,18.96,Composer 2.5
+glm_coding_lite_cn_old_offpeak,GLM Coding Lite (老客 ¥49) 闲时,Zhipu,7.23,shared,17.49,126.48,GLM 5.3,1,False,False,2,2,False,17.49,GLM 5.3,6.07,GLM 5.3 Flash
+glm_coding_lite_cn_old_offpeak,GLM Coding Lite (老客 ¥49) 闲时,Zhipu,7.23,exception,6.07,43.91,GLM 5.3 Flash,1,False,False,2,2,False,17.49,GLM 5.3,6.07,GLM 5.3 Flash
+kimi_allegro_cn,Kimi 会员 699,Kimi,103.12,shared,17.29,1782.55,Kimi K3,1,False,False,2,2,False,17.29,Kimi K3,10.02,Kimi K2.7 Code
+kimi_allegro_cn,Kimi 会员 699,Kimi,103.12,exception,10.02,1033.35,Kimi K2.7 Code,1,False,False,2,2,False,17.29,Kimi K3,10.02,Kimi K2.7 Code
+glm_coding_pro_cn_old_peak,GLM Coding Pro (老客 ¥149) 忙时,Zhipu,21.98,shared,17.28,379.73,GLM 5.3,1,False,False,2,2,False,17.28,GLM 5.3,5.99,GLM 5.3 Flash
+glm_coding_pro_cn_old_peak,GLM Coding Pro (老客 ¥149) 忙时,Zhipu,21.98,exception,5.99,131.77,GLM 5.3 Flash,1,False,False,2,2,False,17.28,GLM 5.3,5.99,GLM 5.3 Flash
+chatgpt_plus,ChatGPT Plus,OpenAI,20.0,shared,16.82,336.34,GPT 5.5 | GPT 5.6 Sol | GPT 5.6 Terra,3,False,False,4,2,False,16.82,GPT 5.6 Sol,10.52,GPT 5.6 Luna
+chatgpt_plus,ChatGPT Plus,OpenAI,20.0,exception,10.52,210.31,GPT 5.6 Luna,1,False,False,4,2,False,16.82,GPT 5.6 Sol,10.52,GPT 5.6 Luna
+chatgpt_pro_5x,ChatGPT Pro 5x,OpenAI,100.0,shared,16.82,1681.68,GPT 5.5 | GPT 5.6 Sol | GPT 5.6 Terra,3,False,False,4,2,False,16.82,GPT 5.6 Sol,10.52,GPT 5.6 Luna
+chatgpt_pro_5x,ChatGPT Pro 5x,OpenAI,100.0,exception,10.52,1051.57,GPT 5.6 Luna,1,False,False,4,2,False,16.82,GPT 5.6 Sol,10.52,GPT 5.6 Luna
+glm_coding_lite_cn_old_mid,GLM Coding Lite (老客 ¥49) 中间值,Zhipu,7.23,shared,13.11,94.78,GLM 5.3,1,False,False,2,2,False,13.11,GLM 5.3,4.55,GLM 5.3 Flash
+glm_coding_lite_cn_old_mid,GLM Coding Lite (老客 ¥49) 中间值,Zhipu,7.23,exception,4.55,32.92,GLM 5.3 Flash,1,False,False,2,2,False,13.11,GLM 5.3,4.55,GLM 5.3 Flash
+cursor_pro,Cursor Pro,Cursor,20.0,shared,12.96,259.2,Composer 2.5 | Grok 4.6,2,False,False,2,1,False,12.96,Grok 4.6,12.96,Composer 2.5
+glm_coding_max_cn_old_peak,GLM Coding Max (老客 ¥469) 忙时,Zhipu,69.19,shared,12.8,885.94,GLM 5.3,1,False,False,2,2,False,12.8,GLM 5.3,4.44,GLM 5.3 Flash
+glm_coding_max_cn_old_peak,GLM Coding Max (老客 ¥469) 忙时,Zhipu,69.19,exception,4.44,307.41,GLM 5.3 Flash,1,False,False,2,2,False,12.8,GLM 5.3,4.44,GLM 5.3 Flash
+supergrok_plus,SuperGrok Plus,xAI,100.0,shared,11.25,1125.06,Grok 4.6,1,False,False,1,1,False,11.25,Grok 4.6,11.25,Grok 4.6
+glm_coding_max_cn_new_offpeak,GLM Coding Max (新客 ¥1078) 闲时,Zhipu,159.03,shared,11.14,1771.87,GLM 5.3,1,False,False,2,2,False,11.14,GLM 5.3,3.87,GLM 5.3 Flash
+glm_coding_max_cn_new_offpeak,GLM Coding Max (新客 ¥1078) 闲时,Zhipu,159.03,exception,3.87,614.85,GLM 5.3 Flash,1,False,False,2,2,False,11.14,GLM 5.3,3.87,GLM 5.3 Flash
+glm_coding_pro_cn_new_offpeak,GLM Coding Pro (新客 ¥538) 闲时,Zhipu,79.37,shared,9.57,759.46,GLM 5.3,1,False,False,2,2,False,9.57,GLM 5.3,3.32,GLM 5.3 Flash
+glm_coding_pro_cn_new_offpeak,GLM Coding Pro (新客 ¥538) 闲时,Zhipu,79.37,exception,3.32,263.5,GLM 5.3 Flash,1,False,False,2,2,False,9.57,GLM 5.3,3.32,GLM 5.3 Flash
+supergrok,SuperGrok,xAI,30.0,shared,9.36,280.71,Grok 4.6,1,False,False,2,2,False,9.36,Grok 4.6,6.05,Grok 4.5
+supergrok,SuperGrok,xAI,30.0,exception,6.05,181.46,Grok 4.5,1,False,False,2,2,False,9.36,Grok 4.6,6.05,Grok 4.5
+supergrok_heavy,SuperGrok Heavy,xAI,300.0,shared,9.36,2807.13,Grok 4.6,1,False,False,2,2,False,9.36,Grok 4.6,6.05,Grok 4.5
+supergrok_heavy,SuperGrok Heavy,xAI,300.0,exception,6.05,1814.58,Grok 4.5,1,False,False,2,2,False,9.36,Grok 4.6,6.05,Grok 4.5
+glm_coding_lite_cn_old_peak,GLM Coding Lite (老客 ¥49) 忙时,Zhipu,7.23,shared,8.77,63.39,GLM 5.3,1,False,False,2,2,False,8.77,GLM 5.3,3.04,GLM 5.3 Flash
+glm_coding_lite_cn_old_peak,GLM Coding Lite (老客 ¥49) 忙时,Zhipu,7.23,exception,3.04,21.97,GLM 5.3 Flash,1,False,False,2,2,False,8.77,GLM 5.3,3.04,GLM 5.3 Flash
+cursor_ultra_fast,Cursor Ultra (Fast),Cursor,200.0,shared,8.48,1695.31,Grok 4.6,1,False,False,1,1,False,8.48,Grok 4.6,8.48,Grok 4.6
+glm_coding_max_cn_new_mid,GLM Coding Max (新客 ¥1078) 中间值,Zhipu,159.03,shared,8.36,1329.05,GLM 5.3,1,False,False,2,2,False,8.36,GLM 5.3,2.9,GLM 5.3 Flash
+glm_coding_max_cn_new_mid,GLM Coding Max (新客 ¥1078) 中间值,Zhipu,159.03,exception,2.9,461.11,GLM 5.3 Flash,1,False,False,2,2,False,8.36,GLM 5.3,2.9,GLM 5.3 Flash
+supergrok_lite,SuperGrok Lite,xAI,10.0,shared,8.27,82.72,Grok 4.6,1,False,False,1,1,False,8.27,Grok 4.6,8.27,Grok 4.6
+kimi_moderato_cn,Kimi 会员 99,Kimi,14.6,shared,8.13,118.75,Kimi K3,1,False,False,2,2,False,8.13,Kimi K3,4.72,Kimi K2.7 Code
+kimi_moderato_cn,Kimi 会员 99,Kimi,14.6,exception,4.72,68.98,Kimi K2.7 Code,1,False,False,2,2,False,8.13,Kimi K3,4.72,Kimi K2.7 Code
+cursor_ultra_composer_fast,Cursor Ultra (Composer Fast),Cursor,200.0,shared,7.57,1514.09,Composer 2.5,1,False,False,1,1,False,7.57,Composer 2.5,7.57,Composer 2.5
+glm_coding_lite_cn_new_offpeak,GLM Coding Lite (新客 ¥118) 闲时,Zhipu,17.41,shared,7.26,126.48,GLM 5.3,1,False,False,2,2,False,7.26,GLM 5.3,2.52,GLM 5.3 Flash
+glm_coding_lite_cn_new_offpeak,GLM Coding Lite (新客 ¥118) 闲时,Zhipu,17.41,exception,2.52,43.91,GLM 5.3 Flash,1,False,False,2,2,False,7.26,GLM 5.3,2.52,GLM 5.3 Flash
+glm_coding_pro_cn_new_mid,GLM Coding Pro (新客 ¥538) 中间值,Zhipu,79.37,shared,7.18,569.6,GLM 5.3,1,False,False,2,2,False,7.18,GLM 5.3,2.49,GLM 5.3 Flash
+glm_coding_pro_cn_new_mid,GLM Coding Pro (新客 ¥538) 中间值,Zhipu,79.37,exception,2.49,197.62,GLM 5.3 Flash,1,False,False,2,2,False,7.18,GLM 5.3,2.49,GLM 5.3 Flash
+minimax_token_ultra_cn,MiniMax Token Plan Ultra,MiniMax,69.19,shared,7.1,490.97,MiniMax M3,1,False,False,1,1,False,7.1,MiniMax M3,7.1,MiniMax M3
+minimax_token_max_cn,MiniMax Token Plan Max,MiniMax,17.55,shared,7.09,124.47,MiniMax M3,1,False,False,1,1,False,7.09,MiniMax M3,7.09,MiniMax M3
+cursor_pro_plus_composer_fast,Cursor Pro+ (Composer Fast),Cursor,60.0,shared,6.73,403.75,Composer 2.5,1,False,False,1,1,False,6.73,Composer 2.5,6.73,Composer 2.5
+minimax_token_max_global,MiniMax Token Plan Max (Global),MiniMax,55.0,shared,6.41,352.67,MiniMax M3,1,False,False,1,1,False,6.41,MiniMax M3,6.41,MiniMax M3
+opencode_go,OpenCode Go,OpenCode,10.0,shared,6.0,60.01,DeepSeek V4 Flash | GLM 5.1 | GLM 5.2 | Kimi K2.6 | Kimi K2.7 Code | MiniMax M2.7 | MiniMax M3 | Muse Spark 1.2 Contributor | Qwen3.6 Plus,9,False,True,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+opencode_go,OpenCode Go,OpenCode,10.0,exception,21.37,213.72,MiMo V2.5 Pro,1,False,True,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+opencode_go,OpenCode Go,OpenCode,10.0,exception,15.75,157.5,MiMo V2.5,1,False,True,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+opencode_go,OpenCode Go,OpenCode,10.0,exception,14.94,149.37,LongCat 2.0,1,False,True,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+opencode_go,OpenCode Go,OpenCode,10.0,exception,10.4,103.98,Qwen3.7 Plus,1,False,False,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+opencode_go,OpenCode Go,OpenCode,10.0,exception,3.46,34.62,MiniMax M2.5,1,False,False,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+opencode_go,OpenCode Go,OpenCode,10.0,exception,3.0,30.0,DeepSeek V4 Flash Vision Exp | DeepSeek V4 Pro | Hy4 Preview,3,False,False,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+opencode_go,OpenCode Go,OpenCode,10.0,exception,2.86,28.57,Qwen3.8 Flash,1,False,False,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+opencode_go,OpenCode Go,OpenCode,10.0,exception,1.71,17.13,Qwen3.7 Max,1,False,False,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+opencode_go,OpenCode Go,OpenCode,10.0,exception,1.64,16.35,Hy3,1,False,True,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+opencode_go,OpenCode Go,OpenCode,10.0,exception,1.5,15.0,GLM 5.3 | GLM 5.3 Flash | GPT 5.6 Luna | Grok 4.6 | Kimi K3,5,False,False,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+opencode_go,OpenCode Go,OpenCode,10.0,exception,1.26,12.61,Qwen3.8 Max,1,False,False,26,12,True,21.37,MiMo V2.5 Pro,1.26,Qwen3.8 Max
+minimax_token_plus_cn,MiniMax Token Plan Plus,MiniMax,7.23,shared,5.74,41.49,MiniMax M2.7 | MiniMax M3,2,False,False,2,1,False,5.74,MiniMax M3,5.74,MiniMax M2.7
+glm_coding_max_cn_new_peak,GLM Coding Max (新客 ¥1078) 忙时,Zhipu,159.03,shared,5.57,885.94,GLM 5.3,1,False,False,2,2,False,5.57,GLM 5.3,1.93,GLM 5.3 Flash
+glm_coding_max_cn_new_peak,GLM Coding Max (新客 ¥1078) 忙时,Zhipu,159.03,exception,1.93,307.41,GLM 5.3 Flash,1,False,False,2,2,False,5.57,GLM 5.3,1.93,GLM 5.3 Flash
+glm_coding_lite_cn_new_mid,GLM Coding Lite (新客 ¥118) 中间值,Zhipu,17.41,shared,5.44,94.78,GLM 5.3,1,False,False,2,2,False,5.44,GLM 5.3,1.89,GLM 5.3 Flash
+glm_coding_lite_cn_new_mid,GLM Coding Lite (新客 ¥118) 中间值,Zhipu,17.41,exception,1.89,32.92,GLM 5.3 Flash,1,False,False,2,2,False,5.44,GLM 5.3,1.89,GLM 5.3 Flash
+minimax_token_plus_global,MiniMax Token Plan Plus (Global),MiniMax,22.0,shared,5.34,117.56,MiniMax M2.7 | MiniMax M3,2,False,False,2,1,False,5.34,MiniMax M3,5.34,MiniMax M2.7
+minimax_token_ultra_global,MiniMax Token Plan Ultra (Global),MiniMax,132.0,shared,5.13,677.67,MiniMax M3,1,False,False,1,1,False,5.13,MiniMax M3,5.13,MiniMax M3
+glm_coding_pro_cn_new_peak,GLM Coding Pro (新客 ¥538) 忙时,Zhipu,79.37,shared,4.78,379.73,GLM 5.3,1,False,False,2,2,False,4.78,GLM 5.3,1.66,GLM 5.3 Flash
+glm_coding_pro_cn_new_peak,GLM Coding Pro (新客 ¥538) 忙时,Zhipu,79.37,exception,1.66,131.77,GLM 5.3 Flash,1,False,False,2,2,False,4.78,GLM 5.3,1.66,GLM 5.3 Flash
+cursor_pro_composer_fast,Cursor Pro (Composer Fast),Cursor,20.0,shared,4.6,91.98,Composer 2.5,1,False,False,1,1,False,4.6,Composer 2.5,4.6,Composer 2.5
+glm_coding_lite_cn_new_peak,GLM Coding Lite (新客 ¥118) 忙时,Zhipu,17.41,shared,3.64,63.39,GLM 5.3,1,False,False,2,2,False,3.64,GLM 5.3,1.26,GLM 5.3 Flash
+glm_coding_lite_cn_new_peak,GLM Coding Lite (新客 ¥118) 忙时,Zhipu,17.41,exception,1.26,21.97,GLM 5.3 Flash,1,False,False,2,2,False,3.64,GLM 5.3,1.26,GLM 5.3 Flash
+ollama_max,Ollama Max,Ollama,100.0,shared,3.0,299.99,GLM 5.2 | GLM 5.3 | GLM 5.3 Flash | Kimi K2.7 Code | Kimi K3 | MiniMax M2.7,6,False,False,10,4,False,6.0,DeepSeek V4 Flash,1.5,MiniMax M3
+ollama_max,Ollama Max,Ollama,100.0,exception,6.0,600.0,DeepSeek V4 Flash | DeepSeek V4 Pro,2,False,False,10,4,False,6.0,DeepSeek V4 Flash,1.5,MiniMax M3
+ollama_max,Ollama Max,Ollama,100.0,exception,3.94,393.93,GLM 5.1,1,False,False,10,4,False,6.0,DeepSeek V4 Flash,1.5,MiniMax M3
+ollama_max,Ollama Max,Ollama,100.0,exception,1.5,150.0,MiniMax M3,1,False,False,10,4,False,6.0,DeepSeek V4 Flash,1.5,MiniMax M3
+ollama_pro,Ollama Pro,Ollama,20.0,shared,3.0,60.01,GLM 5.2 | GLM 5.3 | GLM 5.3 Flash | Kimi K2.7 Code | Kimi K3 | MiniMax M2.7,6,False,False,10,4,False,6.0,DeepSeek V4 Flash,1.5,MiniMax M3
+ollama_pro,Ollama Pro,Ollama,20.0,exception,6.0,120.0,DeepSeek V4 Flash | DeepSeek V4 Pro,2,False,False,10,4,False,6.0,DeepSeek V4 Flash,1.5,MiniMax M3
+ollama_pro,Ollama Pro,Ollama,20.0,exception,3.94,78.79,GLM 5.1,1,False,False,10,4,False,6.0,DeepSeek V4 Flash,1.5,MiniMax M3
+ollama_pro,Ollama Pro,Ollama,20.0,exception,1.5,30.0,MiniMax M3,1,False,False,10,4,False,6.0,DeepSeek V4 Flash,1.5,MiniMax M3
+kimi_andante_cn,Kimi 会员 49,Kimi,7.23,shared,2.37,17.13,Kimi K2.7 Code,1,False,False,1,1,False,2.37,Kimi K2.7 Code,2.37,Kimi K2.7 Code
+command_code_goat,Command Code GOAT,Command Code,10.0,shared,2.0,20.0,GLM 5.3 | GPT 5.6 Luna | Gemini 3.7 Flash | Gemini 3.8 Flash | Grok 4.6 | Hy4 Preview | Kimi K3 | Muse Spark 1.2 | Muse Spark 1.2 Contributor,9,False,True,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,28.54,285.41,MiMo V2.5 Pro,1,False,True,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,12.0,120.0,DeepSeek V4 Flash,1,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,8.43,84.34,Qwen3.8 27B,1,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,7.88,78.75,MiMo V2.5,1,False,True,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,7.0,70.0,GLM 5.2,1,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,6.0,59.99,Kimi K2.7 Code,1,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,5.46,54.6,GPT 5.6 Sol,1,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,4.7,47.0,MiniMax M3,1,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,4.0,40.0,DeepSeek V4 Flash Vision Exp | DeepSeek V4 Pro | GLM 5.3 Flash,3,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,3.3,33.0,Qwen3.7 Plus,1,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,1.94,19.45,Qwen3.6 Plus,1,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,1.91,19.08,Hy3,1,False,True,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,1.89,18.85,Qwen3.8 Flash,1,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,1.88,18.81,Qwen3.7 Max,1,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,1.68,16.84,Nemotron 3 Ultra | Qwen3.8 Max | Qwen3.8 Max 0902,3,False,True,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,1.29,12.94,Grok 4.5,1,False,False,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,1.18,11.76,Step 3.7 Flash,1,False,True,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+command_code_goat,Command Code GOAT,Command Code,10.0,exception,1.04,10.36,Step 3.5 Flash,1,False,True,31,19,True,28.54,MiMo V2.5 Pro,1.04,Step 3.5 Flash
+aliyun_coding_pro_cn,阿里云百炼 Coding Plan Pro,Alibaba,29.5,shared,0.62,18.26,Qwen3.7 Plus,1,False,False,1,1,False,0.62,Qwen3.7 Plus,0.62,Qwen3.7 Plus
+aliyun_coding_pro_global,Alibaba Cloud Coding Plan Pro,Alibaba,50.0,shared,0.37,18.26,Qwen3.7 Plus,1,False,False,1,1,False,0.37,Qwen3.7 Plus,0.37,Qwen3.7 Plus

@@ -7,6 +7,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BUILD = ROOT / '_build'
 CHARTS = ROOT / 'charts'
+# 中文总览文件名前缀 → 英文 slug；plot_quotas.py 的 VIEW_CN 决定这个前缀。
+# 按前缀长度从长到短匹配，这样新增更长的口径名（套餐性价比）不会被短前缀抢走。
+OVERVIEW_SLUGS = {
+    '额度': 'monthly-allowance',
+    '单价': 'real-price',
+    '倍数': 'api-cost-multiple',
+    '套餐性价比': 'plan-value',
+}
 BOARDS = {
     'CodeArena榜': ('code-arena', 'Code Arena'),
     'AgentArena榜': ('agent-arena', 'Agent Arena'),
@@ -34,7 +42,9 @@ def exports():
             category = 'overview'
             name = base
             if language == 'en':
-                name = ('monthly-allowance' if base.startswith('额度') else 'real-price') + '-overview'
+                prefix = next(k for k in sorted(OVERVIEW_SLUGS, key=len, reverse=True)
+                              if base.startswith(k))
+                name = OVERVIEW_SLUGS[prefix] + '-overview'
                 if '_月费' in base:
                     name += '-fee-' + base.split('_月费', 1)[1].removesuffix('美元') + '-usd'
                 if '混合比例' in base:

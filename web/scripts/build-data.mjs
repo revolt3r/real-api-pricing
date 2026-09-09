@@ -119,6 +119,8 @@ for (const f of [
   "data/adopted.csv",
   "derived/points.json",
   "derived/points.csv",
+  "derived/plan-value.json",
+  "derived/plan-value.csv",
   "derived/benchmark-configurations.json",
   "derived/benchmark-configurations.csv",
   "derived/benchmark-points.json",

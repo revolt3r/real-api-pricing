@@ -1,0 +1,952 @@
+{
+  "collectedAt": "2026-09-09",
+  "supersedes": "list-prices-2026-09.json",
+  "role": "Refreshed and expanded official API list prices, used to value each plan's adopted monthly allowance at metered API rates (the api_cost_usd_month column).",
+  "roleZh": "刷新并扩充官方按量标价，用于把每个套餐的采用月额度按 API 标价折算成美元成本（api_cost_usd_month 列）。",
+  "usdPerCny": 6.7787,
+  "priceTiers": {
+    "official": "First-party vendor pricing page read this round. High confidence.",
+    "official_indirect": "First-party rate restated in vendor docs, announcement or console help because the pricing page itself is JS-rendered or gives no three-part split. Medium confidence.",
+    "third_party": "Open-weight or wrapper-only model with no first-party rate card; a named gateway or tracker rate is recorded instead. Low confidence.",
+    "unavailable": "No defensible public rate found. Prices stay null and the API cost column stays blank; no value is invented."
+  },
+  "conventions": {
+    "unit": "USD per million tokens",
+    "regionRule": "Where a vendor publishes both an international and a domestic-CNY list, the international USD list is recorded as the base, matching the existing qwen3.7-plus decision.",
+    "promoRule": "Base fields hold the standing list price; promotional and speed/context variants stay in variants and are not used for the API cost column.",
+    "cacheFallback": "cachedInput null means the vendor publishes no cache-read rate; compute.py falls back to 0.1x input, which is the multiplier every vendor that does publish one uses.",
+    "blendRule": "The API cost column weights cachedInput/input/output by the project standard workload in conventions.json (97.5% / 2.15% / 0.35%). Cache writes are still not modeled, so API cost is a floor for providers that bill them."
+  },
+  "crossChecks": [
+    {
+      "source": "https://www.aipricing.guru/pricing/",
+      "verifiedAt": "2026-09-09",
+      "scope": "229 models / 18 providers, reconciled daily against vendor pages",
+      "use": "Used only to find candidate rates for models missing a first-party page. Where it disagreed with the vendor page, the vendor page was adopted.",
+      "disagreements": [
+        "qwen3.8-max cached $0.25 vs official $0.20 (10% of input) - official adopted",
+        "qwen3.8-flash cached $0.016 vs official $0.015 - official adopted",
+        "qwen3.8-27b $0.42/$0.085/$1.49 and qwen3.7-max $1.25/$0.125/$3.75 match the Beijing-CNY-converted list, not the Singapore international list this project uses - official international adopted",
+        "glm-5.1 input $1.38 vs official $1.40 - official adopted",
+        "kimi-k2.6 $0.80/$0.16/$3.40 vs official $0.95/$0.16/$4.00 - official adopted",
+        "nemotron-3-ultra $0.60/$0.20/$3.60 vs OpenRouter $0.50/$0.10/$2.20 - neither is first-party; recorded as third_party with the range in the note"
+      ]
+    }
+  ],
+  "models": [
+    {
+      "model": "gpt-5.6-sol",
+      "vendor": "OpenAI",
+      "input": 4.0,
+      "cachedInput": 0.4,
+      "output": 20.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": { "input": 8.0, "cachedInput": 0.8, "output": 30.0, "note": "context >= ~270K" },
+        "fast": { "input": 8.0, "cachedInput": 0.8, "output": 40.0, "note": "long-context Fast: 16 / 1.6 / 60" },
+        "batch": { "input": 2.0, "cachedInput": 0.2, "output": 10.0 },
+        "flex": { "input": 2.0, "cachedInput": 0.2, "output": 10.0 }
+      },
+      "source": "https://developers.openai.com/api/docs/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "Promotional pricing still stated as available through 2026-11-21. Short-context Standard rates used as base."
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "vendor": "OpenAI",
+      "input": 2.0,
+      "cachedInput": 0.2,
+      "output": 12.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": { "input": 4.0, "cachedInput": 0.4, "output": 18.0 },
+        "fast": { "input": 4.0, "cachedInput": 0.4, "output": 24.0 },
+        "batch": { "input": 1.0, "cachedInput": 0.1, "output": 6.0 },
+        "flex": { "input": 1.0, "cachedInput": 0.1, "output": 6.0 }
+      },
+      "source": "https://developers.openai.com/api/docs/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": ""
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "vendor": "OpenAI",
+      "input": 0.2,
+      "cachedInput": 0.02,
+      "output": 1.2,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": { "input": 0.4, "cachedInput": 0.04, "output": 1.8 },
+        "fast": { "input": 0.4, "cachedInput": 0.04, "output": 2.4 },
+        "batch": { "input": 0.1, "cachedInput": 0.01, "output": 0.6 },
+        "flex": { "input": 0.1, "cachedInput": 0.01, "output": 0.6 }
+      },
+      "source": "https://developers.openai.com/api/docs/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": ""
+    },
+    {
+      "model": "gpt-5.5",
+      "vendor": "OpenAI",
+      "input": 5.0,
+      "cachedInput": 0.5,
+      "output": 30.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": { "input": 10.0, "cachedInput": 1.0, "output": 45.0 },
+        "fast": { "input": 12.5, "cachedInput": 1.25, "output": 75.0 },
+        "batch": { "input": 2.5, "cachedInput": 0.25, "output": 15.0 },
+        "flex": { "input": 2.5, "cachedInput": 0.25, "output": 15.0 }
+      },
+      "source": "https://developers.openai.com/api/docs/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "Max 272K context."
+    },
+    {
+      "model": "claude-opus-5",
+      "vendor": "Anthropic",
+      "input": 5.0,
+      "cachedInput": 0.5,
+      "output": 25.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "fast": { "input": 10.0, "output": 50.0, "note": "Fast mode research preview; cache multipliers stack" },
+        "batch": { "input": 2.5, "output": 12.5 },
+        "cacheWrite5m": { "input": 6.25 },
+        "cacheWrite1h": { "input": 10.0 }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "1M context at standard rates. inference_geo us applies 1.1x, not modeled here."
+    },
+    {
+      "model": "claude-fable-5",
+      "vendor": "Anthropic",
+      "input": 10.0,
+      "cachedInput": 1.0,
+      "output": 50.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "batch": { "input": 5.0, "output": 25.0 },
+        "cacheWrite5m": { "input": 12.5 },
+        "cacheWrite1h": { "input": 20.0 },
+        "fable51CacheHit": { "cachedInput": 0.25, "note": "Fable 5.1 cache hits are 0.025x input; Fable 5 stays at the 0.1x $1 rate" }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "Cache-hit split between Fable 5 and Fable 5.1 re-confirmed this round; the adopted served model is Fable 5."
+    },
+    {
+      "model": "claude-sonnet-5",
+      "vendor": "Anthropic",
+      "input": 2.0,
+      "cachedInput": 0.2,
+      "output": 10.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "batch": { "input": 1.0, "output": 5.0 },
+        "cacheWrite5m": { "input": 2.5 },
+        "cacheWrite1h": { "input": 4.0 }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "Docs still state $2/$10 is the permanent standard; the scheduled $3/$15 increase remains cancelled."
+    },
+    {
+      "model": "claude-opus-4.8",
+      "vendor": "Anthropic",
+      "input": 5.0,
+      "cachedInput": 0.5,
+      "output": 25.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "fast": { "input": 10.0, "output": 50.0 },
+        "batch": { "input": 2.5, "output": 12.5 },
+        "cacheWrite5m": { "input": 6.25 },
+        "cacheWrite1h": { "input": 10.0 }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": ""
+    },
+    {
+      "model": "grok-4.6",
+      "vendor": "xAI",
+      "input": 2.0,
+      "cachedInput": 0.5,
+      "output": 6.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": { "input": 4.0, "cachedInput": 1.0, "output": 12.0, "note": "prompt >= 200k; the higher rate applies to the whole request" }
+      },
+      "source": "https://docs.x.ai/developers/models",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": ""
+    },
+    {
+      "model": "grok-4.5",
+      "vendor": "xAI",
+      "input": 2.0,
+      "cachedInput": 0.3,
+      "output": 6.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": { "input": 4.0, "cachedInput": 0.6, "output": 12.0 }
+      },
+      "source": "https://docs.x.ai/developers/models",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": ""
+    },
+    {
+      "model": "kimi-k3",
+      "vendor": "Moonshot / Kimi",
+      "input": 3.0,
+      "cachedInput": 0.3,
+      "output": 15.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://platform.kimi.ai/",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "Flat across 1M context."
+    },
+    {
+      "model": "kimi-k2.7-code",
+      "vendor": "Moonshot / Kimi",
+      "input": 0.95,
+      "cachedInput": 0.19,
+      "output": 4.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://platform.kimi.ai/",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": ""
+    },
+    {
+      "model": "kimi-k2.6",
+      "vendor": "Moonshot / Kimi",
+      "input": 0.95,
+      "cachedInput": 0.16,
+      "output": 4.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://platform.kimi.ai/",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Same input/output as K2.7 Code with a lower cache-hit rate. Rejected the aggregator's $0.80/$3.40."
+    },
+    {
+      "model": "kimi-k2.7-code-highspeed",
+      "vendor": "Moonshot / Kimi",
+      "input": null,
+      "cachedInput": null,
+      "output": null,
+      "currency": "USD",
+      "priceTier": "unavailable",
+      "priceConfidence": null,
+      "variants": {},
+      "source": "https://platform.kimi.ai/",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "still unpriced",
+      "note": "The platform card lists K2.7 Code and K2.6 only; no separate HighSpeed rate is published. Served through Command Code GOAT. No rate invented."
+    },
+    {
+      "model": "glm-5.3",
+      "vendor": "Z.AI / Zhipu",
+      "input": 1.4,
+      "cachedInput": 0.26,
+      "output": 4.4,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "cnyDomestic": {
+          "input": 8.0,
+          "cachedInput": 2.0,
+          "output": 28.0,
+          "currency": "CNY",
+          "source": "https://open.bigmodel.cn/pricing"
+        }
+      },
+      "source": "https://docs.z.ai/guides/overview/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "International Z.ai USD rates. Cached input storage still limited-time free."
+    },
+    {
+      "model": "glm-5.3-flash",
+      "vendor": "Z.AI / Zhipu",
+      "input": 0.15,
+      "cachedInput": 0.03,
+      "output": 0.5,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "promo50off": { "input": 0.075, "cachedInput": 0.015, "output": 0.25, "note": "50% off stated as ending 24:00 2026-09-09 UTC+8; list retained as base" }
+      },
+      "source": "https://docs.z.ai/guides/overview/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "The 50% promotion is scheduled to end today (UTC+8); base stays the standing list price."
+    },
+    {
+      "model": "glm-5.2",
+      "vendor": "Z.AI / Zhipu",
+      "input": 1.4,
+      "cachedInput": 0.26,
+      "output": 4.4,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://docs.z.ai/guides/overview/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Same rate card as GLM-5.3."
+    },
+    {
+      "model": "glm-5.1",
+      "vendor": "Z.AI / Zhipu",
+      "input": 1.4,
+      "cachedInput": 0.26,
+      "output": 4.4,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://docs.z.ai/guides/overview/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Listed under earlier text models at the same rate; rejected the aggregator's $1.38 input."
+    },
+    {
+      "model": "glm-5.2-fast",
+      "vendor": "Z.AI / Zhipu",
+      "input": null,
+      "cachedInput": null,
+      "output": null,
+      "currency": "USD",
+      "priceTier": "unavailable",
+      "priceConfidence": null,
+      "variants": {},
+      "source": "https://docs.z.ai/guides/overview/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "still unpriced",
+      "note": "No GLM-5.2-Fast row on the Z.ai pricing page. Served through Command Code GOAT. No rate invented."
+    },
+    {
+      "model": "minimax-m3",
+      "vendor": "MiniMax",
+      "input": 0.3,
+      "cachedInput": 0.06,
+      "output": 1.2,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": { "input": 0.6, "cachedInput": 0.12, "output": 2.4, "note": "> 512k input" },
+        "priority": { "input": 0.45, "cachedInput": 0.09, "output": 1.8 },
+        "priorityLongContext": { "input": 0.9, "cachedInput": 0.18, "output": 3.6 }
+      },
+      "source": "https://platform.minimax.io/docs/guides/pricing-paygo",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "Standard <=512k after the permanent 50% off."
+    },
+    {
+      "model": "minimax-m2.7",
+      "vendor": "MiniMax",
+      "input": 0.3,
+      "cachedInput": 0.06,
+      "output": 1.2,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "highspeed": { "input": 0.6, "cachedInput": 0.06, "output": 2.4, "cacheWrite": 0.375 },
+        "cacheWrite": { "input": 0.375 }
+      },
+      "source": "https://platform.minimax.io/docs/guides/pricing-paygo",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": ""
+    },
+    {
+      "model": "minimax-m2.5",
+      "vendor": "MiniMax",
+      "input": 0.3,
+      "cachedInput": 0.03,
+      "output": 1.2,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "cacheWrite": { "input": 0.375 }
+      },
+      "source": "https://platform.minimax.io/docs/guides/pricing-paygo",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Listed as legacy; same input/output as M2.7 with a lower cache-read rate. Independently matched the aggregator."
+    },
+    {
+      "model": "qwen3.8-max",
+      "vendor": "Alibaba Cloud / Qwen",
+      "input": 2.0,
+      "cachedInput": 0.2,
+      "output": 6.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "cnyBeijingUsdConverted": { "input": 1.65, "output": 4.95, "note": "China Beijing and other regional deployments" },
+        "batch": { "note": "50% batch inference discount available" }
+      },
+      "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Singapore/International list, consistent with the existing qwen3.7-plus decision. Cache hit is the standard 10% of input."
+    },
+    {
+      "model": "qwen3.8-max-0902",
+      "vendor": "Alibaba Cloud / Qwen",
+      "input": 2.0,
+      "cachedInput": 0.2,
+      "output": 6.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Dated snapshot of qwen3.8-max; same rate card."
+    },
+    {
+      "model": "qwen3.8-flash",
+      "vendor": "Alibaba Cloud / Qwen",
+      "input": 0.15,
+      "cachedInput": 0.015,
+      "output": 0.47,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "cnyBeijingUsdConverted": { "input": 0.113, "output": 0.382 }
+      },
+      "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Singapore/International list."
+    },
+    {
+      "model": "qwen3.8-27b",
+      "vendor": "Alibaba Cloud / Qwen",
+      "input": 0.5,
+      "cachedInput": 0.05,
+      "output": 3.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "cnyBeijingUsdConverted": { "input": 0.424, "output": 1.696 }
+      },
+      "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Open-source tier, Singapore/International list. The aggregator's $0.42/$1.49 tracks the Beijing list instead."
+    },
+    {
+      "model": "qwen3.7-max",
+      "vendor": "Alibaba Cloud / Qwen",
+      "input": 2.5,
+      "cachedInput": 0.25,
+      "output": 7.5,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "batch": { "note": "50% batch inference discount available" }
+      },
+      "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Singapore/International list. The aggregator's $1.25/$3.75 tracks the Beijing list instead."
+    },
+    {
+      "model": "qwen3.7-plus",
+      "vendor": "Alibaba Cloud / Qwen",
+      "input": 0.4,
+      "cachedInput": 0.08,
+      "output": 1.6,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": { "input": 1.2, "cachedInput": 0.24, "output": 4.8, "note": "256K < tokens <= 1M" },
+        "promo20offInternational": { "input": 0.32, "output": 1.28 },
+        "cnyBeijing": { "input": 2.0, "cachedInput": 0.4, "output": 8.0, "currency": "CNY" }
+      },
+      "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "Singapore/International list (<=256K)."
+    },
+    {
+      "model": "qwen3.6-plus",
+      "vendor": "Alibaba Cloud / Qwen",
+      "input": 0.5,
+      "cachedInput": 0.05,
+      "output": 3.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": { "input": 2.0, "output": 6.0, "note": "256K < tokens <= 1M" }
+      },
+      "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Singapore/International list. Priced above qwen3.7-plus, which the vendor cut on release."
+    },
+    {
+      "model": "deepseek-v4-flash",
+      "vendor": "DeepSeek",
+      "input": 0.44,
+      "cachedInput": 0.014,
+      "output": 1.32,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "offPeak": { "input": 0.22, "cachedInput": 0.007, "output": 0.66 }
+      },
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "Base = USD peak. Peak hours UTC Mon-Fri 01:00-04:00 and 06:00-10:00; all other times off-peak at half."
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "vendor": "DeepSeek",
+      "input": 1.32,
+      "cachedInput": 0.044,
+      "output": 3.96,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "offPeak": { "input": 0.66, "cachedInput": 0.022, "output": 1.98 }
+      },
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "Base = USD peak."
+    },
+    {
+      "model": "deepseek-v4-flash-vision-exp",
+      "vendor": "DeepSeek",
+      "input": 0.44,
+      "cachedInput": 0.014,
+      "output": 1.32,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "offPeak": { "input": 0.22, "cachedInput": 0.007, "output": 0.66 }
+      },
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. The pricing page lists it as a third model at rates identical to deepseek-v4-flash; vision inputs are converted to input tokens."
+    },
+    {
+      "model": "deepseek-v4-flash-fast",
+      "vendor": "DeepSeek",
+      "input": null,
+      "cachedInput": null,
+      "output": null,
+      "currency": "USD",
+      "priceTier": "unavailable",
+      "priceConfidence": null,
+      "variants": {},
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "still unpriced",
+      "note": "The pricing page lists only v4-flash, v4-pro and v4-flash-vision-exp; no Fast tier. Served through Command Code GOAT. No rate invented."
+    },
+    {
+      "model": "gemini-3.1-pro",
+      "vendor": "Google",
+      "input": 2.0,
+      "cachedInput": 0.2,
+      "output": 12.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": { "input": 4.0, "cachedInput": 0.4, "output": 18.0, "note": "prompts > 200k" },
+        "batch": { "input": 1.0, "output": 6.0 },
+        "flex": { "input": 1.0, "output": 6.0 }
+      },
+      "source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "Model id gemini-3.1-pro-preview. Not currently served by any adopted plan; kept for continuity."
+    },
+    {
+      "model": "gemini-3.7-flash",
+      "vendor": "Google",
+      "input": 0.75,
+      "cachedInput": 0.075,
+      "output": 3.75,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "standardFrom2027-01-01": { "input": 1.5, "cachedInput": 0.15, "output": 7.5 },
+        "batch": { "input": 0.375, "cachedInput": 0.0375, "output": 1.875 },
+        "priority": { "input": 1.35, "cachedInput": 0.135, "output": 6.75 }
+      },
+      "source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "Introductory Flash pricing through 2026-12-31, then double."
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "vendor": "Google",
+      "input": 0.75,
+      "cachedInput": 0.075,
+      "output": 3.75,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "standardFrom2027-01-01": { "input": 1.5, "cachedInput": 0.15, "output": 7.5 },
+        "batch": { "input": 0.375, "output": 1.875 }
+      },
+      "source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Explicitly priced the same as Gemini 3.7 Flash, including the same 2026-12-31 introductory expiry. Cache read is the standard 10%."
+    },
+    {
+      "model": "mimo-v2.5-pro",
+      "vendor": "Xiaomi MiMo",
+      "input": 1.0,
+      "cachedInput": 0.2,
+      "output": 3.0,
+      "currency": "USD",
+      "priceTier": "official_indirect",
+      "priceConfidence": "medium",
+      "variants": {
+        "cnyDomestic": { "input": 7.0, "cachedInput": 1.4, "output": 21.0, "currency": "CNY" }
+      },
+      "source": "https://mimo.mi.com/docs/price/pay-as-you-go",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "source URL moved",
+      "note": "The pricing page is JS-rendered and returned only a title this round (platform.xiaomimimo.com now 302s to mimo.mi.com). Carrying the previous round's official overseas card unchanged. Third-party gateways quote far lower ($0.30/$0.61 blended on OpenRouter); the conflict is unresolved and the official card is retained."
+    },
+    {
+      "model": "mimo-v2.5",
+      "vendor": "Xiaomi MiMo",
+      "input": 0.14,
+      "cachedInput": null,
+      "output": 0.28,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "low",
+      "variants": {
+        "gatewayCheapest": { "input": 0.119, "output": 0.238, "note": "GMICloud / OpenRouter cheapest host" },
+        "gatewayCacheRead": { "cachedInput": 0.00255, "note": "OpenRouter-reported cache read; not confirmed first-party" }
+      },
+      "source": "https://openrouter.ai/xiaomi/mimo-v2.5",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round, low confidence. $0.14/$0.28 is reported by several trackers as Xiaomi's own first-party rate, but the official page is JS-rendered and could not be read directly. No cache-read rate confirmed first-party, so compute.py applies the 0.1x fallback."
+    },
+    {
+      "model": "hy4-preview",
+      "vendor": "Tencent Hunyuan",
+      "input": 0.834,
+      "cachedInput": 0.042,
+      "output": 2.501,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://hy.tencent.ai/research/hy4-preview",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": ""
+    },
+    {
+      "model": "hy3",
+      "vendor": "Tencent Hunyuan",
+      "input": 0.08,
+      "cachedInput": null,
+      "output": 0.33,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "low",
+      "variants": {
+        "tokenHubBlendedReference": {
+          "blended": 0.132,
+          "note": "Tencent Cloud TokenHub publishes a single $0.132/MTok reference price with no three-part split, at an unstated token mix. Recorded as a cross-check only; it cannot be re-weighted to this project's standard workload."
+        }
+      },
+      "source": "https://arena.ai/leaderboard/agent",
+      "crossCheck": "https://www.tencentcloud.com/techpedia/145748?lang=en",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "cross-check added",
+      "note": "Still no first-party three-part table. Retaining the Arena Price column ($0.08/$0.33) and adding the TokenHub blended reference as evidence rather than substituting a differently-mixed number."
+    },
+    {
+      "model": "composer-2.5",
+      "vendor": "Cursor",
+      "input": 0.5,
+      "cachedInput": 0.2,
+      "output": 2.5,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "fast": { "input": 3.0, "cachedInput": 0.5, "output": 15.0, "note": "default in the Cursor product" }
+      },
+      "source": "https://cursor.com/docs/models/cursor-composer-2-5",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "none",
+      "note": "On-demand API-equivalent token rates inside Cursor, not a public third-party API."
+    },
+    {
+      "model": "longcat-2.0",
+      "vendor": "Meituan",
+      "input": 0.75,
+      "cachedInput": 0.015,
+      "output": 2.95,
+      "currency": "USD",
+      "priceTier": "official_indirect",
+      "priceConfidence": "medium",
+      "variants": {
+        "launchPromo": { "input": 0.3, "cachedInput": 0.006, "output": 1.2, "note": "limited-time launch discount, cached reads described as free in some restatements" },
+        "tokenPackage": { "note": "~$60 for 1 billion tokens" }
+      },
+      "source": "https://openrouter.ai/meituan/longcat-2.0",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. Meituan's own pricing page is restated consistently across gateway and press coverage as $0.75 uncached / $0.015 cached / $2.95 output, with a launch promotion at $0.30 / $0.006 / $1.20. Base holds the standing list price."
+    },
+    {
+      "model": "step-3.7-flash",
+      "vendor": "StepFun",
+      "input": 0.2,
+      "cachedInput": null,
+      "output": 1.15,
+      "currency": "USD",
+      "priceTier": "official_indirect",
+      "priceConfidence": "medium",
+      "variants": {
+        "openrouter": { "input": 0.16, "output": 0.92 }
+      },
+      "source": "https://pricepertoken.com/pricing-page/provider/stepfun-ai",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. $0.20/$1.15 is reported as StepFun's own direct API rate; gateways resell lower. No cache-read rate published, so compute.py applies the 0.1x fallback."
+    },
+    {
+      "model": "step-3.5-flash",
+      "vendor": "StepFun",
+      "input": 0.09,
+      "cachedInput": null,
+      "output": 0.3,
+      "currency": "USD",
+      "priceTier": "official_indirect",
+      "priceConfidence": "medium",
+      "variants": {
+        "openrouter": { "input": 0.1, "output": 0.3 }
+      },
+      "source": "https://pricepertoken.com/pricing-page/provider/stepfun-ai",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. $0.09/$0.30 reported as StepFun's own direct rate. No cache-read rate published, so compute.py applies the 0.1x fallback."
+    },
+    {
+      "model": "nemotron-3-ultra",
+      "vendor": "NVIDIA",
+      "input": 0.5,
+      "cachedInput": 0.1,
+      "output": 2.2,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "low",
+      "variants": {
+        "fireworks": { "input": 0.6, "output": 2.4 },
+        "aggregatorTracker": { "input": 0.6, "cachedInput": 0.2, "output": 3.6, "source": "https://www.aipricing.guru/pricing/" }
+      },
+      "source": "https://openrouter.ai/nvidia/nemotron-3-ultra-550b-a55b",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round, low confidence. Open-weight 550B model with no NVIDIA rate card; hosts range $0.50-$0.60 input and $2.20-$3.60 output. OpenRouter adopted because it is the only source publishing a cache-read rate."
+    },
+    {
+      "model": "muse-spark-1.2",
+      "vendor": "Muse",
+      "input": 1.25,
+      "cachedInput": 0.15,
+      "output": 4.25,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "low",
+      "variants": {},
+      "source": "https://www.layer3labs.io/guides/muse-spark-1-3-pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round, low confidence. Tracker-published rates for the 1.2 generation, reviewed 2026-09-09. Meta does not publish a public rate card."
+    },
+    {
+      "model": "muse-spark-1.2-contributor",
+      "vendor": "Muse",
+      "input": 0.1,
+      "cachedInput": 0.002,
+      "output": 0.2,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "low",
+      "variants": {},
+      "source": "https://www.layer3labs.io/guides/muse-spark-1-3-pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round, low confidence. Contributor tier trades a ~12x lower rate for Meta training on prompts and completions."
+    },
+    {
+      "model": "muse-spark-1.3",
+      "vendor": "Muse",
+      "input": null,
+      "cachedInput": null,
+      "output": null,
+      "currency": "USD",
+      "priceTier": "unavailable",
+      "priceConfidence": null,
+      "variants": {
+        "unconfirmedBlendedEstimate": { "blended": 0.8, "source": "https://artificialanalysis.ai/", "note": "third-party blended estimate, not a Meta rate" },
+        "carriedOverClaim": { "input": 1.25, "output": 4.25, "note": "some trackers restate the 1.2 rate card for 1.3; Meta has not confirmed it applies" }
+      },
+      "source": "https://www.layer3labs.io/guides/muse-spark-1-3-pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "conflict recorded, still unpriced",
+      "note": "Conflicting third-party claims: one search pass reported 1.3 at the 1.2 rate card, while the tracker reviewed 2026-09-09 states Meta has released no confirmed token rate for 1.3 and that only an unverified blended estimate exists. Left unpriced rather than adopting a carried-over rate."
+    },
+    {
+      "model": "muse-spark-1.3-contributor",
+      "vendor": "Muse",
+      "input": null,
+      "cachedInput": null,
+      "output": null,
+      "currency": "USD",
+      "priceTier": "unavailable",
+      "priceConfidence": null,
+      "variants": {
+        "carriedOverClaim": { "input": 0.1, "output": 0.2, "note": "restated from the 1.2 contributor tier; not confirmed for 1.3" }
+      },
+      "source": "https://www.layer3labs.io/guides/muse-spark-1-3-pricing",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "conflict recorded, still unpriced",
+      "note": "Same unresolved conflict as muse-spark-1.3; Meta has not confirmed whether the two-tier 1.2 model carries to 1.3."
+    },
+    {
+      "model": "inkling",
+      "vendor": "other",
+      "input": null,
+      "cachedInput": null,
+      "output": null,
+      "currency": "USD",
+      "priceTier": "unavailable",
+      "priceConfidence": null,
+      "variants": {},
+      "source": "",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "searched, still unpriced",
+      "note": "No public API rate card found in this round. Served only through Command Code GOAT. No rate invented."
+    },
+    {
+      "model": "inkling-small",
+      "vendor": "other",
+      "input": null,
+      "cachedInput": null,
+      "output": null,
+      "currency": "USD",
+      "priceTier": "unavailable",
+      "priceConfidence": null,
+      "variants": {},
+      "source": "",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "searched, still unpriced",
+      "note": "No public API rate card found in this round. Served only through Command Code GOAT. No rate invented."
+    },
+    {
+      "model": "omen-alpha",
+      "vendor": "OpenCode",
+      "input": null,
+      "cachedInput": null,
+      "output": null,
+      "currency": "USD",
+      "priceTier": "unavailable",
+      "priceConfidence": null,
+      "variants": {},
+      "source": "https://opencode.ai/docs/go/",
+      "checkedAt": "2026-09-09",
+      "changeSincePreviousRound": "searched, still unpriced",
+      "note": "Wrapper-exclusive model inside OpenCode Go with no standalone metered API rate. No rate invented."
+    }
+  ],
+  "unpricedModels": [
+    "kimi-k2.7-code-highspeed",
+    "glm-5.2-fast",
+    "deepseek-v4-flash-fast",
+    "muse-spark-1.3",
+    "muse-spark-1.3-contributor",
+    "inkling",
+    "inkling-small",
+    "omen-alpha"
+  ],
+  "unpricedRationale": "Speed/Fast tiers inside wrapper products and wrapper-exclusive models have no separately published metered rate. Their API cost column stays blank; the subscription rows themselves are unaffected.",
+  "notFound": []
+}

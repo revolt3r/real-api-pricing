@@ -8,6 +8,8 @@ import {
   allowance,
   color,
   displayPlan,
+  money,
+  multiple,
   price,
   tableRows,
   feeBands,
@@ -40,11 +42,12 @@ export default function Ranking({
   onQuery: (query: string) => void;
 }) {
   const zh = state.lang === "zh",
-    isPrice = state.view === "price";
+    isPrice = state.view === "price",
+    isMultiple = state.view === "multiple";
   const scrollRef = useRef<HTMLDivElement>(null);
   const sorted = tableRows(rows, {
     ...state,
-    sort: isPrice ? "price" : "allowance",
+    sort: isPrice ? "price" : isMultiple ? "multiple" : "allowance",
     direction: isPrice ? "asc" : "desc",
   });
   const signature = sorted.map((r) => r.key).join("|");
@@ -55,7 +58,11 @@ export default function Ranking({
     el.scrollLeft = 0;
   }, [signature, state.view]);
   const value = (r: Row) =>
-    isPrice ? r.point.real_usd_per_mtok : r.point.monthly_yi!;
+    isPrice
+      ? r.point.real_usd_per_mtok
+      : isMultiple
+        ? r.point.api_cost_multiple!
+        : r.point.monthly_yi!;
   const values = sorted.map(value),
     low = values.length ? Math.min(...values) : 0,
     high = values.length ? Math.max(...values) : 0;
@@ -66,19 +73,47 @@ export default function Ranking({
         (92 * (Math.log10(value(r)) - Math.log10(low))) /
           (Math.log10(high) - Math.log10(low));
   const formatted = (r: Row) =>
-    isPrice ? price(value(r)) : allowance(r.point, state.lang);
-  const unit = isPrice ? "USD / MTok" : zh ? "token / 月" : "tokens / month";
+    isPrice
+      ? price(value(r))
+      : isMultiple
+        ? multiple(value(r), state.lang)
+        : allowance(r.point, state.lang);
+  // "What the same tokens cost on the API" is the point of the whole project, so it
+  // rides along on every ranking row rather than living only in the detail table.
+  const apiCost = (r: Row) =>
+    r.point.api_cost_usd_month === null
+      ? ""
+      : `${money(r.point.api_cost_usd_month, state.lang)} ${zh ? "按API标价" : "at API list"}` +
+        // In the value view the multiple is already the headline, so don't repeat it.
+        (isMultiple || r.point.api_cost_multiple === null
+          ? ""
+          : ` (${multiple(r.point.api_cost_multiple, state.lang)}${zh ? "月费" : " fee"})`);
+  const unit = isPrice
+    ? "USD / MTok"
+    : isMultiple
+      ? zh
+        ? "× 月费"
+        : "× the monthly fee"
+      : zh
+        ? "token / 月"
+        : "tokens / month";
   const heading = isPrice
     ? zh
       ? "真实单价排名"
       : "Real price ranking"
-    : zh
-      ? "月额度排名"
-      : "Monthly allowance ranking";
+    : isMultiple
+      ? zh
+        ? "订阅性价比排名"
+        : "Subscription value ranking"
+      : zh
+        ? "月额度排名"
+        : "Monthly allowance ranking";
   const band = feeBands.find((b) => b.id === state.feeBand);
   const title =
     heading +
-    (!isPrice && band ? ` · ${zh ? "月费" : "Monthly fee"} ${band.label}` : "");
+    (!isPrice && !isMultiple && band
+      ? ` · ${zh ? "月费" : "Monthly fee"} ${band.label}`
+      : "");
   const regionLabel = zh
     ? `${title}，可滚动列表`
     : `${title}, scrollable list`;
@@ -99,7 +134,7 @@ export default function Ranking({
             const titleSize = rowH < 70 ? 14 : 16,
               metaSize = rowH < 70 ? 11 : 12,
               valueSize = rowH < 70 ? 16 : 18;
-            return `<text x="32" y="${y}" fill="#7a8490" font-size="14">${i + 1}</text><text x="75" y="${y}" font-size="${titleSize}">${escape(r.point.model_display)}</text><text x="75" y="${y + 22}" font-size="${metaSize}" fill="#687382">${escape(displayPlan(r.point.plan, state.lang) + " · " + accessLine(r.point))}</text><rect x="580" y="${y - 9}" width="${bar(r) * 2.8}" height="7" rx="3" fill="${color(r.point)}"/><text x="1068" y="${y}" text-anchor="end" font-size="${valueSize}">${escape(formatted(r))}</text><line x1="32" x2="1068" y1="${y + Math.min(44, rowH - 10)}" y2="${y + Math.min(44, rowH - 10)}" stroke="#edf0f3"/>`;
+            return `<text x="32" y="${y}" fill="#7a8490" font-size="14">${i + 1}</text><text x="75" y="${y}" font-size="${titleSize}">${escape(r.point.model_display)}</text><text x="75" y="${y + 22}" font-size="${metaSize}" fill="#687382">${escape(displayPlan(r.point.plan, state.lang) + " · " + accessLine(r.point))}</text><rect x="580" y="${y - 9}" width="${bar(r) * 2.8}" height="7" rx="3" fill="${color(r.point)}"/><text x="1068" y="${y}" text-anchor="end" font-size="${valueSize}">${escape(formatted(r))}</text><text x="1068" y="${y + 20}" text-anchor="end" font-size="${metaSize}" fill="#687382">${escape(apiCost(r))}</text><line x1="32" x2="1068" y1="${y + Math.min(44, rowH - 10)}" y2="${y + Math.min(44, rowH - 10)}" stroke="#edf0f3"/>`;
           })
           .join("")}</g></svg>`;
         const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
@@ -127,7 +162,7 @@ export default function Ranking({
           }
           const link = document.createElement("a");
           link.href = url;
-          link.download = `real-api-pricing-${state.view}-${state.lang}${!isPrice ? `-fee-${state.feeBand}` : ""}.${format}`;
+          link.download = `real-api-pricing-${state.view}-${state.lang}${!isPrice && !isMultiple ? `-fee-${state.feeBand}` : ""}.${format}`;
           link.click();
         } finally {
           setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -150,9 +185,13 @@ export default function Ranking({
               ? zh
                 ? "单价由低到高，越低越便宜。"
                 : "Lowest price first. Lower is less expensive."
-              : zh
-                ? "额度由高到低，越高可用量越多。"
-                : "Largest allowance first. Higher means more tokens."}{" "}
+              : isMultiple
+                ? zh
+                  ? "倍数由高到低。1× 为盈亏线：低于 1× 表示订阅比直接按量买同样的 token 更贵。缺公开标价的行不参与此排名。"
+                  : "Highest multiple first. 1× is break-even: below 1× the subscription costs more than buying the same tokens on the API. Rows with no published rate are excluded."
+                : zh
+                  ? "额度由高到低，越高可用量越多。"
+                  : "Largest allowance first. Higher means more tokens."}{" "}
             {zh ? "条形使用对数刻度。" : "Bars use a logarithmic scale."}
           </p>
         </div>
@@ -181,7 +220,11 @@ export default function Ranking({
           <span>
             {zh ? "数值对比 · 对数刻度" : "Comparison · logarithmic scale"}
           </span>
-          <span>{unit}</span>
+          <span>
+            {unit}
+            <br />
+            {zh ? "及 API 标价成本" : "and API list cost"}
+          </span>
           <span />
         </div>
         {sorted.length ? (
@@ -225,6 +268,7 @@ export default function Ranking({
                         (zh ? " token / 月" : " tokens / mo")
                     : price(r.point.price_usd) + (zh ? " / 月" : " / mo")}
                 </small>
+                {apiCost(r) && <small className="rank-api-cost">{apiCost(r)}</small>}
               </span>
               <ArrowRight className="rank-arrow" size={17} />
             </button>

@@ -1,5 +1,5 @@
 export type Lang = "en" | "zh";
-export type View = "pareto" | "price" | "allowance" | "method";
+export type View = "pareto" | "price" | "allowance" | "multiple" | "compare" | "method";
 export interface Point {
   id: string;
   plan_id: string;
@@ -18,6 +18,19 @@ export interface Point {
   monthly_tokens: number | null;
   real_usd_per_mtok: number;
   list_blended_usd_per_mtok: number | null;
+  /** The row's monthly allowance priced at the provider's official metered API rates. */
+  api_cost_usd_month: number | null;
+  /** api_cost_usd_month ÷ the monthly fee: how many times the fee the same tokens cost at list price. */
+  api_cost_multiple: number | null;
+  /** True when this row's allowance was derived from a sibling model by a list-price ratio,
+   *  so the API cost repeats that row instead of standing on its own evidence. */
+  api_cost_inherited: boolean;
+  api_price_tier: "official" | "official_indirect" | "third_party" | "unavailable" | null;
+  api_price_confidence: "high" | "medium" | "low" | null;
+  api_price_source: string | null;
+  api_price_archive: string | null;
+  /** Real price ÷ list blended price: the reciprocal of api_cost_multiple. */
+  d: number | null;
   source: string;
   note: string;
   decision_note: string;

@@ -1,0 +1,2596 @@
+{
+ "generatedAt": "2026-09-09",
+ "role": "Per-subscription value: the API-list multiple the plan's models share, plus the models that differ.",
+ "rule": "Allowances inside a plan are alternatives, never additive, so a plan has no total. headline_multiple is the value shared by the largest set of the plan's priced models; exceptions are the remaining distinct values, each with its own models. varies=true means the headline covers fewer than half the plan's models and must be read as the most common value, not a representative one.",
+ "mix": {
+  "cache": 0.975,
+  "input": 0.0215,
+  "output": 0.0035
+ },
+ "listPriceArchives": [
+  "list-prices-2026-09.json",
+  "list-prices-round2-2026-09-09.json"
+ ],
+ "plans": [
+  {
+   "plan_id": "claude_pro",
+   "plan": "Claude Pro",
+   "channel": "Anthropic",
+   "fee_usd": 20.0,
+   "headline_multiple": 54.19,
+   "headline_cost_usd_month": 1083.81,
+   "headline_models": [
+    "Claude Opus 4.8",
+    "Claude Sonnet 5"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 1,
+   "best_multiple": 54.19,
+   "best_model": "Claude Opus 4.8",
+   "worst_multiple": 54.19,
+   "worst_model": "Claude Sonnet 5",
+   "varies": false,
+   "headline": {
+    "multiple": 54.19,
+    "cost": 1083.81,
+    "models": [
+     "Claude Opus 4.8",
+     "Claude Sonnet 5"
+    ],
+    "model_ids": [
+     "claude-opus-4.8",
+     "claude-sonnet-5"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "claude_max_20x",
+   "plan": "Claude Max 20x (9/14+)",
+   "channel": "Anthropic",
+   "fee_usd": 200.0,
+   "headline_multiple": 53.58,
+   "headline_cost_usd_month": 10715.25,
+   "headline_models": [
+    "Claude Opus 4.8",
+    "Claude Opus 5",
+    "Claude Sonnet 5"
+   ],
+   "headline_inherited": false,
+   "model_count": 4,
+   "value_group_count": 2,
+   "best_multiple": 53.58,
+   "best_model": "Claude Opus 5",
+   "worst_multiple": 8.24,
+   "worst_model": "Claude Fable 5",
+   "varies": false,
+   "headline": {
+    "multiple": 53.58,
+    "cost": 10715.25,
+    "models": [
+     "Claude Opus 4.8",
+     "Claude Opus 5",
+     "Claude Sonnet 5"
+    ],
+    "model_ids": [
+     "claude-opus-4.8",
+     "claude-opus-5",
+     "claude-sonnet-5"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 8.24,
+     "cost": 1648.51,
+     "models": [
+      "Claude Fable 5"
+     ],
+     "model_ids": [
+      "claude-fable-5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "claude_max_5x",
+   "plan": "Claude Max 5x (9/14+)",
+   "channel": "Anthropic",
+   "fee_usd": 100.0,
+   "headline_multiple": 53.58,
+   "headline_cost_usd_month": 5357.62,
+   "headline_models": [
+    "Claude Opus 5",
+    "Claude Sonnet 5"
+   ],
+   "headline_inherited": false,
+   "model_count": 3,
+   "value_group_count": 2,
+   "best_multiple": 53.58,
+   "best_model": "Claude Opus 5",
+   "worst_multiple": 12.61,
+   "worst_model": "Claude Fable 5",
+   "varies": false,
+   "headline": {
+    "multiple": 53.58,
+    "cost": 5357.62,
+    "models": [
+     "Claude Opus 5",
+     "Claude Sonnet 5"
+    ],
+    "model_ids": [
+     "claude-opus-5",
+     "claude-sonnet-5"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 12.61,
+     "cost": 1260.58,
+     "models": [
+      "Claude Fable 5"
+     ],
+     "model_ids": [
+      "claude-fable-5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "glm_coding_pro_cn_old_offpeak",
+   "plan": "GLM Coding Pro (老客 ¥149) 闲时",
+   "channel": "Zhipu",
+   "fee_usd": 21.98,
+   "headline_multiple": 34.55,
+   "headline_cost_usd_month": 759.46,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 34.55,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 11.99,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 34.55,
+    "cost": 759.46,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 11.99,
+     "cost": 263.5,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "chatgpt_pro_20x",
+   "plan": "ChatGPT Pro 20x",
+   "channel": "OpenAI",
+   "fee_usd": 200.0,
+   "headline_multiple": 33.63,
+   "headline_cost_usd_month": 6726.72,
+   "headline_models": [
+    "GPT 5.5",
+    "GPT 5.6 Sol",
+    "GPT 5.6 Terra"
+   ],
+   "headline_inherited": false,
+   "model_count": 4,
+   "value_group_count": 2,
+   "best_multiple": 33.63,
+   "best_model": "GPT 5.6 Sol",
+   "worst_multiple": 21.03,
+   "worst_model": "GPT 5.6 Luna",
+   "varies": false,
+   "headline": {
+    "multiple": 33.63,
+    "cost": 6726.72,
+    "models": [
+     "GPT 5.5",
+     "GPT 5.6 Sol",
+     "GPT 5.6 Terra"
+    ],
+    "model_ids": [
+     "gpt-5.5",
+     "gpt-5.6-sol",
+     "gpt-5.6-terra"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 21.03,
+     "cost": 4206.22,
+     "models": [
+      "GPT 5.6 Luna"
+     ],
+     "model_ids": [
+      "gpt-5.6-luna"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "glm_coding_pro_cn_old_mid",
+   "plan": "GLM Coding Pro (老客 ¥149) 中间值",
+   "channel": "Zhipu",
+   "fee_usd": 21.98,
+   "headline_multiple": 25.91,
+   "headline_cost_usd_month": 569.6,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 25.91,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 8.99,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 25.91,
+    "cost": 569.6,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 8.99,
+     "cost": 197.62,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "glm_coding_max_cn_old_offpeak",
+   "plan": "GLM Coding Max (老客 ¥469) 闲时",
+   "channel": "Zhipu",
+   "fee_usd": 69.19,
+   "headline_multiple": 25.61,
+   "headline_cost_usd_month": 1771.87,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 25.61,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 8.89,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 25.61,
+    "cost": 1771.87,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 8.89,
+     "cost": 614.85,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "cursor_ultra",
+   "plan": "Cursor Ultra",
+   "channel": "Cursor",
+   "fee_usd": 200.0,
+   "headline_multiple": 21.33,
+   "headline_cost_usd_month": 4266.96,
+   "headline_models": [
+    "Composer 2.5",
+    "Grok 4.6"
+   ],
+   "headline_inherited": false,
+   "model_count": 3,
+   "value_group_count": 2,
+   "best_multiple": 21.33,
+   "best_model": "Grok 4.6",
+   "worst_multiple": 13.79,
+   "worst_model": "Grok 4.5",
+   "varies": false,
+   "headline": {
+    "multiple": 21.33,
+    "cost": 4266.96,
+    "models": [
+     "Composer 2.5",
+     "Grok 4.6"
+    ],
+    "model_ids": [
+     "composer-2.5",
+     "grok-4.6"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 13.79,
+     "cost": 2758.24,
+     "models": [
+      "Grok 4.5"
+     ],
+     "model_ids": [
+      "grok-4.5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "kimi_allegretto_cn",
+   "plan": "Kimi 会员 199",
+   "channel": "Kimi",
+   "fee_usd": 29.36,
+   "headline_multiple": 20.24,
+   "headline_cost_usd_month": 594.18,
+   "headline_models": [
+    "Kimi K3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 20.24,
+   "best_model": "Kimi K3",
+   "worst_multiple": 11.73,
+   "worst_model": "Kimi K2.7 Code",
+   "varies": false,
+   "headline": {
+    "multiple": 20.24,
+    "cost": 594.18,
+    "models": [
+     "Kimi K3"
+    ],
+    "model_ids": [
+     "kimi-k3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 11.73,
+     "cost": 344.45,
+     "models": [
+      "Kimi K2.7 Code"
+     ],
+     "model_ids": [
+      "kimi-k2.7-code"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "glm_coding_max_cn_old_mid",
+   "plan": "GLM Coding Max (老客 ¥469) 中间值",
+   "channel": "Zhipu",
+   "fee_usd": 69.19,
+   "headline_multiple": 19.21,
+   "headline_cost_usd_month": 1329.05,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 19.21,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 6.66,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 19.21,
+    "cost": 1329.05,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 6.66,
+     "cost": 461.11,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "cursor_pro_plus",
+   "plan": "Cursor Pro+",
+   "channel": "Cursor",
+   "fee_usd": 60.0,
+   "headline_multiple": 18.96,
+   "headline_cost_usd_month": 1137.85,
+   "headline_models": [
+    "Composer 2.5",
+    "Grok 4.6"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 1,
+   "best_multiple": 18.96,
+   "best_model": "Grok 4.6",
+   "worst_multiple": 18.96,
+   "worst_model": "Composer 2.5",
+   "varies": false,
+   "headline": {
+    "multiple": 18.96,
+    "cost": 1137.85,
+    "models": [
+     "Composer 2.5",
+     "Grok 4.6"
+    ],
+    "model_ids": [
+     "composer-2.5",
+     "grok-4.6"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "glm_coding_lite_cn_old_offpeak",
+   "plan": "GLM Coding Lite (老客 ¥49) 闲时",
+   "channel": "Zhipu",
+   "fee_usd": 7.23,
+   "headline_multiple": 17.49,
+   "headline_cost_usd_month": 126.48,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 17.49,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 6.07,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 17.49,
+    "cost": 126.48,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 6.07,
+     "cost": 43.91,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "kimi_allegro_cn",
+   "plan": "Kimi 会员 699",
+   "channel": "Kimi",
+   "fee_usd": 103.12,
+   "headline_multiple": 17.29,
+   "headline_cost_usd_month": 1782.55,
+   "headline_models": [
+    "Kimi K3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 17.29,
+   "best_model": "Kimi K3",
+   "worst_multiple": 10.02,
+   "worst_model": "Kimi K2.7 Code",
+   "varies": false,
+   "headline": {
+    "multiple": 17.29,
+    "cost": 1782.55,
+    "models": [
+     "Kimi K3"
+    ],
+    "model_ids": [
+     "kimi-k3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 10.02,
+     "cost": 1033.35,
+     "models": [
+      "Kimi K2.7 Code"
+     ],
+     "model_ids": [
+      "kimi-k2.7-code"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "glm_coding_pro_cn_old_peak",
+   "plan": "GLM Coding Pro (老客 ¥149) 忙时",
+   "channel": "Zhipu",
+   "fee_usd": 21.98,
+   "headline_multiple": 17.28,
+   "headline_cost_usd_month": 379.73,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 17.28,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 5.99,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 17.28,
+    "cost": 379.73,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 5.99,
+     "cost": 131.77,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "chatgpt_plus",
+   "plan": "ChatGPT Plus",
+   "channel": "OpenAI",
+   "fee_usd": 20.0,
+   "headline_multiple": 16.82,
+   "headline_cost_usd_month": 336.34,
+   "headline_models": [
+    "GPT 5.5",
+    "GPT 5.6 Sol",
+    "GPT 5.6 Terra"
+   ],
+   "headline_inherited": false,
+   "model_count": 4,
+   "value_group_count": 2,
+   "best_multiple": 16.82,
+   "best_model": "GPT 5.6 Sol",
+   "worst_multiple": 10.52,
+   "worst_model": "GPT 5.6 Luna",
+   "varies": false,
+   "headline": {
+    "multiple": 16.82,
+    "cost": 336.34,
+    "models": [
+     "GPT 5.5",
+     "GPT 5.6 Sol",
+     "GPT 5.6 Terra"
+    ],
+    "model_ids": [
+     "gpt-5.5",
+     "gpt-5.6-sol",
+     "gpt-5.6-terra"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 10.52,
+     "cost": 210.31,
+     "models": [
+      "GPT 5.6 Luna"
+     ],
+     "model_ids": [
+      "gpt-5.6-luna"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "chatgpt_pro_5x",
+   "plan": "ChatGPT Pro 5x",
+   "channel": "OpenAI",
+   "fee_usd": 100.0,
+   "headline_multiple": 16.82,
+   "headline_cost_usd_month": 1681.68,
+   "headline_models": [
+    "GPT 5.5",
+    "GPT 5.6 Sol",
+    "GPT 5.6 Terra"
+   ],
+   "headline_inherited": false,
+   "model_count": 4,
+   "value_group_count": 2,
+   "best_multiple": 16.82,
+   "best_model": "GPT 5.6 Sol",
+   "worst_multiple": 10.52,
+   "worst_model": "GPT 5.6 Luna",
+   "varies": false,
+   "headline": {
+    "multiple": 16.82,
+    "cost": 1681.68,
+    "models": [
+     "GPT 5.5",
+     "GPT 5.6 Sol",
+     "GPT 5.6 Terra"
+    ],
+    "model_ids": [
+     "gpt-5.5",
+     "gpt-5.6-sol",
+     "gpt-5.6-terra"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 10.52,
+     "cost": 1051.57,
+     "models": [
+      "GPT 5.6 Luna"
+     ],
+     "model_ids": [
+      "gpt-5.6-luna"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "glm_coding_lite_cn_old_mid",
+   "plan": "GLM Coding Lite (老客 ¥49) 中间值",
+   "channel": "Zhipu",
+   "fee_usd": 7.23,
+   "headline_multiple": 13.11,
+   "headline_cost_usd_month": 94.78,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 13.11,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 4.55,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 13.11,
+    "cost": 94.78,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 4.55,
+     "cost": 32.92,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "cursor_pro",
+   "plan": "Cursor Pro",
+   "channel": "Cursor",
+   "fee_usd": 20.0,
+   "headline_multiple": 12.96,
+   "headline_cost_usd_month": 259.2,
+   "headline_models": [
+    "Composer 2.5",
+    "Grok 4.6"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 1,
+   "best_multiple": 12.96,
+   "best_model": "Grok 4.6",
+   "worst_multiple": 12.96,
+   "worst_model": "Composer 2.5",
+   "varies": false,
+   "headline": {
+    "multiple": 12.96,
+    "cost": 259.2,
+    "models": [
+     "Composer 2.5",
+     "Grok 4.6"
+    ],
+    "model_ids": [
+     "composer-2.5",
+     "grok-4.6"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "glm_coding_max_cn_old_peak",
+   "plan": "GLM Coding Max (老客 ¥469) 忙时",
+   "channel": "Zhipu",
+   "fee_usd": 69.19,
+   "headline_multiple": 12.8,
+   "headline_cost_usd_month": 885.94,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 12.8,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 4.44,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 12.8,
+    "cost": 885.94,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 4.44,
+     "cost": 307.41,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "supergrok_plus",
+   "plan": "SuperGrok Plus",
+   "channel": "xAI",
+   "fee_usd": 100.0,
+   "headline_multiple": 11.25,
+   "headline_cost_usd_month": 1125.06,
+   "headline_models": [
+    "Grok 4.6"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 11.25,
+   "best_model": "Grok 4.6",
+   "worst_multiple": 11.25,
+   "worst_model": "Grok 4.6",
+   "varies": false,
+   "headline": {
+    "multiple": 11.25,
+    "cost": 1125.06,
+    "models": [
+     "Grok 4.6"
+    ],
+    "model_ids": [
+     "grok-4.6"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "glm_coding_max_cn_new_offpeak",
+   "plan": "GLM Coding Max (新客 ¥1078) 闲时",
+   "channel": "Zhipu",
+   "fee_usd": 159.03,
+   "headline_multiple": 11.14,
+   "headline_cost_usd_month": 1771.87,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 11.14,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 3.87,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 11.14,
+    "cost": 1771.87,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 3.87,
+     "cost": 614.85,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "glm_coding_pro_cn_new_offpeak",
+   "plan": "GLM Coding Pro (新客 ¥538) 闲时",
+   "channel": "Zhipu",
+   "fee_usd": 79.37,
+   "headline_multiple": 9.57,
+   "headline_cost_usd_month": 759.46,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 9.57,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 3.32,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 9.57,
+    "cost": 759.46,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 3.32,
+     "cost": 263.5,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "supergrok",
+   "plan": "SuperGrok",
+   "channel": "xAI",
+   "fee_usd": 30.0,
+   "headline_multiple": 9.36,
+   "headline_cost_usd_month": 280.71,
+   "headline_models": [
+    "Grok 4.6"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 9.36,
+   "best_model": "Grok 4.6",
+   "worst_multiple": 6.05,
+   "worst_model": "Grok 4.5",
+   "varies": false,
+   "headline": {
+    "multiple": 9.36,
+    "cost": 280.71,
+    "models": [
+     "Grok 4.6"
+    ],
+    "model_ids": [
+     "grok-4.6"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 6.05,
+     "cost": 181.46,
+     "models": [
+      "Grok 4.5"
+     ],
+     "model_ids": [
+      "grok-4.5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "supergrok_heavy",
+   "plan": "SuperGrok Heavy",
+   "channel": "xAI",
+   "fee_usd": 300.0,
+   "headline_multiple": 9.36,
+   "headline_cost_usd_month": 2807.13,
+   "headline_models": [
+    "Grok 4.6"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 9.36,
+   "best_model": "Grok 4.6",
+   "worst_multiple": 6.05,
+   "worst_model": "Grok 4.5",
+   "varies": false,
+   "headline": {
+    "multiple": 9.36,
+    "cost": 2807.13,
+    "models": [
+     "Grok 4.6"
+    ],
+    "model_ids": [
+     "grok-4.6"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 6.05,
+     "cost": 1814.58,
+     "models": [
+      "Grok 4.5"
+     ],
+     "model_ids": [
+      "grok-4.5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "glm_coding_lite_cn_old_peak",
+   "plan": "GLM Coding Lite (老客 ¥49) 忙时",
+   "channel": "Zhipu",
+   "fee_usd": 7.23,
+   "headline_multiple": 8.77,
+   "headline_cost_usd_month": 63.39,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 8.77,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 3.04,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 8.77,
+    "cost": 63.39,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 3.04,
+     "cost": 21.97,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "cursor_ultra_fast",
+   "plan": "Cursor Ultra (Fast)",
+   "channel": "Cursor",
+   "fee_usd": 200.0,
+   "headline_multiple": 8.48,
+   "headline_cost_usd_month": 1695.31,
+   "headline_models": [
+    "Grok 4.6"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 8.48,
+   "best_model": "Grok 4.6",
+   "worst_multiple": 8.48,
+   "worst_model": "Grok 4.6",
+   "varies": false,
+   "headline": {
+    "multiple": 8.48,
+    "cost": 1695.31,
+    "models": [
+     "Grok 4.6"
+    ],
+    "model_ids": [
+     "grok-4.6"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "glm_coding_max_cn_new_mid",
+   "plan": "GLM Coding Max (新客 ¥1078) 中间值",
+   "channel": "Zhipu",
+   "fee_usd": 159.03,
+   "headline_multiple": 8.36,
+   "headline_cost_usd_month": 1329.05,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 8.36,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 2.9,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 8.36,
+    "cost": 1329.05,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 2.9,
+     "cost": 461.11,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "supergrok_lite",
+   "plan": "SuperGrok Lite",
+   "channel": "xAI",
+   "fee_usd": 10.0,
+   "headline_multiple": 8.27,
+   "headline_cost_usd_month": 82.72,
+   "headline_models": [
+    "Grok 4.6"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 8.27,
+   "best_model": "Grok 4.6",
+   "worst_multiple": 8.27,
+   "worst_model": "Grok 4.6",
+   "varies": false,
+   "headline": {
+    "multiple": 8.27,
+    "cost": 82.72,
+    "models": [
+     "Grok 4.6"
+    ],
+    "model_ids": [
+     "grok-4.6"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "kimi_moderato_cn",
+   "plan": "Kimi 会员 99",
+   "channel": "Kimi",
+   "fee_usd": 14.6,
+   "headline_multiple": 8.13,
+   "headline_cost_usd_month": 118.75,
+   "headline_models": [
+    "Kimi K3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 8.13,
+   "best_model": "Kimi K3",
+   "worst_multiple": 4.72,
+   "worst_model": "Kimi K2.7 Code",
+   "varies": false,
+   "headline": {
+    "multiple": 8.13,
+    "cost": 118.75,
+    "models": [
+     "Kimi K3"
+    ],
+    "model_ids": [
+     "kimi-k3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 4.72,
+     "cost": 68.98,
+     "models": [
+      "Kimi K2.7 Code"
+     ],
+     "model_ids": [
+      "kimi-k2.7-code"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "cursor_ultra_composer_fast",
+   "plan": "Cursor Ultra (Composer Fast)",
+   "channel": "Cursor",
+   "fee_usd": 200.0,
+   "headline_multiple": 7.57,
+   "headline_cost_usd_month": 1514.09,
+   "headline_models": [
+    "Composer 2.5"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 7.57,
+   "best_model": "Composer 2.5",
+   "worst_multiple": 7.57,
+   "worst_model": "Composer 2.5",
+   "varies": false,
+   "headline": {
+    "multiple": 7.57,
+    "cost": 1514.09,
+    "models": [
+     "Composer 2.5"
+    ],
+    "model_ids": [
+     "composer-2.5"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "glm_coding_lite_cn_new_offpeak",
+   "plan": "GLM Coding Lite (新客 ¥118) 闲时",
+   "channel": "Zhipu",
+   "fee_usd": 17.41,
+   "headline_multiple": 7.26,
+   "headline_cost_usd_month": 126.48,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 7.26,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 2.52,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 7.26,
+    "cost": 126.48,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 2.52,
+     "cost": 43.91,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "glm_coding_pro_cn_new_mid",
+   "plan": "GLM Coding Pro (新客 ¥538) 中间值",
+   "channel": "Zhipu",
+   "fee_usd": 79.37,
+   "headline_multiple": 7.18,
+   "headline_cost_usd_month": 569.6,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 7.18,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 2.49,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 7.18,
+    "cost": 569.6,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 2.49,
+     "cost": 197.62,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "minimax_token_ultra_cn",
+   "plan": "MiniMax Token Plan Ultra",
+   "channel": "MiniMax",
+   "fee_usd": 69.19,
+   "headline_multiple": 7.1,
+   "headline_cost_usd_month": 490.97,
+   "headline_models": [
+    "MiniMax M3"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 7.1,
+   "best_model": "MiniMax M3",
+   "worst_multiple": 7.1,
+   "worst_model": "MiniMax M3",
+   "varies": false,
+   "headline": {
+    "multiple": 7.1,
+    "cost": 490.97,
+    "models": [
+     "MiniMax M3"
+    ],
+    "model_ids": [
+     "minimax-m3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "minimax_token_max_cn",
+   "plan": "MiniMax Token Plan Max",
+   "channel": "MiniMax",
+   "fee_usd": 17.55,
+   "headline_multiple": 7.09,
+   "headline_cost_usd_month": 124.47,
+   "headline_models": [
+    "MiniMax M3"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 7.09,
+   "best_model": "MiniMax M3",
+   "worst_multiple": 7.09,
+   "worst_model": "MiniMax M3",
+   "varies": false,
+   "headline": {
+    "multiple": 7.09,
+    "cost": 124.47,
+    "models": [
+     "MiniMax M3"
+    ],
+    "model_ids": [
+     "minimax-m3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "cursor_pro_plus_composer_fast",
+   "plan": "Cursor Pro+ (Composer Fast)",
+   "channel": "Cursor",
+   "fee_usd": 60.0,
+   "headline_multiple": 6.73,
+   "headline_cost_usd_month": 403.75,
+   "headline_models": [
+    "Composer 2.5"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 6.73,
+   "best_model": "Composer 2.5",
+   "worst_multiple": 6.73,
+   "worst_model": "Composer 2.5",
+   "varies": false,
+   "headline": {
+    "multiple": 6.73,
+    "cost": 403.75,
+    "models": [
+     "Composer 2.5"
+    ],
+    "model_ids": [
+     "composer-2.5"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "minimax_token_max_global",
+   "plan": "MiniMax Token Plan Max (Global)",
+   "channel": "MiniMax",
+   "fee_usd": 55.0,
+   "headline_multiple": 6.41,
+   "headline_cost_usd_month": 352.67,
+   "headline_models": [
+    "MiniMax M3"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 6.41,
+   "best_model": "MiniMax M3",
+   "worst_multiple": 6.41,
+   "worst_model": "MiniMax M3",
+   "varies": false,
+   "headline": {
+    "multiple": 6.41,
+    "cost": 352.67,
+    "models": [
+     "MiniMax M3"
+    ],
+    "model_ids": [
+     "minimax-m3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "opencode_go",
+   "plan": "OpenCode Go",
+   "channel": "OpenCode",
+   "fee_usd": 10.0,
+   "headline_multiple": 6.0,
+   "headline_cost_usd_month": 60.01,
+   "headline_models": [
+    "DeepSeek V4 Flash",
+    "GLM 5.1",
+    "GLM 5.2",
+    "Kimi K2.6",
+    "Kimi K2.7 Code",
+    "MiniMax M2.7",
+    "MiniMax M3",
+    "Muse Spark 1.2 Contributor",
+    "Qwen3.6 Plus"
+   ],
+   "headline_inherited": false,
+   "model_count": 26,
+   "value_group_count": 12,
+   "best_multiple": 21.37,
+   "best_model": "MiMo V2.5 Pro",
+   "worst_multiple": 1.26,
+   "worst_model": "Qwen3.8 Max",
+   "varies": true,
+   "headline": {
+    "multiple": 6.0,
+    "cost": 60.01,
+    "models": [
+     "DeepSeek V4 Flash",
+     "GLM 5.1",
+     "GLM 5.2",
+     "Kimi K2.6",
+     "Kimi K2.7 Code",
+     "MiniMax M2.7",
+     "MiniMax M3",
+     "Muse Spark 1.2 Contributor",
+     "Qwen3.6 Plus"
+    ],
+    "model_ids": [
+     "deepseek-v4-flash",
+     "glm-5.1",
+     "glm-5.2",
+     "kimi-k2.6",
+     "kimi-k2.7-code",
+     "minimax-m2.7",
+     "minimax-m3",
+     "muse-spark-1.2-contributor",
+     "qwen3.6-plus"
+    ],
+    "inherited": false,
+    "third_party_rate": true
+   },
+   "exceptions": [
+    {
+     "multiple": 21.37,
+     "cost": 213.72,
+     "models": [
+      "MiMo V2.5 Pro"
+     ],
+     "model_ids": [
+      "mimo-v2.5-pro"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 15.75,
+     "cost": 157.5,
+     "models": [
+      "MiMo V2.5"
+     ],
+     "model_ids": [
+      "mimo-v2.5"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 14.94,
+     "cost": 149.37,
+     "models": [
+      "LongCat 2.0"
+     ],
+     "model_ids": [
+      "longcat-2.0"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 10.4,
+     "cost": 103.98,
+     "models": [
+      "Qwen3.7 Plus"
+     ],
+     "model_ids": [
+      "qwen3.7-plus"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 3.46,
+     "cost": 34.62,
+     "models": [
+      "MiniMax M2.5"
+     ],
+     "model_ids": [
+      "minimax-m2.5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 3.0,
+     "cost": 30.0,
+     "models": [
+      "DeepSeek V4 Flash Vision Exp",
+      "DeepSeek V4 Pro",
+      "Hy4 Preview"
+     ],
+     "model_ids": [
+      "deepseek-v4-flash-vision-exp",
+      "deepseek-v4-pro",
+      "hy4-preview"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 2.86,
+     "cost": 28.57,
+     "models": [
+      "Qwen3.8 Flash"
+     ],
+     "model_ids": [
+      "qwen3.8-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 1.71,
+     "cost": 17.13,
+     "models": [
+      "Qwen3.7 Max"
+     ],
+     "model_ids": [
+      "qwen3.7-max"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 1.64,
+     "cost": 16.35,
+     "models": [
+      "Hy3"
+     ],
+     "model_ids": [
+      "hy3"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 1.5,
+     "cost": 15.0,
+     "models": [
+      "GLM 5.3",
+      "GLM 5.3 Flash",
+      "GPT 5.6 Luna",
+      "Grok 4.6",
+      "Kimi K3"
+     ],
+     "model_ids": [
+      "glm-5.3",
+      "glm-5.3-flash",
+      "gpt-5.6-luna",
+      "grok-4.6",
+      "kimi-k3"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 1.26,
+     "cost": 12.61,
+     "models": [
+      "Qwen3.8 Max"
+     ],
+     "model_ids": [
+      "qwen3.8-max"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "minimax_token_plus_cn",
+   "plan": "MiniMax Token Plan Plus",
+   "channel": "MiniMax",
+   "fee_usd": 7.23,
+   "headline_multiple": 5.74,
+   "headline_cost_usd_month": 41.49,
+   "headline_models": [
+    "MiniMax M2.7",
+    "MiniMax M3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 1,
+   "best_multiple": 5.74,
+   "best_model": "MiniMax M3",
+   "worst_multiple": 5.74,
+   "worst_model": "MiniMax M2.7",
+   "varies": false,
+   "headline": {
+    "multiple": 5.74,
+    "cost": 41.49,
+    "models": [
+     "MiniMax M2.7",
+     "MiniMax M3"
+    ],
+    "model_ids": [
+     "minimax-m2.7",
+     "minimax-m3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "glm_coding_max_cn_new_peak",
+   "plan": "GLM Coding Max (新客 ¥1078) 忙时",
+   "channel": "Zhipu",
+   "fee_usd": 159.03,
+   "headline_multiple": 5.57,
+   "headline_cost_usd_month": 885.94,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 5.57,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 1.93,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 5.57,
+    "cost": 885.94,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 1.93,
+     "cost": 307.41,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "glm_coding_lite_cn_new_mid",
+   "plan": "GLM Coding Lite (新客 ¥118) 中间值",
+   "channel": "Zhipu",
+   "fee_usd": 17.41,
+   "headline_multiple": 5.44,
+   "headline_cost_usd_month": 94.78,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 5.44,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 1.89,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 5.44,
+    "cost": 94.78,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 1.89,
+     "cost": 32.92,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "minimax_token_plus_global",
+   "plan": "MiniMax Token Plan Plus (Global)",
+   "channel": "MiniMax",
+   "fee_usd": 22.0,
+   "headline_multiple": 5.34,
+   "headline_cost_usd_month": 117.56,
+   "headline_models": [
+    "MiniMax M2.7",
+    "MiniMax M3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 1,
+   "best_multiple": 5.34,
+   "best_model": "MiniMax M3",
+   "worst_multiple": 5.34,
+   "worst_model": "MiniMax M2.7",
+   "varies": false,
+   "headline": {
+    "multiple": 5.34,
+    "cost": 117.56,
+    "models": [
+     "MiniMax M2.7",
+     "MiniMax M3"
+    ],
+    "model_ids": [
+     "minimax-m2.7",
+     "minimax-m3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "minimax_token_ultra_global",
+   "plan": "MiniMax Token Plan Ultra (Global)",
+   "channel": "MiniMax",
+   "fee_usd": 132.0,
+   "headline_multiple": 5.13,
+   "headline_cost_usd_month": 677.67,
+   "headline_models": [
+    "MiniMax M3"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 5.13,
+   "best_model": "MiniMax M3",
+   "worst_multiple": 5.13,
+   "worst_model": "MiniMax M3",
+   "varies": false,
+   "headline": {
+    "multiple": 5.13,
+    "cost": 677.67,
+    "models": [
+     "MiniMax M3"
+    ],
+    "model_ids": [
+     "minimax-m3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "glm_coding_pro_cn_new_peak",
+   "plan": "GLM Coding Pro (新客 ¥538) 忙时",
+   "channel": "Zhipu",
+   "fee_usd": 79.37,
+   "headline_multiple": 4.78,
+   "headline_cost_usd_month": 379.73,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 4.78,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 1.66,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 4.78,
+    "cost": 379.73,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 1.66,
+     "cost": 131.77,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "cursor_pro_composer_fast",
+   "plan": "Cursor Pro (Composer Fast)",
+   "channel": "Cursor",
+   "fee_usd": 20.0,
+   "headline_multiple": 4.6,
+   "headline_cost_usd_month": 91.98,
+   "headline_models": [
+    "Composer 2.5"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 4.6,
+   "best_model": "Composer 2.5",
+   "worst_multiple": 4.6,
+   "worst_model": "Composer 2.5",
+   "varies": false,
+   "headline": {
+    "multiple": 4.6,
+    "cost": 91.98,
+    "models": [
+     "Composer 2.5"
+    ],
+    "model_ids": [
+     "composer-2.5"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "glm_coding_lite_cn_new_peak",
+   "plan": "GLM Coding Lite (新客 ¥118) 忙时",
+   "channel": "Zhipu",
+   "fee_usd": 17.41,
+   "headline_multiple": 3.64,
+   "headline_cost_usd_month": 63.39,
+   "headline_models": [
+    "GLM 5.3"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 3.64,
+   "best_model": "GLM 5.3",
+   "worst_multiple": 1.26,
+   "worst_model": "GLM 5.3 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 3.64,
+    "cost": 63.39,
+    "models": [
+     "GLM 5.3"
+    ],
+    "model_ids": [
+     "glm-5.3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 1.26,
+     "cost": 21.97,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "ollama_max",
+   "plan": "Ollama Max",
+   "channel": "Ollama",
+   "fee_usd": 100.0,
+   "headline_multiple": 3.0,
+   "headline_cost_usd_month": 299.99,
+   "headline_models": [
+    "GLM 5.2",
+    "GLM 5.3",
+    "GLM 5.3 Flash",
+    "Kimi K2.7 Code",
+    "Kimi K3",
+    "MiniMax M2.7"
+   ],
+   "headline_inherited": false,
+   "model_count": 10,
+   "value_group_count": 4,
+   "best_multiple": 6.0,
+   "best_model": "DeepSeek V4 Flash",
+   "worst_multiple": 1.5,
+   "worst_model": "MiniMax M3",
+   "varies": false,
+   "headline": {
+    "multiple": 3.0,
+    "cost": 299.99,
+    "models": [
+     "GLM 5.2",
+     "GLM 5.3",
+     "GLM 5.3 Flash",
+     "Kimi K2.7 Code",
+     "Kimi K3",
+     "MiniMax M2.7"
+    ],
+    "model_ids": [
+     "glm-5.2",
+     "glm-5.3",
+     "glm-5.3-flash",
+     "kimi-k2.7-code",
+     "kimi-k3",
+     "minimax-m2.7"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 6.0,
+     "cost": 600.0,
+     "models": [
+      "DeepSeek V4 Flash",
+      "DeepSeek V4 Pro"
+     ],
+     "model_ids": [
+      "deepseek-v4-flash",
+      "deepseek-v4-pro"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 3.94,
+     "cost": 393.93,
+     "models": [
+      "GLM 5.1"
+     ],
+     "model_ids": [
+      "glm-5.1"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 1.5,
+     "cost": 150.0,
+     "models": [
+      "MiniMax M3"
+     ],
+     "model_ids": [
+      "minimax-m3"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "ollama_pro",
+   "plan": "Ollama Pro",
+   "channel": "Ollama",
+   "fee_usd": 20.0,
+   "headline_multiple": 3.0,
+   "headline_cost_usd_month": 60.01,
+   "headline_models": [
+    "GLM 5.2",
+    "GLM 5.3",
+    "GLM 5.3 Flash",
+    "Kimi K2.7 Code",
+    "Kimi K3",
+    "MiniMax M2.7"
+   ],
+   "headline_inherited": false,
+   "model_count": 10,
+   "value_group_count": 4,
+   "best_multiple": 6.0,
+   "best_model": "DeepSeek V4 Flash",
+   "worst_multiple": 1.5,
+   "worst_model": "MiniMax M3",
+   "varies": false,
+   "headline": {
+    "multiple": 3.0,
+    "cost": 60.01,
+    "models": [
+     "GLM 5.2",
+     "GLM 5.3",
+     "GLM 5.3 Flash",
+     "Kimi K2.7 Code",
+     "Kimi K3",
+     "MiniMax M2.7"
+    ],
+    "model_ids": [
+     "glm-5.2",
+     "glm-5.3",
+     "glm-5.3-flash",
+     "kimi-k2.7-code",
+     "kimi-k3",
+     "minimax-m2.7"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 6.0,
+     "cost": 120.0,
+     "models": [
+      "DeepSeek V4 Flash",
+      "DeepSeek V4 Pro"
+     ],
+     "model_ids": [
+      "deepseek-v4-flash",
+      "deepseek-v4-pro"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 3.94,
+     "cost": 78.79,
+     "models": [
+      "GLM 5.1"
+     ],
+     "model_ids": [
+      "glm-5.1"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 1.5,
+     "cost": 30.0,
+     "models": [
+      "MiniMax M3"
+     ],
+     "model_ids": [
+      "minimax-m3"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "kimi_andante_cn",
+   "plan": "Kimi 会员 49",
+   "channel": "Kimi",
+   "fee_usd": 7.23,
+   "headline_multiple": 2.37,
+   "headline_cost_usd_month": 17.13,
+   "headline_models": [
+    "Kimi K2.7 Code"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 2.37,
+   "best_model": "Kimi K2.7 Code",
+   "worst_multiple": 2.37,
+   "worst_model": "Kimi K2.7 Code",
+   "varies": false,
+   "headline": {
+    "multiple": 2.37,
+    "cost": 17.13,
+    "models": [
+     "Kimi K2.7 Code"
+    ],
+    "model_ids": [
+     "kimi-k2.7-code"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "command_code_goat",
+   "plan": "Command Code GOAT",
+   "channel": "Command Code",
+   "fee_usd": 10.0,
+   "headline_multiple": 2.0,
+   "headline_cost_usd_month": 20.0,
+   "headline_models": [
+    "GLM 5.3",
+    "GPT 5.6 Luna",
+    "Gemini 3.7 Flash",
+    "Gemini 3.8 Flash",
+    "Grok 4.6",
+    "Hy4 Preview",
+    "Kimi K3",
+    "Muse Spark 1.2",
+    "Muse Spark 1.2 Contributor"
+   ],
+   "headline_inherited": false,
+   "model_count": 31,
+   "value_group_count": 19,
+   "best_multiple": 28.54,
+   "best_model": "MiMo V2.5 Pro",
+   "worst_multiple": 1.04,
+   "worst_model": "Step 3.5 Flash",
+   "varies": true,
+   "headline": {
+    "multiple": 2.0,
+    "cost": 20.0,
+    "models": [
+     "GLM 5.3",
+     "GPT 5.6 Luna",
+     "Gemini 3.7 Flash",
+     "Gemini 3.8 Flash",
+     "Grok 4.6",
+     "Hy4 Preview",
+     "Kimi K3",
+     "Muse Spark 1.2",
+     "Muse Spark 1.2 Contributor"
+    ],
+    "model_ids": [
+     "gemini-3.7-flash",
+     "gemini-3.8-flash",
+     "glm-5.3",
+     "gpt-5.6-luna",
+     "grok-4.6",
+     "hy4-preview",
+     "kimi-k3",
+     "muse-spark-1.2",
+     "muse-spark-1.2-contributor"
+    ],
+    "inherited": false,
+    "third_party_rate": true
+   },
+   "exceptions": [
+    {
+     "multiple": 28.54,
+     "cost": 285.41,
+     "models": [
+      "MiMo V2.5 Pro"
+     ],
+     "model_ids": [
+      "mimo-v2.5-pro"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 12.0,
+     "cost": 120.0,
+     "models": [
+      "DeepSeek V4 Flash"
+     ],
+     "model_ids": [
+      "deepseek-v4-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 8.43,
+     "cost": 84.34,
+     "models": [
+      "Qwen3.8 27B"
+     ],
+     "model_ids": [
+      "qwen3.8-27b"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 7.88,
+     "cost": 78.75,
+     "models": [
+      "MiMo V2.5"
+     ],
+     "model_ids": [
+      "mimo-v2.5"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 7.0,
+     "cost": 70.0,
+     "models": [
+      "GLM 5.2"
+     ],
+     "model_ids": [
+      "glm-5.2"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 6.0,
+     "cost": 59.99,
+     "models": [
+      "Kimi K2.7 Code"
+     ],
+     "model_ids": [
+      "kimi-k2.7-code"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 5.46,
+     "cost": 54.6,
+     "models": [
+      "GPT 5.6 Sol"
+     ],
+     "model_ids": [
+      "gpt-5.6-sol"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 4.7,
+     "cost": 47.0,
+     "models": [
+      "MiniMax M3"
+     ],
+     "model_ids": [
+      "minimax-m3"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 4.0,
+     "cost": 40.0,
+     "models": [
+      "DeepSeek V4 Flash Vision Exp",
+      "DeepSeek V4 Pro",
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "deepseek-v4-flash-vision-exp",
+      "deepseek-v4-pro",
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 3.3,
+     "cost": 33.0,
+     "models": [
+      "Qwen3.7 Plus"
+     ],
+     "model_ids": [
+      "qwen3.7-plus"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 1.94,
+     "cost": 19.45,
+     "models": [
+      "Qwen3.6 Plus"
+     ],
+     "model_ids": [
+      "qwen3.6-plus"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 1.91,
+     "cost": 19.08,
+     "models": [
+      "Hy3"
+     ],
+     "model_ids": [
+      "hy3"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 1.89,
+     "cost": 18.85,
+     "models": [
+      "Qwen3.8 Flash"
+     ],
+     "model_ids": [
+      "qwen3.8-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 1.88,
+     "cost": 18.81,
+     "models": [
+      "Qwen3.7 Max"
+     ],
+     "model_ids": [
+      "qwen3.7-max"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 1.68,
+     "cost": 16.84,
+     "models": [
+      "Nemotron 3 Ultra",
+      "Qwen3.8 Max",
+      "Qwen3.8 Max 0902"
+     ],
+     "model_ids": [
+      "nemotron-3-ultra",
+      "qwen3.8-max",
+      "qwen3.8-max-0902"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 1.29,
+     "cost": 12.94,
+     "models": [
+      "Grok 4.5"
+     ],
+     "model_ids": [
+      "grok-4.5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 1.18,
+     "cost": 11.76,
+     "models": [
+      "Step 3.7 Flash"
+     ],
+     "model_ids": [
+      "step-3.7-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 1.04,
+     "cost": 10.36,
+     "models": [
+      "Step 3.5 Flash"
+     ],
+     "model_ids": [
+      "step-3.5-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    }
+   ]
+  },
+  {
+   "plan_id": "aliyun_coding_pro_cn",
+   "plan": "阿里云百炼 Coding Plan Pro",
+   "channel": "Alibaba",
+   "fee_usd": 29.5,
+   "headline_multiple": 0.62,
+   "headline_cost_usd_month": 18.26,
+   "headline_models": [
+    "Qwen3.7 Plus"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 0.62,
+   "best_model": "Qwen3.7 Plus",
+   "worst_multiple": 0.62,
+   "worst_model": "Qwen3.7 Plus",
+   "varies": false,
+   "headline": {
+    "multiple": 0.62,
+    "cost": 18.26,
+    "models": [
+     "Qwen3.7 Plus"
+    ],
+    "model_ids": [
+     "qwen3.7-plus"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
+   "plan_id": "aliyun_coding_pro_global",
+   "plan": "Alibaba Cloud Coding Plan Pro",
+   "channel": "Alibaba",
+   "fee_usd": 50.0,
+   "headline_multiple": 0.37,
+   "headline_cost_usd_month": 18.26,
+   "headline_models": [
+    "Qwen3.7 Plus"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 0.37,
+   "best_model": "Qwen3.7 Plus",
+   "worst_multiple": 0.37,
+   "worst_model": "Qwen3.7 Plus",
+   "varies": false,
+   "headline": {
+    "multiple": 0.37,
+    "cost": 18.26,
+    "models": [
+     "Qwen3.7 Plus"
+    ],
+    "model_ids": [
+     "qwen3.7-plus"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  }
+ ]
+}

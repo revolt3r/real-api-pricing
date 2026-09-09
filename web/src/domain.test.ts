@@ -29,7 +29,11 @@ import {
   manufacturer,
   frontierPath,
   groups,
+  money,
+  multiple,
   pareto,
+  planComparisons,
+  sortComparisons,
   restore,
   rowsFor,
   serialize,
@@ -42,6 +46,7 @@ import {
   placementRect,
 } from "./chartLabels";
 import type { Group, Point, Row, SiteData } from "./types";
+import type { PlanComparison } from "./domain";
 const data: SiteData = unpackData(JSON.parse(
   readFileSync(new URL("../public/data/site.json", import.meta.url), "utf8"),
 ));
@@ -423,4 +428,246 @@ test("CSV escapes formula-like text and embedded quotes without changing numeric
   >[];
   assert.equal(parsed[0].Model, '\'=BAD("x")');
   assert.equal(parsed[0]["Real price USD/MTok"], "0.002");
+});
+
+test("API cost restates each allowance at list rates, stays blank when unpriced, and never contradicts the fee", () => {
+  const mix = data.conventions.standardTokenMix;
+  assert.ok(Math.abs(mix.cache + mix.input + mix.output - 1) < 1e-9);
+  let priced = 0,
+    blank = 0,
+    inherited = 0;
+  for (const p of data.points) {
+    if (p.api_cost_usd_month === null) {
+      // A missing rate must leave the cell empty rather than imply free tokens.
+      blank++;
+      assert.ok(p.list_blended_usd_per_mtok === null || p.monthly_tokens === null);
+      assert.equal(p.api_cost_multiple, null);
+      continue;
+    }
+    priced++;
+    assert.equal(p.billing, "subscription");
+    assert.ok(p.monthly_tokens !== null && p.list_blended_usd_per_mtok !== null);
+    const expected = (p.monthly_tokens! / 1e6) * p.list_blended_usd_per_mtok!;
+    assert.ok(Math.abs(p.api_cost_usd_month - expected) <= 0.01 + expected * 1e-6);
+    // The multiple must be the same claim as the cost, not an independent number.
+    // Tolerances are the published rounding: cost to cents, multiple to 2dp, d to 4dp.
+    assert.ok(p.price_usd);
+    assert.ok(
+      Math.abs(p.api_cost_multiple! - p.api_cost_usd_month / p.price_usd!) <=
+        0.005 + 0.001 * p.api_cost_multiple!,
+    );
+    // d is real price / list price, so it is the reciprocal of the multiple.
+    if (p.d)
+      assert.ok(
+        Math.abs(p.api_cost_multiple! - 1 / p.d) <= 0.01 + 0.01 * p.api_cost_multiple!,
+      );
+    if (p.api_cost_inherited) inherited++;
+    assert.ok(["official", "official_indirect", "third_party"].includes(p.api_price_tier!));
+    assert.ok(["high", "medium", "low"].includes(p.api_price_confidence!));
+  }
+  assert.ok(priced > 150 && blank > 0);
+  // Sibling-derived rows exist and must be flagged, or readers double-count one measurement.
+  assert.ok(inherited > 0);
+  const sonnet = data.points.find((p) => p.id === "claude_max_20x::claude-sonnet-5")!;
+  const opus = data.points.find((p) => p.id === "claude_max_20x::claude-opus-5")!;
+  assert.equal(sonnet.api_cost_inherited, true);
+  assert.equal(opus.api_cost_inherited, false);
+  assert.ok(Math.abs(sonnet.api_cost_usd_month! - opus.api_cost_usd_month!) < 1);
+});
+
+test("API cost is sortable, exported and formatted without inventing precision", () => {
+  // The price view yields exactly one table row per point, as the data table does.
+  const s = {
+    ...defaultState(),
+    view: "price" as const,
+    sort: "apiCost",
+    direction: "desc" as const,
+  };
+  const rs = tableRows(rowsFor(data, s), s);
+  const costs = rs.map((r) => r.point.api_cost_usd_month);
+  const present = costs.filter((c) => c !== null) as number[];
+  assert.deepEqual(present, [...present].sort((a, b) => b - a));
+  // Unpriced rows sort last instead of being dropped from the table.
+  assert.equal(costs.slice(present.length).every((c) => c === null), true);
+  assert.equal(rs.length, data.points.length);
+  assert.deepEqual(restore(serialize(s), data).state.sort, "apiCost");
+
+  const exported = parse(csv(rs, "en"), { bom: true, columns: true }) as Record<string, string>[];
+  assert.equal(Number(exported[0]["API cost USD/month"]), rs[0].point.api_cost_usd_month);
+  assert.equal(exported[0]["API price tier"], rs[0].point.api_price_tier);
+  const unpriced = exported.at(-1)!;
+  assert.equal(unpriced["API cost USD/month"], "");
+  assert.equal(unpriced["API cost multiple of fee"], "");
+
+  assert.equal(money(null), "—");
+  assert.equal(money(10715.25), "$10,715");
+  assert.equal(money(4.567), "$4.57");
+  // Rows that rank differently must not print the same multiple.
+  assert.equal(multiple(53.58), "×53.6");
+  assert.equal(multiple(54.19), "×54.2");
+  assert.equal(multiple(0.37), "×0.37");
+  // Near break-even the second decimal is the whole story: ×1.04 is not ×1.
+  assert.equal(multiple(1.04), "×1.04");
+  assert.equal(multiple(1), "×1");
+  assert.equal(multiple(null), "");
+});
+
+test("Subscription value view ranks by the fee multiple and excludes rows with no published rate", () => {
+  const s = {
+    ...defaultState(),
+    view: "multiple" as const,
+    sort: "multiple",
+    direction: "desc" as const,
+  };
+  const shown = visiblePoints(data, s);
+  // Every row on this view must have a multiple; unpriced rows are absent, not zeroed.
+  assert.ok(shown.length);
+  assert.ok(shown.every((p) => p.api_cost_multiple !== null));
+  assert.equal(
+    shown.length,
+    data.points.filter((p) => p.api_cost_multiple !== null).length,
+  );
+  assert.ok(shown.length < data.points.length);
+  // The fee band selector does not apply here, unlike the allowance view.
+  assert.equal(visiblePoints(data, { ...s, feeBand: "100-300" }).length, shown.length);
+
+  const rs = tableRows(rowsFor(data, s), s);
+  const ranked = rs.map((r) => r.point.api_cost_multiple!);
+  assert.deepEqual(ranked, [...ranked].sort((a, b) => b - a));
+  assert.equal(rs.length, shown.length);
+  // Sorting by the ratio is not the same ranking as sorting by the dollar amount.
+  const byCost = tableRows(rowsFor(data, s), { ...s, sort: "apiCost" });
+  assert.notDeepEqual(
+    rs.map((r) => r.key),
+    byCost.map((r) => r.key),
+  );
+  // At least one plan is worse than metered, so the break-even line is meaningful.
+  assert.ok(ranked.at(-1)! < 1 && ranked[0] > 1);
+  assert.deepEqual(restore(serialize(s), data).state.view, "multiple");
+  assert.deepEqual(restore(serialize(s), data).state.sort, "multiple");
+});
+
+test("Plan comparison finds the value a plan's models share and separates the exceptions", () => {
+  const rows = rowsFor(data, { ...defaultState(), view: "compare" });
+  const plans = planComparisons(rows);
+  // Every priced subscription plan appears exactly once; metered APIs have no plan value.
+  const pricedPlans = new Set(
+    data.points
+      .filter((p) => p.api_cost_multiple !== null && p.billing !== "metered")
+      .map((p) => p.plan_id),
+  );
+  assert.equal(plans.length, pricedPlans.size);
+  assert.equal(new Set(plans.map((p) => p.key)).size, plans.length);
+
+  for (const p of plans) {
+    // Groups partition the plan's models: no model counted twice, none dropped.
+    const all = [p.headline, ...p.exceptions].flatMap((g) => g.rows);
+    assert.equal(all.length, p.modelCount);
+    assert.equal(new Set(all.map((r) => r.point.id)).size, p.modelCount);
+    // Each group is one distinct value, and the headline is the largest group.
+    const sizes = [p.headline, ...p.exceptions].map((g) => g.rows.length);
+    assert.equal(Math.max(...sizes), p.headline.rows.length);
+    assert.equal(
+      new Set([p.headline, ...p.exceptions].map((g) => g.multiple)).size,
+      sizes.length,
+    );
+    for (const g of [p.headline, ...p.exceptions])
+      assert.ok(g.rows.every((r) => r.point.api_cost_multiple === g.multiple));
+    // The plan value is never a sum: it cannot exceed the best single model.
+    assert.ok(p.headline.cost <= p.best.point.api_cost_usd_month!);
+    assert.ok(
+      p.best.point.api_cost_multiple! >= p.worst.point.api_cost_multiple!,
+    );
+    assert.equal(p.varies, p.headline.rows.length * 2 < p.modelCount);
+  }
+
+  // The case that motivated the view: same $200 fee, very different value.
+  const at200 = plans.filter((p) => p.fee === 200);
+  const claude = at200.find((p) => p.plan.startsWith("Claude Max 20x"))!;
+  const chatgpt = at200.find((p) => p.plan === "ChatGPT Pro 20x")!;
+  assert.ok(claude && chatgpt);
+  assert.equal(claude.headline.rows.length, 3);
+  assert.equal(claude.exceptions.length, 1);
+  assert.deepEqual(
+    claude.exceptions[0].rows.map((r) => r.point.model_display),
+    ["Claude Fable 5"],
+  );
+  assert.ok(claude.headline.multiple > chatgpt.headline.multiple);
+  assert.equal(claude.varies, false);
+  // Wrapper plans reselling dozens of models must be flagged, not headlined.
+  const wrapper = plans.find((p) => p.plan === "Command Code GOAT")!;
+  assert.equal(wrapper.varies, true);
+  assert.ok(wrapper.exceptions.length > 10);
+});
+
+test("Comparison ranking follows the chosen metric and stays stable on ties", () => {
+  const plans = planComparisons(
+    rowsFor(data, { ...defaultState(), view: "compare" }),
+  );
+  for (const [by, of] of [
+    ["value", (p: PlanComparison) => p.headline.multiple],
+    ["apiCost", (p: PlanComparison) => p.headline.cost],
+    ["fee", (p: PlanComparison) => p.fee ?? 0],
+  ] as const) {
+    const ranked = sortComparisons(plans, by).map(of);
+    assert.deepEqual(ranked, [...ranked].sort((a, b) => b - a));
+  }
+  // Ranking by value is not the same as ranking by absolute cost.
+  assert.notDeepEqual(
+    sortComparisons(plans, "value").map((p) => p.key),
+    sortComparisons(plans, "apiCost").map((p) => p.key),
+  );
+  // Ties break on plan name, so the order never depends on input order.
+  const shuffled = [...plans].reverse();
+  assert.deepEqual(
+    sortComparisons(shuffled, "value").map((p) => p.key),
+    sortComparisons(plans, "value").map((p) => p.key),
+  );
+});
+
+test("The site's plan grouping matches the published plan-value dataset exactly", () => {
+  // compute.py writes derived/plan-value.json for the static chart; the site groups the
+  // same points client-side so it can respond to filters. Two implementations of one
+  // rule drift silently, so pin them together here.
+  const published = JSON.parse(
+    readFileSync(new URL("../../derived/plan-value.json", import.meta.url), "utf8"),
+  ) as { plans: Record<string, unknown>[] };
+  const computed = planComparisons(
+    rowsFor(data, { ...defaultState(), view: "compare" }),
+  );
+  const byKey = new Map(computed.map((p) => [p.key, p]));
+  assert.equal(published.plans.length, computed.length);
+  for (const row of published.plans as any[]) {
+    const mine = byKey.get(row.plan_id)!;
+    assert.ok(mine, `missing plan ${row.plan_id}`);
+    assert.equal(mine.plan, row.plan);
+    assert.equal(mine.channel, row.channel);
+    assert.equal(mine.fee, row.fee_usd);
+    assert.equal(mine.headline.multiple, row.headline_multiple);
+    assert.equal(mine.headline.cost, row.headline_cost_usd_month);
+    assert.equal(mine.headline.inherited, row.headline_inherited);
+    assert.equal(mine.modelCount, row.model_count);
+    assert.equal(mine.varies, row.varies);
+    assert.equal(mine.exceptions.length, row.exceptions.length);
+    assert.equal(mine.best.point.api_cost_multiple, row.best_multiple);
+    assert.equal(mine.worst.point.api_cost_multiple, row.worst_multiple);
+    assert.deepEqual(
+      mine.headline.rows.map((r) => r.point.model_display).sort(),
+      [...row.headline_models].sort(),
+    );
+    assert.deepEqual(
+      mine.exceptions.map((g) => g.multiple),
+      row.exceptions.map((g: any) => g.multiple),
+    );
+    for (const [i, g] of mine.exceptions.entries())
+      assert.deepEqual(
+        g.rows.map((r) => r.point.model_display).sort(),
+        [...row.exceptions[i].models].sort(),
+      );
+  }
+  // Both sides must agree on the ranking the static chart publishes.
+  assert.deepEqual(
+    sortComparisons(computed, "value").map((p) => p.key),
+    (published.plans as any[]).map((p) => p.plan_id),
+  );
 });

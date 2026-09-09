@@ -714,6 +714,12 @@ td small {
 .real-price {
   font-weight: 550;
 }
+/* The multiple-of-fee sits under the dollar figure, so the two read as one number. */
+.api-cost small {
+  display: block;
+  color: #8a94a0;
+  line-height: 1.4;
+}
 .confidence {
   font-size: 10px;
   display: inline-flex;
@@ -2234,6 +2240,10 @@ small {
   font-size: 10px;
   color: #71808d;
 }
+.rank-api-cost {
+  margin-top: -4px;
+  color: #8a94a0 !important;
+}
 .rank-arrow {
   color: #a7b0ba;
 }
@@ -2459,5 +2469,343 @@ body,
 @media (max-width: 700px) {
   .data-section {
     padding: 14px;
+  }
+}
+
+/* ---- Compare plans dashboard ---------------------------------------------
+   One row per subscription plan: the value its models share, with the models
+   that land somewhere else listed under it as their own rows. */
+.web-compare {
+  padding: 8px 32px 20px;
+}
+.compare-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  padding: 18px 0 20px;
+}
+.compare-tiers strong,
+.compare-metric strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6d7784;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+.compare-tiers > div,
+.compare-metric > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+button.tier {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #dfe4e9;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2b323a;
+  cursor: pointer;
+}
+button.tier small {
+  font-size: 10px;
+  color: #8a94a0;
+  font-weight: 400;
+}
+button.tier:hover {
+  border-color: #b9c2cb;
+}
+button.tier.active {
+  background: #23262c;
+  border-color: #23262c;
+  color: #fff;
+}
+button.tier.active small {
+  color: #b9c2cb;
+}
+button.tier.clear {
+  border-style: dashed;
+  color: #6d7784;
+}
+.compare-picker {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.compare-picker summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #40474f;
+}
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 4px 16px;
+  padding: 4px 16px 16px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.picker-grid label {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 6px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.picker-grid label:hover {
+  background: #f5f7f9;
+}
+.picker-grid input {
+  margin-top: 2px;
+  flex: none;
+}
+.picker-grid strong {
+  display: block;
+  font-weight: 500;
+}
+.picker-grid small {
+  display: block;
+  font-size: 10px;
+  color: #8a94a0;
+  margin-top: 2px;
+}
+.compare-legend {
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: #697582;
+  padding-bottom: 16px;
+  max-width: 96ch;
+}
+.compare-scroll {
+  position: relative;
+  max-height: 640px;
+  overflow-y: auto;
+  border-top: 1px solid var(--line);
+}
+/* The break-even guide spans the bar column, so it lines up with every bar. */
+.compare-scroll .break-even {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed #c0392b;
+  pointer-events: none;
+  z-index: 2;
+}
+.compare-scroll .break-even span {
+  position: sticky;
+  top: 2px;
+  display: inline-block;
+  transform: translateX(-50%);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #c0392b;
+  background: #ffffffd9;
+  padding: 1px 4px;
+  white-space: nowrap;
+}
+.compare-plan {
+  padding: 18px 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+.compare-plan header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+}
+.compare-identity strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+.compare-identity small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #6d7784;
+  margin-top: 4px;
+}
+.compare-identity small i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+}
+.compare-value {
+  text-align: right;
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}
+.compare-value strong {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+.compare-value small {
+  display: block;
+  font-size: 10.5px;
+  color: #8a94a0;
+  margin-top: 2px;
+}
+.compare-bar {
+  height: 12px;
+  border-radius: 4px;
+  background: #f0f2f5;
+  margin: 12px 0 10px;
+  overflow: hidden;
+}
+.compare-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  opacity: 0.88;
+}
+.compare-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.compare-chips-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #98a1ab;
+  margin-right: 2px;
+}
+.model-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #e5e9ed;
+  border-radius: 20px;
+  padding: 3px 9px 3px 6px;
+  font-size: 11px;
+  color: #363d45;
+  background: #fbfcfd;
+}
+.model-chip i {
+  font-style: normal;
+  color: #a5aeb8;
+  cursor: help;
+}
+.compare-models .compare-varies {
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: #8a6d3b;
+  background: #fdf6e6;
+  border: 1px solid #f2e3bd;
+  border-radius: 8px;
+  padding: 8px 11px;
+  margin: 0;
+}
+button.exception-row {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: 8px 0 2px;
+  margin-top: 6px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+}
+button.exception-row:hover {
+  background: none;
+}
+button.exception-row:hover .exception-bar {
+  background: #e6eaee;
+}
+button.exception-row:hover .exception-value strong {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.exception-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.exception-label {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #98a1ab;
+  border: 1px dashed #dfe4e9;
+  border-radius: 4px;
+  padding: 2px 5px;
+  text-align: center;
+}
+.exception-bar {
+  display: block;
+  height: 7px;
+  border-radius: 3px;
+  background: #f0f2f5;
+  overflow: hidden;
+}
+.exception-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  opacity: 0.5;
+}
+.exception-models {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  flex: 1;
+}
+.exception-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+.exception-value strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.exception-value small {
+  display: block;
+  font-size: 10px;
+  color: #8a94a0;
+}
+.more-exceptions {
+  font-size: 11px;
+  color: #8a94a0;
+  line-height: 1.6;
+  margin: 8px 0 0;
+}
+@media (max-width: 760px) {
+  .web-compare {
+    padding: 8px 16px 20px;
+  }
+  .compare-plan header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .compare-value {
+    text-align: left;
+  }
+  .exception-head {
+    flex-wrap: wrap;
+  }
+  .compare-scroll .break-even {
+    display: none;
   }
 }

@@ -35,6 +35,71 @@ Snapshot: 2026-09-09. Each row is one **plan × actual served model**; allowance
 
 **Download the data:** [adopted values (CSV)](data/adopted.csv) · [computed points (CSV)](derived/points.csv) · [computed points (JSON)](derived/points.json) · [data notes and score coverage](data/README.md) · [dated evidence](data/research/)
 
+## API cost per row
+
+Every row now carries an **API cost / month**: the same monthly allowance valued at the provider's official metered rates, under the same standard workload. It answers the question the real unit price implies but does not state — *what would these tokens cost if you bought them on the API instead?* The bracketed multiple is that amount ÷ the monthly fee.
+
+`api_cost_usd_month = monthly_tokens ÷ 1,000,000 × list_blended_usd_per_mtok`, and `api_cost_multiple = api_cost_usd_month ÷ price_usd`, which is the reciprocal of the existing `d`. Published figures are computed from the published blended rate, so the columns reconcile exactly.
+
+List prices were re-checked on 2026-09-09 against first-party pricing pages and expanded from 24 to 43 models; see the [price archive](data/research/list-prices-round2-2026-09-09.json). No mainstream rate had moved since the 2026-09-05 round.
+
+| Price source | Rows | Meaning |
+|---|---:|---|
+| First-party rate card | 166 | Vendor pricing page read this round |
+| Vendor docs or announcement (`*`) | 5 | Pricing page is JS-rendered or publishes no three-part split |
+| Named gateway or tracker (`*`) | 8 | Open-weight or wrapper-only model with no first-party rate card |
+| No defensible rate | 9 | Column left blank; no value invented |
+
+168 of 188 rows are priced. The 11 metered API rows have no monthly allowance, so they have no API cost by construction; 9 subscription rows are served by models with no published rate — `deepseek-v4-flash-fast`, `glm-5.2-fast`, `kimi-k2.7-code-highspeed` (wrapper speed tiers), `muse-spark-1.3` and `muse-spark-1.3-contributor` (Meta publishes no 1.3 rate card, and trackers disagree on whether the 1.2 card carries over), `inkling`, `inkling-small` and `omen-alpha`.
+
+Three limits matter when reading the column. Cache writes are still not modeled, so every figure is a **floor** for providers that bill them. 15 rows are marked `‡` because the plan's allowance for that model was itself derived from a sibling model by a list-price ratio — their API cost repeats the base row rather than resting on independent evidence, so do not read the agreement between, say, Claude Max's Opus 5 and Sonnet 5 rows as two measurements. And the multiple compares list price to a saturated subscription; it is not a claim that any user reaches that allowance.
+
+Read against list prices, most subscriptions return far more than their fee: Claude Max 20x tops the range at about $10,715/month of Opus 5 tokens for $200 (×54), and ChatGPT Pro 20x at about $6,727 (×34). Two rows invert — Qwen3.7 Plus on Alibaba Cloud Coding Plan Pro comes to ×0.37 and ×0.62, meaning the plan costs more than buying the same tokens metered.
+
+### Subscription value, ranked by multiple
+
+All 168 priced rows sorted by the multiple, highest first. The dashed line marks 1× break-even: bars to its right buy more tokens than the fee would buy metered, bars to its left buy fewer. Each label carries the dollar amount behind the multiple, so a large ratio on a small base stays visible.
+
+[English SVG](charts/en/overview/api-cost-multiple-overview.svg) · [中文 SVG](charts/zh/overview/倍数总览.svg) · [English PNG](charts/en/overview/api-cost-multiple-overview.png) · [中文 PNG](charts/zh/overview/倍数总览.png)
+
+![Subscription value ranked by API cost multiple](charts/en/overview/api-cost-multiple-overview.svg)
+
+**Table:** [English TXT](charts/en/overview/api-cost-multiple-overview-table.txt) · [中文 TXT](charts/zh/overview/倍数总览表.txt)
+
+The ranking is dominated by Anthropic and OpenAI at the top (×54 to ×34) because their list prices are the highest in the set — a plan looks better here partly because the metered alternative is expensive, not only because the allowance is large. The 20 rows without a published rate are absent from this chart rather than plotted at zero.
+
+### Subscription value ranking, one bar per plan
+
+The chart above ranks all 168 plan × model rows. This one collapses them to **51 subscriptions**, ranked by the value each plan's models share — the static counterpart to the comparison dashboard below.
+
+[English SVG](charts/en/overview/plan-value-overview.svg) · [中文 SVG](charts/zh/overview/套餐性价比总览.svg) · [English PNG](charts/en/overview/plan-value-overview.png) · [中文 PNG](charts/zh/overview/套餐性价比总览.png)
+
+![Subscription value ranked by plan](charts/en/overview/plan-value-overview.svg)
+
+**Table:** [English TXT](charts/en/overview/plan-value-overview-table.txt) · [中文 TXT](charts/zh/overview/套餐性价比总览表.txt) — one line per plan × value group, so every exception keeps its own row
+
+The solid bar is the shared value; the pale extension reaches the plan's **best** model and the tick marks its **worst**, so "which model you pick" and "what the plan is worth" are both visible without ever adding alternatives together. `⚠` marks the 2 plans whose headline covers fewer than half their models — OpenCode Go's ×6 sits inside a ×1.26–×21.37 spread, and Command Code GOAT's ×2 inside ×1.04–×28.54. Both are honest only as ranges.
+
+Plan-level figures are published as [plan-value.json](derived/plan-value.json) / [plan-value.csv](derived/plan-value.csv); the site computes the same grouping client-side and a test asserts the two agree.
+
+## Compare plans at the same price
+
+**[Compare plans →](https://real-api-pricing.vercel.app)** · the interactive site's fourth view
+
+Pick the plans you are actually choosing between — the five at $200, say — and the dashboard puts one row per plan side by side: the value its models **share**, with the models that land somewhere else listed underneath as their own rows.
+
+| $200 / month | Shared value | At API list | Models sharing it | Exception |
+|---|---:|---:|---|---|
+| Claude Max 20x (9/14+) | ×53.6 | $10,715 | Opus 5, Sonnet 5, Opus 4.8 | ×8.2 Fable 5 ($1,649) |
+| ChatGPT Pro 20x | ×33.6 | $6,727 | GPT 5.6 Sol, 5.6 Terra, 5.5 | ×21 GPT 5.6 Luna ($4,206) |
+| Cursor Ultra | ×21.3 | $4,267 | Grok 4.6, Composer 2.5 | ×13.8 Grok 4.5 ($2,758) |
+
+Rank by **value (× fee)**, **API list cost**, or **monthly fee**; the headline and its second line always show the two different numbers, so the fee-relative and absolute readings are both on screen. Every bar shares one origin and one linear scale, including the exception bars — a log axis would flatten the differences the view exists to show.
+
+Two things the dashboard deliberately refuses to do. It never sums a plan's models: allowances inside a plan are alternatives, so the value is "pick one model and get this", not a total. And it does not print a headline for plans where one would mislead — Command Code GOAT resells 31 models at 19 distinct values, so it is flagged **value differs by model**, with the range and the best model named instead. Only 2 of the 51 priced plans fall into that case.
+
+The shared value is shared for a reason worth knowing: on Claude Max, Sonnet 5's and Opus 4.8's allowances were derived from Opus 5's measurement by a list-price ratio, which is why all three land on ×53.6. Those models are marked `‡`. Fable 5 differs because its allowance came from a measured in-subscription weight instead — the exception is where the independent evidence actually is.
+
 ## Monthly allowance overview
 
 The 177 subscription plan × model points are split by adopted USD monthly fee so GitHub can show them without packing every bar into one chart: **$0–30 inclusive**, **>$30 and ≤$100**, **>$100–$300**. Each band ranks monthly usable tokens independently. The undivided chart and hybrid-scale view stay in the [chart index](charts/README.md).

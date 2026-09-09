@@ -1,0 +1,124 @@
+Subscription value ranking | What one plan is worth in monthly fees
+One bar per plan: the multiple its models share; the pale extension reaches the plan's best model; allowances inside a plan are alternatives, never additive
+The headline is the multiple shared by the largest set of the plan's models. The solid bar is that headline, the pale extension reaches the plan's best model and the tick marks its worst. Most models share one value because their adopted allowances were derived from a single base model by a list-price ratio, not measured independently.
+⚠ = the headline covers fewer than half the plan's models, so it is only the most common value and must be read as a range; * = the rate is not a first-party rate card; ‡ = the whole headline group inherits from a sibling model. Per-model exceptions are in the matching text table. Cache writes are not modeled, so every figure is a floor.
+Allowances within a plan are not additive. Claude Max (9/14+): estimated permanent allowances from 2026-09-14, not current boosted limits. Source: adopted.csv.
+FX: 1 USD = 6.7787 CNY (2026-09-04, CFETS central parity, via Xinhua); CNY monthly fees divided by this rate.
+FX source: https://www.xinhuanet.com/20260904/4c1ce1cbf39d416997cb9c237d6f5024/c.html
+No.  Plan                                Channel       Monthly fee  Group      Multiple  API cost/mo  Models
+---  ----------------------------------  ------------  -----------  ---------  --------  -----------  -------------------------------------------------------------------------------------------------------------------------------------
+1    Claude Pro                          Anthropic     USD 20       shared     54.19×    1,084        Claude Opus 4.8, Claude Sonnet 5
+2    Claude Max 20x (9/14+)              Anthropic     USD 200      shared     53.58×    10,715       Claude Opus 4.8, Claude Opus 5, Claude Sonnet 5
+                                                                    exception  8.24×     1,649        Claude Fable 5
+3    Claude Max 5x (9/14+)               Anthropic     USD 100      shared     53.58×    5,358        Claude Opus 5, Claude Sonnet 5
+                                                                    exception  12.61×    1,261        Claude Fable 5
+4    GLM Coding Pro (v2 ¥149) Off-peak   Zhipu         USD 21.98    shared     34.55×    759          GLM 5.3
+                                                                    exception  11.99×    264          GLM 5.3 Flash
+5    ChatGPT Pro 20x                     OpenAI        USD 200      shared     33.63×    6,727        GPT 5.5, GPT 5.6 Sol, GPT 5.6 Terra
+                                                                    exception  21.03×    4,206        GPT 5.6 Luna
+6    GLM Coding Pro (v2 ¥149) Midpoint   Zhipu         USD 21.98    shared     25.91×    570          GLM 5.3
+                                                                    exception  8.99×     198          GLM 5.3 Flash
+7    GLM Coding Max (v2 ¥469) Off-peak   Zhipu         USD 69.19    shared     25.61×    1,772        GLM 5.3
+                                                                    exception  8.89×     615          GLM 5.3 Flash
+8    Cursor Ultra                        Cursor        USD 200      shared     21.33×    4,267        Composer 2.5, Grok 4.6
+                                                                    exception  13.79×    2,758        Grok 4.5
+9    Kimi CN CNY 199 †                   Kimi          USD 29.36    shared     20.24×    594          Kimi K3
+                                                                    exception  11.73×    344          Kimi K2.7 Code
+10   GLM Coding Max (v2 ¥469) Midpoint   Zhipu         USD 69.19    shared     19.21×    1,329        GLM 5.3
+                                                                    exception  6.66×     461          GLM 5.3 Flash
+11   Cursor Pro+                         Cursor        USD 60       shared     18.96×    1,138        Composer 2.5, Grok 4.6
+12   GLM Coding Lite (v2 ¥49) Off-peak   Zhipu         USD 7.23     shared     17.49×    126          GLM 5.3
+                                                                    exception  6.07×     44           GLM 5.3 Flash
+13   Kimi CN CNY 699 †                   Kimi          USD 103.12   shared     17.29×    1,783        Kimi K3
+                                                                    exception  10.02×    1,033        Kimi K2.7 Code
+14   GLM Coding Pro (v2 ¥149) Peak       Zhipu         USD 21.98    shared     17.28×    380          GLM 5.3
+                                                                    exception  5.99×     132          GLM 5.3 Flash
+15   ChatGPT Plus                        OpenAI        USD 20       shared     16.82×    336          GPT 5.5, GPT 5.6 Sol, GPT 5.6 Terra
+                                                                    exception  10.52×    210          GPT 5.6 Luna
+16   ChatGPT Pro 5x                      OpenAI        USD 100      shared     16.82×    1,682        GPT 5.5, GPT 5.6 Sol, GPT 5.6 Terra
+                                                                    exception  10.52×    1,052        GPT 5.6 Luna
+17   GLM Coding Lite (v2 ¥49) Midpoint   Zhipu         USD 7.23     shared     13.11×    95           GLM 5.3
+                                                                    exception  4.55×     33           GLM 5.3 Flash
+18   Cursor Pro                          Cursor        USD 20       shared     12.96×    259          Composer 2.5, Grok 4.6
+19   GLM Coding Max (v2 ¥469) Peak       Zhipu         USD 69.19    shared     12.8×     886          GLM 5.3
+                                                                    exception  4.44×     307          GLM 5.3 Flash
+20   SuperGrok Plus                      xAI           USD 100      shared     11.25×    1,125        Grok 4.6
+21   GLM Coding Max (v3 ¥1078) Off-peak  Zhipu         USD 159.03   shared     11.14×    1,772        GLM 5.3
+                                                                    exception  3.87×     615          GLM 5.3 Flash
+22   GLM Coding Pro (v3 ¥538) Off-peak   Zhipu         USD 79.37    shared     9.57×     759          GLM 5.3
+                                                                    exception  3.32×     264          GLM 5.3 Flash
+23   SuperGrok                           xAI           USD 30       shared     9.36×     281          Grok 4.6
+                                                                    exception  6.05×     181          Grok 4.5
+24   SuperGrok Heavy                     xAI           USD 300      shared     9.36×     2,807        Grok 4.6
+                                                                    exception  6.05×     1,815        Grok 4.5
+25   GLM Coding Lite (v2 ¥49) Peak       Zhipu         USD 7.23     shared     8.77×     63           GLM 5.3
+                                                                    exception  3.04×     22           GLM 5.3 Flash
+26   Cursor Ultra (Fast)                 Cursor        USD 200      shared     8.48×     1,695        Grok 4.6
+27   GLM Coding Max (v3 ¥1078) Midpoint  Zhipu         USD 159.03   shared     8.36×     1,329        GLM 5.3
+                                                                    exception  2.9×      461          GLM 5.3 Flash
+28   SuperGrok Lite                      xAI           USD 10       shared     8.27×     83           Grok 4.6
+29   Kimi CN CNY 99 †                    Kimi          USD 14.6     shared     8.13×     119          Kimi K3
+                                                                    exception  4.72×     69           Kimi K2.7 Code
+30   Cursor Ultra (Composer Fast)        Cursor        USD 200      shared     7.57×     1,514        Composer 2.5
+31   GLM Coding Lite (v3 ¥118) Off-peak  Zhipu         USD 17.41    shared     7.26×     126          GLM 5.3
+                                                                    exception  2.52×     44           GLM 5.3 Flash
+32   GLM Coding Pro (v3 ¥538) Midpoint   Zhipu         USD 79.37    shared     7.18×     570          GLM 5.3
+                                                                    exception  2.49×     198          GLM 5.3 Flash
+33   MiniMax Token Plan Ultra            MiniMax       USD 69.19    shared     7.1×      491          MiniMax M3
+34   MiniMax Token Plan Max              MiniMax       USD 17.55    shared     7.09×     124          MiniMax M3
+35   Cursor Pro+ (Composer Fast)         Cursor        USD 60       shared     6.73×     404          Composer 2.5
+36   MiniMax Token Plan Max (Global)     MiniMax       USD 55       shared     6.41×     353          MiniMax M3
+37   OpenCode Go⚠*                       OpenCode      USD 10       shared     6×*       60           DeepSeek V4 Flash, GLM 5.1, GLM 5.2, Kimi K2.6, Kimi K2.7 Code, MiniMax M2.7, MiniMax M3, Muse Spark 1.2 Contributor, Qwen3.6 Plus
+                                                                    exception  21.37×*   214          MiMo V2.5 Pro
+                                                                    exception  15.75×*   158          MiMo V2.5
+                                                                    exception  14.94×*   149          LongCat 2.0
+                                                                    exception  10.4×     104          Qwen3.7 Plus
+                                                                    exception  3.46×     35           MiniMax M2.5
+                                                                    exception  3×        30           DeepSeek V4 Flash Vision Exp, DeepSeek V4 Pro, Hy4 Preview
+                                                                    exception  2.86×     29           Qwen3.8 Flash
+                                                                    exception  1.71×     17           Qwen3.7 Max
+                                                                    exception  1.64×*    16           Hy3
+                                                                    exception  1.5×      15           GLM 5.3, GLM 5.3 Flash, GPT 5.6 Luna, Grok 4.6, Kimi K3
+                                                                    exception  1.26×     13           Qwen3.8 Max
+38   MiniMax Token Plan Plus             MiniMax       USD 7.23     shared     5.74×     41           MiniMax M2.7, MiniMax M3
+39   GLM Coding Max (v3 ¥1078) Peak      Zhipu         USD 159.03   shared     5.57×     886          GLM 5.3
+                                                                    exception  1.93×     307          GLM 5.3 Flash
+40   GLM Coding Lite (v3 ¥118) Midpoint  Zhipu         USD 17.41    shared     5.44×     95           GLM 5.3
+                                                                    exception  1.89×     33           GLM 5.3 Flash
+41   MiniMax Token Plan Plus (Global)    MiniMax       USD 22       shared     5.34×     118          MiniMax M2.7, MiniMax M3
+42   MiniMax Token Plan Ultra (Global)   MiniMax       USD 132      shared     5.13×     678          MiniMax M3
+43   GLM Coding Pro (v3 ¥538) Peak       Zhipu         USD 79.37    shared     4.78×     380          GLM 5.3
+                                                                    exception  1.66×     132          GLM 5.3 Flash
+44   Cursor Pro (Composer Fast)          Cursor        USD 20       shared     4.6×      92           Composer 2.5
+45   GLM Coding Lite (v3 ¥118) Peak      Zhipu         USD 17.41    shared     3.64×     63           GLM 5.3
+                                                                    exception  1.26×     22           GLM 5.3 Flash
+46   Ollama Max                          Ollama        USD 100      shared     3×        300          GLM 5.2, GLM 5.3, GLM 5.3 Flash, Kimi K2.7 Code, Kimi K3, MiniMax M2.7
+                                                                    exception  6×        600          DeepSeek V4 Flash, DeepSeek V4 Pro
+                                                                    exception  3.94×     394          GLM 5.1
+                                                                    exception  1.5×      150          MiniMax M3
+47   Ollama Pro                          Ollama        USD 20       shared     3×        60           GLM 5.2, GLM 5.3, GLM 5.3 Flash, Kimi K2.7 Code, Kimi K3, MiniMax M2.7
+                                                                    exception  6×        120          DeepSeek V4 Flash, DeepSeek V4 Pro
+                                                                    exception  3.94×     79           GLM 5.1
+                                                                    exception  1.5×      30           MiniMax M3
+48   Kimi CN CNY 49 †                    Kimi          USD 7.23     shared     2.37×     17           Kimi K2.7 Code
+49   Command Code GOAT⚠*                 Command Code  USD 10       shared     2×*       20           GLM 5.3, GPT 5.6 Luna, Gemini 3.7 Flash, Gemini 3.8 Flash, Grok 4.6, Hy4 Preview, Kimi K3, Muse Spark 1.2, Muse Spark 1.2 Contributor
+                                                                    exception  28.54×*   285          MiMo V2.5 Pro
+                                                                    exception  12×       120          DeepSeek V4 Flash
+                                                                    exception  8.43×     84           Qwen3.8 27B
+                                                                    exception  7.88×*    79           MiMo V2.5
+                                                                    exception  7×        70           GLM 5.2
+                                                                    exception  6×        60           Kimi K2.7 Code
+                                                                    exception  5.46×     55           GPT 5.6 Sol
+                                                                    exception  4.7×      47           MiniMax M3
+                                                                    exception  4×        40           DeepSeek V4 Flash Vision Exp, DeepSeek V4 Pro, GLM 5.3 Flash
+                                                                    exception  3.3×      33           Qwen3.7 Plus
+                                                                    exception  1.94×     19           Qwen3.6 Plus
+                                                                    exception  1.91×*    19           Hy3
+                                                                    exception  1.89×     19           Qwen3.8 Flash
+                                                                    exception  1.88×     19           Qwen3.7 Max
+                                                                    exception  1.68×*    17           Nemotron 3 Ultra, Qwen3.8 Max, Qwen3.8 Max 0902
+                                                                    exception  1.29×     13           Grok 4.5
+                                                                    exception  1.18×*    12           Step 3.7 Flash
+                                                                    exception  1.04×*    10           Step 3.5 Flash
+50   Alibaba Cloud CN Coding Plan Pro    Alibaba       USD 29.5     shared     0.62×     18           Qwen3.7 Plus
+51   Alibaba Cloud Coding Plan Pro       Alibaba       USD 50       shared     0.37×     18           Qwen3.7 Plus

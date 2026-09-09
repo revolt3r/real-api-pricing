@@ -70,7 +70,10 @@ function hover(p,yk,vk){
   const board=yk.replace(/__score$/, ""),field=k=>p[board+"__"+k];
   const price=p.billing==="metered"?"按量 API（标价 × 项目标准负载）":`$${p.price_usd} ÷ ${p.monthly_yi} 亿 token`;
   return `<b>${p.label}</b><br>真实单价 <b>$${p.real_usd_per_mtok}/MTok</b><br>${price}`
-   +(p.d!=null?`<br>标价混合 $${p.list_blended_usd_per_mtok}/MTok → d = ${(p.d*100).toFixed(1)}%`:"")
+   +(p.d!=null?`<br>标价混合 ${priceLabel(p.list_blended_usd_per_mtok)}/MTok → d = ${(p.d*100).toFixed(1)}%`:"")
+   +(p.api_cost_usd_month!=null?`<br>API标价成本 <b>$${p.api_cost_usd_month.toLocaleString("en-US",{maximumFractionDigits:0})}/月</b>（×${p.api_cost_multiple} 月费）`
+     +(p.api_price_tier!=="official"?` *标价非一手价目表 [${p.api_price_confidence}]`:"")
+     +(p.api_cost_inherited?" ‡额度由同套餐基准按标价比推导，成本与基准行相同":""):"")
    +`<br>Y：${fmt(p[yk])}（${escapeHtml(fmt(p[vk]))}）`
    +`<br>Harness：${escapeHtml(fmt(field("agent_harness")))} · effort：${fmt(field("reasoning_effort"))}`
    +`<br>分数区间：${fmt(field("score_low"))} ～ ${fmt(field("score_high"))}`

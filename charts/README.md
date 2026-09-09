@@ -12,11 +12,13 @@ Dollar/credit conversions use 97.5% cache reads, 2.15% fresh input and 0.35% out
 | Pareto Aa Intelligence / 帕累托_AA智力榜 | [SVG](en/pareto/pareto-aa-intelligence.svg) | [SVG](zh/pareto/帕累托_AA智力榜.svg) | [PNG](en/pareto/pareto-aa-intelligence.png) | [PNG](zh/pareto/帕累托_AA智力榜.png) |
 | Pareto Agent Arena / 帕累托_AgentArena榜 | [SVG](en/pareto/pareto-agent-arena.svg) | [SVG](zh/pareto/帕累托_AgentArena榜.svg) | [PNG](en/pareto/pareto-agent-arena.png) | [PNG](zh/pareto/帕累托_AgentArena榜.png) |
 | Pareto Code Arena / 帕累托_CodeArena榜 | [SVG](en/pareto/pareto-code-arena.svg) | [SVG](zh/pareto/帕累托_CodeArena榜.svg) | [PNG](en/pareto/pareto-code-arena.png) | [PNG](zh/pareto/帕累托_CodeArena榜.png) |
+| Api Cost Multiple Overview / 倍数总览 | [SVG](en/overview/api-cost-multiple-overview.svg) | [SVG](zh/overview/倍数总览.svg) | [PNG](en/overview/api-cost-multiple-overview.png) | [PNG](zh/overview/倍数总览.png) |
 | Monthly Allowance Overview Fee 0 30 Usd / 额度总览_月费0-30美元 | [SVG](en/overview/monthly-allowance-overview-fee-0-30-usd.svg) | [SVG](zh/overview/额度总览_月费0-30美元.svg) | [PNG](en/overview/monthly-allowance-overview-fee-0-30-usd.png) | [PNG](zh/overview/额度总览_月费0-30美元.png) |
 | Monthly Allowance Overview Fee 100 300 Usd / 额度总览_月费100-300美元 | [SVG](en/overview/monthly-allowance-overview-fee-100-300-usd.svg) | [SVG](zh/overview/额度总览_月费100-300美元.svg) | [PNG](en/overview/monthly-allowance-overview-fee-100-300-usd.png) | [PNG](zh/overview/额度总览_月费100-300美元.png) |
 | Monthly Allowance Overview Fee 30 100 Usd / 额度总览_月费30-100美元 | [SVG](en/overview/monthly-allowance-overview-fee-30-100-usd.svg) | [SVG](zh/overview/额度总览_月费30-100美元.svg) | [PNG](en/overview/monthly-allowance-overview-fee-30-100-usd.png) | [PNG](zh/overview/额度总览_月费30-100美元.png) |
 | Monthly Allowance Overview Hybrid Scale / 额度总览_混合比例 | [SVG](en/overview/monthly-allowance-overview-hybrid-scale.svg) | [SVG](zh/overview/额度总览_混合比例.svg) | [PNG](en/overview/monthly-allowance-overview-hybrid-scale.png) | [PNG](zh/overview/额度总览_混合比例.png) |
 | Monthly Allowance Overview / 额度总览 | [SVG](en/overview/monthly-allowance-overview.svg) | [SVG](zh/overview/额度总览.svg) | [PNG](en/overview/monthly-allowance-overview.png) | [PNG](zh/overview/额度总览.png) |
+| Plan Value Overview / 套餐性价比总览 | [SVG](en/overview/plan-value-overview.svg) | [SVG](zh/overview/套餐性价比总览.svg) | [PNG](en/overview/plan-value-overview.png) | [PNG](zh/overview/套餐性价比总览.png) |
 | Real Price Overview / 单价总览 | [SVG](en/overview/real-price-overview.svg) | [SVG](zh/overview/单价总览.svg) | [PNG](en/overview/real-price-overview.png) | [PNG](zh/overview/单价总览.png) |
 | Frontier Allowance Aa Coding Agent / 前沿额度_AA编程Agent榜 | [SVG](en/frontier/frontier-allowance-aa-coding-agent.svg) | [SVG](zh/frontier/前沿额度_AA编程Agent榜.svg) | [PNG](en/frontier/frontier-allowance-aa-coding-agent.png) | [PNG](zh/frontier/前沿额度_AA编程Agent榜.png) |
 | Frontier Allowance Aa Intelligence / 前沿额度_AA智力榜 | [SVG](en/frontier/frontier-allowance-aa-intelligence.svg) | [SVG](zh/frontier/前沿额度_AA智力榜.svg) | [PNG](en/frontier/frontier-allowance-aa-intelligence.png) | [PNG](zh/frontier/前沿额度_AA智力榜.png) |
@@ -29,6 +31,8 @@ Dollar/credit conversions use 97.5% cache reads, 2.15% fresh input and 0.35% out
 
 ## Data tables / 数据表
 
+- [zh/overview/倍数总览表.txt](zh/overview/倍数总览表.txt)
+- [en/overview/api-cost-multiple-overview-table.txt](en/overview/api-cost-multiple-overview-table.txt)
 - [zh/frontier/前沿单价表_AA智力榜.txt](zh/frontier/前沿单价表_AA智力榜.txt)
 - [en/frontier/frontier-price-aa-intelligence-table.txt](en/frontier/frontier-price-aa-intelligence-table.txt)
 - [zh/frontier/前沿单价表_AA编程Agent榜.txt](zh/frontier/前沿单价表_AA编程Agent榜.txt)
@@ -47,6 +51,8 @@ Dollar/credit conversions use 97.5% cache reads, 2.15% fresh input and 0.35% out
 - [en/frontier/frontier-allowance-code-arena-table.txt](en/frontier/frontier-allowance-code-arena-table.txt)
 - [zh/overview/单价总览表.txt](zh/overview/单价总览表.txt)
 - [en/overview/real-price-overview-table.txt](en/overview/real-price-overview-table.txt)
+- [zh/overview/套餐性价比总览表.txt](zh/overview/套餐性价比总览表.txt)
+- [en/overview/plan-value-overview-table.txt](en/overview/plan-value-overview-table.txt)
 - [zh/overview/额度总览表.txt](zh/overview/额度总览表.txt)
 - [zh/overview/额度总览表_月费0-30美元.txt](zh/overview/额度总览表_月费0-30美元.txt)
 - [en/overview/monthly-allowance-overview-fee-0-30-usd-table.txt](en/overview/monthly-allowance-overview-fee-0-30-usd-table.txt)

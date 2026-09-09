@@ -20,6 +20,7 @@ import {
   X,
 } from "@phosphor-icons/react";
 import Chart from "./Chart";
+import Compare from "./Compare";
 import HeaderActions from "./HeaderActions";
 import { unpackData } from "./loadData";
 import Ranking from "./Ranking";
@@ -46,6 +47,8 @@ import {
   filterKeys,
   groups,
   manufacturer,
+  money,
+  multiple,
   number,
   options,
   pareto,
@@ -307,7 +310,20 @@ function Explorer({ data }: { data: SiteData }) {
                   "Every subscription and API price",
                   "全部订阅与 API 的真实单价",
                 )
-              : t("All adopted subscription allowances", "全部已采用订阅额度")}
+              : view === "multiple"
+                ? t(
+                    "Allowance value in monthly fees at API list",
+                    "额度按 API 标价值几倍月费",
+                  )
+                : view === "compare"
+                  ? t(
+                      "Plan against plan, at the same price",
+                      "同价位套餐逐个对比",
+                    )
+                  : t(
+                      "All adopted subscription allowances",
+                      "全部已采用订阅额度",
+                    )}
         </small>
       </span>
     </button>
@@ -468,6 +484,8 @@ function Explorer({ data }: { data: SiteData }) {
               {tab("pareto", "Price vs. capability", "价格 × 能力")}
               {tab("price", "Real price", "真实单价")}
               {tab("allowance", "Monthly allowance", "月额度")}
+              {tab("multiple", "Subscription value", "订阅性价比")}
+              {tab("compare", "Compare plans", "套餐对比")}
               <button
                 className="view-tab"
                 onClick={() => {
@@ -521,10 +539,20 @@ function Explorer({ data }: { data: SiteData }) {
                             "Every model. Its real price.",
                             "每个模型的真实单价。",
                           )
-                        : t(
-                            "How much can you actually use?",
-                            "每月实际能用多少？",
-                          )}
+                        : state.view === "multiple"
+                          ? t(
+                              "What is a month's fee actually worth?",
+                              "一个月的月费到底值多少？",
+                            )
+                          : state.view === "compare"
+                            ? t(
+                                "Same price. Which one gives you more?",
+                                "同样的价格，哪个给得更多？",
+                              )
+                            : t(
+                                "How much can you actually use?",
+                                "每月实际能用多少？",
+                              )}
                   </h2>
                   <p>
                     {state.view === "pareto" ? (
@@ -554,6 +582,16 @@ function Explorer({ data }: { data: SiteData }) {
                       t(
                         "Monthly subscription fee ÷ usable tokens. Metered APIs use the standard workload.",
                         "订阅月费 ÷ 可用 token；按量 API 采用项目标准负载。",
+                      )
+                    ) : state.view === "multiple" ? (
+                      t(
+                        "Allowance priced at official metered rates ÷ monthly fee · 1× is break-even · cache writes not modeled, so each figure is a floor",
+                        "月额度按官方按量标价的成本 ÷ 订阅月费 · 1× 为盈亏线 · 不含缓存写入费，故为下限",
+                      )
+                    ) : state.view === "compare" ? (
+                      t(
+                        "One row per plan · the value its models share, with models that differ listed separately · allowances inside a plan are alternatives, not a total",
+                        "每个套餐一行 · 多数模型共享的价值，差异模型单独列出 · 同套餐额度为互斥选项，不是总量",
                       )
                     ) : (
                       t(
@@ -738,6 +776,15 @@ function Explorer({ data }: { data: SiteData }) {
                     {t("Reset selection", "恢复全部数据")}
                   </button>
                 </div>
+              ) : state.view === "compare" ? (
+                <Compare
+                  data={data}
+                  rows={rows}
+                  state={state}
+                  patch={patch}
+                  onSelect={setDetail}
+                  handle={chart}
+                />
               ) : state.view !== "pareto" ? (
                 <Ranking
                   rows={rows}
@@ -898,6 +945,7 @@ function Explorer({ data }: { data: SiteData }) {
                       )}
                       {sortHead("fee", "Monthly fee", "订阅月费")}
                       {sortHead("allowance", "Monthly tokens", "月 token")}
+                      {sortHead("apiCost", "API cost / mo", "API标价成本 / 月")}
                       {sortHead("score", "Score", "分数")}
                       <th>{t("Quota confidence", "额度置信度")}</th>
                       <th>
@@ -970,6 +1018,17 @@ function Explorer({ data }: { data: SiteData }) {
                         </td>
                         <td className="numeric">
                           {allowance(r.point, state.lang)}
+                        </td>
+                        <td className="numeric api-cost">
+                          {money(r.point.api_cost_usd_month, state.lang)}
+                          {r.point.api_cost_multiple !== null && (
+                            <small>
+                              {multiple(r.point.api_cost_multiple, state.lang)}{" "}
+                              {t("the fee", "月费")}
+                              {r.point.api_price_tier !== "official" && " *"}
+                              {r.point.api_cost_inherited && " ‡"}
+                            </small>
+                          )}
                         </td>
                         <td className="numeric">
                           {number(r.score, state.lang, 2)}
@@ -1388,6 +1447,10 @@ function Details({
               <strong>{allowance(p, lang)}</strong>
             </div>
             <div>
+              <small>{t("API cost / mo", "API标价成本 / 月")}</small>
+              <strong>{money(p.api_cost_usd_month, lang)}</strong>
+            </div>
+            <div>
               <small>{t("Quota confidence", "额度置信度")}</small>
               <strong>
                 {zh
@@ -1412,6 +1475,48 @@ function Details({
               </>
             )}
           </div>
+          {p.api_cost_usd_month !== null ? (
+            <div className="formula">
+              {number(p.monthly_tokens, lang, 0)} tokens ×{" "}
+              {price(p.list_blended_usd_per_mtok)} / MTok ={" "}
+              {money(p.api_cost_usd_month, lang)}
+              {p.api_cost_multiple !== null && (
+                <>
+                  {" "}
+                  ={" "}
+                  <strong>
+                    {multiple(p.api_cost_multiple, lang)}{" "}
+                    {t("the monthly fee", "月费")}
+                  </strong>
+                </>
+              )}
+              <small>
+                {t(
+                  "The same tokens bought at this provider's official metered rates, weighted by the project standard workload. Cache writes are not modeled, so this is a floor.",
+                  "同样的 token 按该厂商官方按量标价、同一标准负载加权后的花费。不含缓存写入费，故为下限。",
+                )}{" "}
+                {p.api_price_tier !== "official" &&
+                  t(
+                    `* Rate source: ${p.api_price_tier === "third_party" ? "named gateway or tracker, not a first-party rate card" : "vendor docs or announcement, because the pricing page is not machine-readable"} (${p.api_price_confidence} confidence).`,
+                    `* 标价来源：${p.api_price_tier === "third_party" ? "具名网关或追踪站，非厂商一手价目表" : "厂商文档或公告，因价目页不可机读"}（置信度 ${p.api_price_confidence}）。`,
+                  )}{" "}
+                {p.api_cost_inherited &&
+                  t(
+                    "‡ This plan's allowance for this model was itself derived from a sibling model by a list-price ratio, so this figure repeats that row rather than standing on independent evidence.",
+                    "‡ 该套餐下此模型的额度本身由同套餐基准模型按标价比推导，故此数字与基准行相同，不是独立证据。",
+                  )}
+              </small>
+            </div>
+          ) : (
+            p.billing !== "metered" && (
+              <div className="formula">
+                {t(
+                  "No API cost: no defensible public metered rate was found for this model, so the figure is left blank rather than invented.",
+                  "无 API 标价成本：未找到该模型可辩护的公开按量标价，留空不补造。",
+                )}
+              </div>
+            )
+          )}
           <h4>
             {t(
               "Adoption evidence · original source text",
@@ -1432,6 +1537,26 @@ function Details({
                 <ArrowUpRight size={13} />
               </a>
             ))}
+            {p.api_price_source && (
+              <a
+                href={safeUrl(p.api_price_source)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {t("API rate card", "API 标价来源")}: {p.api_price_source}
+                <ArrowUpRight size={13} />
+              </a>
+            )}
+            {p.api_price_archive && (
+              <a
+                href={`${REPO}/blob/main/data/research/${p.api_price_archive}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {p.api_price_archive}
+                <ArrowUpRight size={13} />
+              </a>
+            )}
             <a
               href={`${REPO}/tree/main/data/research`}
               target="_blank"

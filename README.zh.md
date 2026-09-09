@@ -35,6 +35,71 @@ AA 智力榜改用 **Intelligence Index v4.3**（2026-09-07 发布），AA Codin
 
 **下载数据：** [采用值 CSV](data/adopted.csv) · [完整计算结果 CSV](derived/points.csv) · [完整计算结果 JSON](derived/points.json) · [数据说明及缺分清单](data/README.md) · [分日期原始证据](data/research/)
 
+## 每行的 API 标价成本
+
+每行新增 **API 标价成本 / 月**：把该行的月额度按厂商官方按量标价、同一标准负载折算成美元。它回答真实单价隐含但没直说的问题——**同样这批 token 改成直接买 API 要花多少钱**。括号里的倍数是该金额 ÷ 订阅月费。
+
+`api_cost_usd_month = 月 token ÷ 1,000,000 × 标价混合单价`，`api_cost_multiple = api_cost_usd_month ÷ 月费`，即已有字段 `d` 的倒数。公开数字均由公开的混合单价算出，读者用公开值可完全复现。
+
+标价已于 2026-09-09 对照厂商一手价目页重新核对，覆盖模型从 24 个扩到 43 个，见[标价档案](data/research/list-prices-round2-2026-09-09.json)。主流模型标价与 2026-09-05 那轮相比没有变化。
+
+| 标价来源 | 行数 | 含义 |
+|---|---:|---|
+| 厂商一手价目表 | 166 | 本轮直接读取厂商价目页 |
+| 厂商文档或公告（`*`） | 5 | 价目页为 JS 渲染，或未给三段拆分 |
+| 具名网关或追踪站（`*`） | 8 | 仅开放权重或仅在套壳产品内提供，无一手价目表 |
+| 无可辩护标价 | 9 | 该列留空，不补造 |
+
+188 行中 168 行有成本。11 条按量 API 行本身没有月额度，按定义无此列；另有 9 条订阅行的服务模型没有公开标价：`deepseek-v4-flash-fast`、`glm-5.2-fast`、`kimi-k2.7-code-highspeed`（套壳产品内的加速档），`muse-spark-1.3` 与 `muse-spark-1.3-contributor`（Meta 未公布 1.3 价目表，各追踪站对是否沿用 1.2 价目表说法冲突），以及 `inkling`、`inkling-small`、`omen-alpha`。
+
+读这一列要注意三点。当前仍不单列缓存写入费，故所有数字都是**下限**。15 行标了 `‡`：该套餐下此模型的额度本身由同套餐基准模型按标价比推导，其成本只是把基准行的数字重复一遍，不是独立证据——例如 Claude Max 的 Opus 5 与 Sonnet 5 两行数值相同，不能当成两次测量。倍数比较的是标价与打满订阅，不代表任何用户真能用到那个额度。
+
+按标价看，多数订阅返还远超月费：Claude Max 20x 最高，$200 换约 $10,715/月的 Opus 5 token（×54）；ChatGPT Pro 20x 约 $6,727（×34）。有两行是倒挂——阿里云百炼 Coding Plan Pro 的 Qwen3.7 Plus 为 ×0.37 与 ×0.62，即套餐比直接按量买同样的 token 更贵。
+
+### 订阅性价比排名（按倍数排序）
+
+全部 168 条有标价的行按倍数从高到低排列。红色虚线为 1× 盈亏线：线右侧的条，同样月费买到的 token 比直接按量买更多；线左侧的条更少。每条标签同时给出倍数背后的美元金额，避免"小基数上的大倍数"被误读。
+
+[English SVG](charts/en/overview/api-cost-multiple-overview.svg) · [中文 SVG](charts/zh/overview/倍数总览.svg) · [English PNG](charts/en/overview/api-cost-multiple-overview.png) · [中文 PNG](charts/zh/overview/倍数总览.png)
+
+![订阅性价比倍数排名](charts/zh/overview/倍数总览.svg)
+
+**表格：** [English TXT](charts/en/overview/api-cost-multiple-overview-table.txt) · [中文 TXT](charts/zh/overview/倍数总览表.txt)
+
+榜首被 Anthropic 与 OpenAI 占据（×54 到 ×34），原因之一是它们的官方标价本身在本样本里最高——倍数高，部分来自"按量替代方案很贵"，不只来自"额度大"。20 条没有公开标价的行不出现在此图，而不是按 0 画出。
+
+### 订阅性价比排名（每个套餐一条）
+
+上一张图排的是 168 条"套餐 × 模型"。这张把它们收敛到 **51 个订阅**，按每个套餐多数模型共享的价值排序——也就是下方对比面板的静态版本。
+
+[English SVG](charts/en/overview/plan-value-overview.svg) · [中文 SVG](charts/zh/overview/套餐性价比总览.svg) · [English PNG](charts/en/overview/plan-value-overview.png) · [中文 PNG](charts/zh/overview/套餐性价比总览.png)
+
+![按套餐排名的订阅性价比](charts/zh/overview/套餐性价比总览.svg)
+
+**表格：** [English TXT](charts/en/overview/plan-value-overview-table.txt) · [中文 TXT](charts/zh/overview/套餐性价比总览表.txt) —— 一行一个"套餐 × 价值组"，每个例外都保留自己的一行
+
+深色条是共享价值，浅色延伸段到该套餐**最优**模型，竖线标出**最差**模型：这样"选哪个模型"和"套餐整体值多少"都能看到，而不必把互斥的额度加起来。`⚠` 标出主数字覆盖不到一半模型的 2 个套餐——OpenCode Go 的 ×6 落在 ×1.26–×21.37 的区间里，Command Code GOAT 的 ×2 落在 ×1.04–×28.54 里，这两个只有按区间读才成立。
+
+套餐级数据已发布为 [plan-value.json](derived/plan-value.json) / [plan-value.csv](derived/plan-value.csv)；网站在前端算同一套分组，并有测试断言两者一致。
+
+## 同价位套餐对比
+
+**[打开套餐对比 →](https://real-api-pricing.vercel.app)** · 交互网站的第四个视图
+
+选中真正在纠结的几个套餐——比如 $200 档的五个——面板会每个套餐一行并排给出：该套餐多数模型**共享**的价值，以及价值落在别处的模型，单独列成自己的一行。
+
+| $200 / 月 | 共享价值 | 按 API 标价 | 共享此价值的模型 | 例外 |
+|---|---:|---:|---|---|
+| Claude Max 20x (9/14+) | ×53.6 | $10,715 | Opus 5、Sonnet 5、Opus 4.8 | ×8.2 Fable 5（$1,649） |
+| ChatGPT Pro 20x | ×33.6 | $6,727 | GPT 5.6 Sol、5.6 Terra、5.5 | ×21 GPT 5.6 Luna（$4,206） |
+| Cursor Ultra | ×21.3 | $4,267 | Grok 4.6、Composer 2.5 | ×13.8 Grok 4.5（$2,758） |
+
+可按**性价比（× 月费）**、**API 标价成本**或**订阅月费**排序；主数字与其副行始终展示两个不同的数，相对月费和绝对金额同时在屏。所有条形——包括例外行的条形——共用同一原点和同一线性刻度：改用对数轴会把这个视图想要展示的差距压平。
+
+面板刻意不做两件事。绝不把同套餐各模型相加：同套餐额度是互斥选项，价值是"选一个模型能得到这么多"，不是总量。以及，当"共享价值"会误导时就不给主数字——Command Code GOAT 转售 31 个模型、19 个不同数值，因此标注**各模型价值差异很大**，改为给出区间与最优模型。51 个有标价的套餐里只有 2 个属于这种情况。
+
+共享价值之所以共享，其原因本身值得知道：Claude Max 下 Sonnet 5 与 Opus 4.8 的额度是由 Opus 5 的实测按标价比推导的，所以三者都落在 ×53.6，这些模型标了 `‡`。Fable 5 不同，是因为它的额度来自实测的订阅内权重——真正的独立证据其实在例外这一行。
+
 ## 月额度总览
 
 177 个订阅套餐 × 模型点按采用数据里的美元月费拆成三档，避免 GitHub 首页一张图挤满：**$0–30（含 $30）**、**>$30 且 ≤$100**、**>$100–$300**。各档内部按月可用 token 排序。未拆档的全量图和混合比例图仍在 [图表目录](charts/README.md)。

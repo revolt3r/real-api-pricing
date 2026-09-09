@@ -90,7 +90,10 @@ export function visiblePoints(data: SiteData, s: State): Point[] {
       (s.view !== "allowance" ||
         (p.billing !== "metered" &&
           p.monthly_yi !== null &&
-          matchesFeeBand(p.price_usd, s.feeBand))),
+          matchesFeeBand(p.price_usd, s.feeBand))) &&
+      // A row with no published API rate is absent from the value view rather
+      // than plotted at zero, which would read as "worth nothing".
+      (s.view !== "multiple" || p.api_cost_multiple !== null),
   );
 }
 export function rowsFor(data: SiteData, s: State): Row[] {
@@ -136,7 +139,11 @@ export function tableRows(rows: Row[], s: State): Row[] {
             ? r.point.monthly_yi
             : s.sort === "fee"
               ? r.point.price_usd
-              : r.point.real_usd_per_mtok;
+              : s.sort === "apiCost"
+                ? r.point.api_cost_usd_month
+                : s.sort === "multiple"
+                  ? r.point.api_cost_multiple
+                  : r.point.real_usd_per_mtok;
   return rows
     .filter(
       (r) =>
@@ -229,10 +236,10 @@ export function restore(
     const enums = {
       feeBand: ["all", ...feeBands.map((b) => b.id)],
       lang: ["en", "zh"],
-      view: ["pareto", "price", "allowance", "method"],
+      view: ["pareto", "price", "allowance", "multiple", "compare", "method"],
       configuration: ["all", "summary"],
       labels: ["frontier", "all", "none"],
-      sort: ["price", "model", "plan", "score", "allowance", "fee"],
+      sort: ["price", "model", "plan", "score", "allowance", "fee", "apiCost", "multiple"],
       direction: ["asc", "desc"],
     };
     for (const [key, values] of Object.entries(enums)) {
@@ -283,6 +290,21 @@ export const allowance = (p: Point, lang: string) =>
     ? "—"
     : number(lang === "zh" ? p.monthly_yi : p.monthly_yi / 10, lang, 3) +
       (lang === "zh" ? " 亿" : " B");
+/** Whole dollars: the API cost of a month's allowance runs from tens to five figures. */
+export const money = (n: number | null, lang = "en") =>
+  n === null
+    ? "—"
+    : "$" +
+      new Intl.NumberFormat(lang === "zh" ? "zh-CN" : "en-US", {
+        maximumFractionDigits: n < 10 ? 2 : 0,
+      }).format(n);
+/** "×21" reads as "this allowance is worth 21 monthly fees at list price".
+ *  Keeps a decimal up to 100 so rows that rank differently do not print the same
+ *  number — ×54.2 and ×53.6 must stay distinguishable in a ranking sorted by it —
+ *  and two decimals below 2, where rounding ×1.04 to "×1" would read as exactly
+ *  break-even when the plan is in fact slightly ahead. */
+export const multiple = (n: number | null, lang = "en") =>
+  n === null ? "" : "×" + number(n, lang, n < 2 ? 2 : n < 100 ? 1 : 0);
 export const safeUrl = (url: string) =>
   /^https?:\/\//i.test(url) || url.startsWith("/data/") ? url : undefined;
 export const manufacturer = (vendor: string) =>
@@ -324,6 +346,13 @@ export function csv(rows: Row[], lang: string): string {
           "币种",
           "月 token",
           "真实单价 USD/MTok",
+          "API标价混合单价 USD/MTok",
+          "API标价成本 USD/月",
+          "成本倍数 ×月费",
+          "标价来源分级",
+          "标价置信度",
+          "成本沿用同套餐基准",
+          "标价来源",
           "额度置信度",
           "评测配置",
           "分数",
@@ -344,6 +373,13 @@ export function csv(rows: Row[], lang: string): string {
           "Currency",
           "Monthly tokens",
           "Real price USD/MTok",
+          "API list blended USD/MTok",
+          "API cost USD/month",
+          "API cost multiple of fee",
+          "API price tier",
+          "API price confidence",
+          "API cost inherited from sibling",
+          "API price source",
           "Quota confidence",
           "Benchmark configuration",
           "Score",
@@ -373,6 +409,13 @@ export function csv(rows: Row[], lang: string): string {
         r.point.currency,
         r.point.monthly_tokens,
         r.point.real_usd_per_mtok,
+        r.point.list_blended_usd_per_mtok,
+        r.point.api_cost_usd_month,
+        r.point.api_cost_multiple,
+        r.point.api_price_tier,
+        r.point.api_price_confidence,
+        r.point.api_cost_inherited,
+        r.point.api_price_source,
         r.point.confidence,
         r.mapping?.variant,
         r.score,
@@ -385,5 +428,103 @@ export function csv(rows: Row[], lang: string): string {
     ]
       .map((row) => row.map(escape).join(","))
       .join("\r\n")
+  );
+}
+
+/** One subscription plan, with the value its models share and the models that differ.
+ *
+ *  Allowances inside a plan are alternatives, never additive, so a plan has no single
+ *  total. What it does have is a value most of its models share — because the adopted
+ *  allowances were derived from one another by list-price ratio — plus the models whose
+ *  own evidence puts them somewhere else. Those are the exceptions.
+ */
+export interface ValueGroup {
+  multiple: number;
+  cost: number;
+  rows: Row[];
+  /** Every row here inherited its allowance from a sibling model by a price ratio. */
+  inherited: boolean;
+}
+export interface PlanComparison {
+  key: string;
+  plan: string;
+  channel: string;
+  fee: number | null;
+  currency: string;
+  originalPrice: number | null;
+  headline: ValueGroup;
+  exceptions: ValueGroup[];
+  best: Row;
+  worst: Row;
+  modelCount: number;
+  /** The headline covers fewer than half the plan's priced models, so it is the most
+   *  common value rather than a representative one. Wrapper plans that resell dozens of
+   *  models land here, and their spread must be read instead of the headline. */
+  varies: boolean;
+}
+export function planComparisons(rows: Row[]): PlanComparison[] {
+  const byPlan = new Map<string, Row[]>();
+  for (const r of rows) {
+    if (r.point.api_cost_multiple === null || r.point.billing === "metered") continue;
+    const seen = byPlan.get(r.point.plan_id);
+    // One row per served model; benchmark configurations must not inflate a plan.
+    if (!seen) byPlan.set(r.point.plan_id, [r]);
+    else if (!seen.some((s) => s.point.id === r.point.id)) seen.push(r);
+  }
+  const comparisons: PlanComparison[] = [];
+  for (const [key, planRows] of byPlan) {
+    const groups = new Map<number, Row[]>();
+    for (const r of planRows) {
+      const m = r.point.api_cost_multiple!;
+      groups.set(m, [...(groups.get(m) || []), r]);
+    }
+    const asGroup = ([multiple, rs]: [number, Row[]]): ValueGroup => ({
+      multiple,
+      cost: rs[0].point.api_cost_usd_month!,
+      rows: [...rs].sort((a, b) =>
+        a.point.model_display.localeCompare(b.point.model_display),
+      ),
+      inherited: rs.every((r) => r.point.api_cost_inherited),
+    });
+    // The headline is the value the most models share; ties go to the higher value.
+    const ranked = [...groups.entries()].sort(
+      (a, b) => b[1].length - a[1].length || b[0] - a[0],
+    );
+    const headline = asGroup(ranked[0]);
+    const exceptions = ranked
+      .slice(1)
+      .map(asGroup)
+      .sort((a, b) => b.multiple - a.multiple);
+    const ordered = [...planRows].sort(
+      (a, b) => b.point.api_cost_multiple! - a.point.api_cost_multiple!,
+    );
+    const first = planRows[0].point;
+    comparisons.push({
+      key,
+      plan: first.plan,
+      channel: first.channel,
+      fee: first.price_usd,
+      currency: first.currency,
+      originalPrice: first.original_price,
+      headline,
+      exceptions,
+      best: ordered[0],
+      worst: ordered[ordered.length - 1],
+      modelCount: planRows.length,
+      varies: headline.rows.length * 2 < planRows.length,
+    });
+  }
+  return comparisons;
+}
+/** Sort keys the comparison dashboard offers: the fee-relative value, the absolute
+ *  dollar value of the allowance, or the fee itself. */
+export function sortComparisons(
+  plans: PlanComparison[],
+  by: "value" | "apiCost" | "fee",
+): PlanComparison[] {
+  const value = (p: PlanComparison) =>
+    by === "fee" ? (p.fee ?? 0) : by === "apiCost" ? p.headline.cost : p.headline.multiple;
+  return [...plans].sort(
+    (a, b) => value(b) - value(a) || a.plan.localeCompare(b.plan),
   );
 }

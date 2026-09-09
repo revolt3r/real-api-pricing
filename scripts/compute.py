@@ -3,11 +3,14 @@
 
 每个点 = (套餐, 实际服务模型)。x = 真实单价 $/MTok；y = 该模型在各榜单的分数（同模型多个 effort 变体取最高分）。
 d = 真实单价 / 标价混合单价（标价按项目统一标准负载折算），只作注释，不进图。
+api_cost_usd_month = 采用月额度 × 标价混合单价：同样的 token 按官方按量标价要花多少钱；
+api_cost_multiple = 该金额 ÷ 订阅月费 = 1/d，即"订阅额度值几倍月费"。缺标价的模型留空，不补造。
 """
 from __future__ import annotations
 
 import csv
 import json
+import re
 from pathlib import Path
 from benchmark_configs import configuration, candidates, score_fields
 
@@ -21,6 +24,11 @@ SCORE_FILES = (
     "scores-code-arena-round1-2026-09-06.json",
     "scores-aa-coding-agent-round1-2026-09-06.json",
     "scores-aa-round3-2026-09-09.json",
+)
+# 官方标价档案，同样按"从旧到新"排列；同一模型后档覆盖前档，缺失的模型沿用旧档。
+LIST_PRICE_FILES = (
+    "list-prices-2026-09.json",
+    "list-prices-round2-2026-09-09.json",
 )
 
 
@@ -59,6 +67,88 @@ def vendor_of(model: str) -> str:
     return next((v for k, v in VENDOR.items() if model.startswith(k)), "other")
 
 
+# build_adopted.py 里同套餐派生行的 source 形如 "由同套餐 claude-opus-5 157 亿 × 2.5"。
+SIBLING_DERIVED = re.compile(r"^由同套餐 (\S+) ")
+
+
+# 渠道前缀 → 渠道名；与 plot_quotas.py 的 VENDOR_OF 和 web/scripts/build-data.mjs 一致。
+CHANNEL = {
+    "chatgpt": "OpenAI", "openai": "OpenAI", "claude": "Anthropic", "anthropic": "Anthropic",
+    "supergrok": "xAI", "xai": "xAI", "cursor": "Cursor", "kimi": "Kimi", "glm": "Zhipu",
+    "minimax": "MiniMax", "aliyun": "Alibaba", "opencode": "OpenCode",
+    "command_code": "Command Code", "ollama": "Ollama", "deepseek": "DeepSeek",
+}
+
+
+def channel_of(plan_id: str) -> str:
+    return next((name for prefix, name in CHANNEL.items() if plan_id.startswith(prefix)), "other")
+
+
+def plan_values(points: list[dict], plan_ids: dict[str, str]) -> list[dict]:
+    """按套餐汇总"订阅性价比"：多数模型共享的倍数，加上落在别处的模型。
+
+    同套餐各模型额度是互斥选项，不可相加，所以套餐没有"总量"，只有"选一个模型能得到多少"。
+    多数模型之所以共享同一个倍数，是因为它们的采用额度本就由同一个基准模型按标价比推导；
+    真正另有依据的模型会落在别的数值上，这些就是 exceptions，必须单独列出而不是并进主数字。
+    """
+    by_plan: dict[str, list[dict]] = {}
+    for p in points:
+        if p["api_cost_multiple"] is None or p["billing"] == "metered":
+            continue
+        by_plan.setdefault(plan_ids[p["id"]], []).append(p)
+
+    plans = []
+    for plan_id, rows in by_plan.items():
+        groups: dict[float, list[dict]] = {}
+        for p in rows:
+            groups.setdefault(p["api_cost_multiple"], []).append(p)
+
+        def as_group(multiple: float, members: list[dict]) -> dict:
+            return dict(
+                multiple=multiple, cost=members[0]["api_cost_usd_month"],
+                models=sorted(m["model_display"] for m in members),
+                model_ids=sorted(m["model"] for m in members),
+                # 整组都是派生行时，这个数值只是把基准行重复一遍，不是该组的独立证据。
+                inherited=all(m["api_cost_inherited"] for m in members),
+                third_party_rate=any(m["api_price_tier"] != "official" for m in members),
+            )
+
+        # 主数字取"共享模型数最多"的那一组；同样多时取倍数更高的一组。
+        ranked = sorted(groups.items(), key=lambda kv: (-len(kv[1]), -kv[0]))
+        headline = as_group(*ranked[0])
+        exceptions = sorted((as_group(m, g) for m, g in ranked[1:]),
+                            key=lambda g: -g["multiple"])
+        ordered = sorted(rows, key=lambda p: -p["api_cost_multiple"])
+        first = rows[0]
+        plans.append(dict(
+            plan_id=plan_id, plan=first["plan"], channel=channel_of(plan_id),
+            fee_usd=first["price_usd"], headline_multiple=headline["multiple"],
+            headline_cost_usd_month=headline["cost"], headline_models=headline["models"],
+            headline_inherited=headline["inherited"],
+            model_count=len(rows), value_group_count=len(groups),
+            best_multiple=ordered[0]["api_cost_multiple"], best_model=ordered[0]["model_display"],
+            worst_multiple=ordered[-1]["api_cost_multiple"], worst_model=ordered[-1]["model_display"],
+            # 主数字覆盖不到一半模型时，它只是"最常见值"，不能当该套餐的代表值读。
+            varies=len(headline["models"]) * 2 < len(rows),
+            headline=headline, exceptions=exceptions,
+        ))
+    return sorted(plans, key=lambda p: (-p["headline_multiple"], p["plan"]))
+
+
+def flag_inherited_api_cost(points: list[dict], base_of: dict[str, str]) -> None:
+    """派生行的额度多半就是"基准模型额度 × 标价比"，其 API 成本会与基准行相同。
+
+    这时 API 成本不是该模型的独立证据，只是把基准行的数字换个模型名重复一遍，必须标出来，
+    否则读者会把同一笔证据当成多条。
+    """
+    cost = {p["id"]: p["api_cost_usd_month"] for p in points}
+    for p in points:
+        base = base_of.get(p["id"])
+        mine, theirs = p["api_cost_usd_month"], cost.get(base)
+        p["api_cost_inherited"] = bool(
+            base and mine and theirs and abs(mine - theirs) <= 0.01 * theirs)
+
+
 def load_scores() -> list[dict]:
     """Keep all configurations in each board's selected snapshot, never mix versions."""
     archives = [(name, json.loads((RESEARCH / name).read_text(encoding="utf-8")))
@@ -75,31 +165,60 @@ def current_score_records(archives):
             if latest.get(record["boardId"]) == name]
 
 
-def load_list_blended() -> dict[str, float]:
-    out = {}
-    for m in json.loads((RESEARCH / "list-prices-2026-09.json").read_text(encoding="utf-8"))["models"]:
-        cached = m["cachedInput"] if m["cachedInput"] is not None else m["input"] * 0.1
-        out[m["model"]] = STANDARD_MIX["cache"] * cached + STANDARD_MIX["input"] * m["input"] + STANDARD_MIX["output"] * m["output"]
+def load_list_prices() -> dict[str, dict]:
+    """标价混合单价 + 来源分级。后档覆盖前档；三段价缺任一项的模型不给混合价，绝不补造。"""
+    out: dict[str, dict] = {}
+    for name in LIST_PRICE_FILES:
+        archive = json.loads((RESEARCH / name).read_text(encoding="utf-8"))
+        for m in archive["models"]:
+            if m["input"] is None or m["output"] is None:
+                # 明确记录为无公开标价：覆盖旧档的猜测，也让 API 成本列留空。
+                out[m["model"]] = dict(blended=None, tier=m.get("priceTier", "unavailable"),
+                                       confidence=m.get("priceConfidence"), source=m.get("source") or None,
+                                       archive=name)
+                continue
+            cached = m["cachedInput"] if m["cachedInput"] is not None else m["input"] * 0.1
+            out[m["model"]] = dict(
+                blended=(STANDARD_MIX["cache"] * cached + STANDARD_MIX["input"] * m["input"]
+                         + STANDARD_MIX["output"] * m["output"]),
+                # 旧档没有分级字段，按当时的口径一律视为官方标价。
+                tier=m.get("priceTier", "official"), confidence=m.get("priceConfidence", "high"),
+                source=m.get("source") or None, archive=name,
+            )
     return out
 
 
 def main() -> None:
-    scores, list_blended = load_scores(), load_list_blended()
+    scores, list_prices = load_scores(), load_list_prices()
     boards_meta = {b["boardId"]: b for archive in score_archives() for b in archive["boards"]}
 
-    points, configuration_points = [], []
+    points, configuration_points, base_of, plan_ids = [], [], {}, {}
     with (DATA / "adopted.csv").open(encoding="utf-8-sig") as f:
         for r in csv.DictReader(f):
             model = r["served_model"]
+            plan_ids[f"{r['plan_id']}::{model}"] = r["plan_id"]
+            sibling = SIBLING_DERIVED.match(r["source"])
+            if sibling:
+                base_of[f"{r['plan_id']}::{model}"] = f"{r['plan_id']}::{sibling.group(1)}"
             real = float(r["real_usd_per_mtok"])
-            lb = list_blended.get(model)
+            listed = list_prices.get(model) or {}
+            # 先定到发布精度再往下算：读者拿published标价×月额度必须能复现出published成本。
+            lb = round(listed["blended"], 6) if listed.get("blended") else None
+            fee = float(r["price_usd"]) if r["price_usd"] else None
+            tokens = int(r["monthly_tokens"]) if r["monthly_tokens"] else None
+            # 同一批 token 按官方按量标价的月成本；按量 API 行本身没有月额度，留空。
+            api_cost = round(tokens / 1e6 * lb, 2) if lb and tokens else None
             p = dict(
                 id=f"{r['plan_id']}::{model}", plan=r["plan_name"], billing=r["billing"], model=model,
                 model_display=DISPLAY.get(model, model), vendor=vendor_of(model),
                 label=r["plan_name"] if r["billing"] == "metered" else f"{DISPLAY.get(model, model)} · {r['plan_name']}",
-                price_usd=float(r["price_usd"]) if r["price_usd"] else None,
-                monthly_yi=float(r["monthly_yi"]) if r["monthly_yi"] else None,
-                real_usd_per_mtok=real, list_blended_usd_per_mtok=round(lb, 4) if lb else None,
+                price_usd=fee, monthly_yi=float(r["monthly_yi"]) if r["monthly_yi"] else None,
+                real_usd_per_mtok=real, list_blended_usd_per_mtok=lb,
+                api_cost_usd_month=api_cost,
+                api_cost_multiple=round(api_cost / fee, 2) if api_cost and fee else None,
+                api_cost_inherited=False,  # 由 flag_inherited_api_cost 在全部行读完后判定
+                api_price_tier=listed.get("tier"), api_price_confidence=listed.get("confidence"),
+                api_price_source=listed.get("source"), api_price_archive=listed.get("archive"),
                 d=round(real / lb, 4) if lb else None, confidence=r["confidence"], tier=r["chart_tier"], source=r["source"], note=r["decision_note"],
             )
             for b in BOARDS:
@@ -114,6 +233,8 @@ def main() -> None:
                     configuration_points.append(dict(point_id=p["id"], board=b, **score_fields(option)))
             points.append(p)
 
+    flag_inherited_api_cost(points, base_of)
+    plans = plan_values(points, plan_ids)
     OUT.mkdir(exist_ok=True)
     (OUT / "benchmark-configurations.json").write_text(json.dumps(scores, ensure_ascii=False, indent=2), encoding="utf-8")
     (OUT / "benchmark-points.json").write_text(json.dumps(configuration_points, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -127,8 +248,40 @@ def main() -> None:
         w = csv.DictWriter(f, fieldnames=list(points[0].keys()))
         w.writeheader()
         w.writerows(points)
+    (OUT / "plan-value.json").write_text(json.dumps(dict(
+        generatedAt="2026-09-09",
+        role="Per-subscription value: the API-list multiple the plan's models share, plus the models that differ.",
+        rule=("Allowances inside a plan are alternatives, never additive, so a plan has no total. "
+              "headline_multiple is the value shared by the largest set of the plan's priced models; "
+              "exceptions are the remaining distinct values, each with its own models. "
+              "varies=true means the headline covers fewer than half the plan's models and must be read "
+              "as the most common value, not a representative one."),
+        mix={k: round(v, 4) for k, v in STANDARD_MIX.items() if isinstance(v, (int, float))},
+        listPriceArchives=list(LIST_PRICE_FILES), plans=plans,
+    ), ensure_ascii=False, indent=1), encoding="utf-8")
+    # 一行一个"套餐 × 价值组"，无损展开，便于直接排序和筛选。
+    with (OUT / "plan-value.csv").open("w", encoding="utf-8-sig", newline="") as f:
+        fields = ["plan_id", "plan", "channel", "fee_usd", "group", "multiple", "cost_usd_month",
+                  "models", "model_count_in_group", "inherited", "third_party_rate",
+                  "plan_model_count", "plan_value_group_count", "plan_varies",
+                  "plan_best_multiple", "plan_best_model", "plan_worst_multiple", "plan_worst_model"]
+        w = csv.DictWriter(f, fieldnames=fields)
+        w.writeheader()
+        for plan in plans:
+            for kind, group in [("shared", plan["headline"])] + [("exception", g) for g in plan["exceptions"]]:
+                w.writerow(dict(
+                    plan_id=plan["plan_id"], plan=plan["plan"], channel=plan["channel"],
+                    fee_usd=plan["fee_usd"], group=kind, multiple=group["multiple"],
+                    cost_usd_month=group["cost"], models=" | ".join(group["models"]),
+                    model_count_in_group=len(group["models"]), inherited=group["inherited"],
+                    third_party_rate=group["third_party_rate"], plan_model_count=plan["model_count"],
+                    plan_value_group_count=plan["value_group_count"], plan_varies=plan["varies"],
+                    plan_best_multiple=plan["best_multiple"], plan_best_model=plan["best_model"],
+                    plan_worst_multiple=plan["worst_multiple"], plan_worst_model=plan["worst_model"],
+                ))
     (OUT / "points.json").write_text(json.dumps(dict(
         generatedAt="2026-09-09", mix={k: round(v, 4) for k, v in STANDARD_MIX.items() if isinstance(v, (int, float))},
+        listPriceArchives=list(LIST_PRICE_FILES),
         boards={b: dict(name=boards_meta[b]["name"].replace("🏆 ", ""), metric=boards_meta[b]["metric"], url=boards_meta[b]["url"], snapshot=boards_meta[b]["snapshotDate"]) for b in BOARDS},
         points=points,
     ), ensure_ascii=False, indent=1), encoding="utf-8")
@@ -137,6 +290,15 @@ def main() -> None:
     print(f"{len(points)} points -> {OUT}")
     for b in BOARDS:
         print(f"  {b}: {sum(p[f'{b}__score'] is not None for p in points)} scored, unscored: {unscored[b]}")
+    priced = [p for p in points if p["api_cost_usd_month"] is not None]
+    print(f"  api cost: {len(priced)} of {len(points)} rows priced; "
+          f"{sum(p['list_blended_usd_per_mtok'] is None for p in points)} rows have no list price; "
+          f"{sum(p['api_cost_inherited'] for p in points)} inherited from a sibling model")
+    for t in ("official", "official_indirect", "third_party"):
+        print(f"    {t}: {sum(p['api_price_tier'] == t for p in points)} rows")
+    print(f"  unpriced models: {sorted({p['model'] for p in points if p['list_blended_usd_per_mtok'] is None})}")
+    print(f"  plan value: {len(plans)} plans, {sum(p['varies'] for p in plans)} where value differs by model, "
+          f"{sum(len(p['exceptions']) for p in plans)} exception groups")
 
 
 if __name__ == "__main__":
