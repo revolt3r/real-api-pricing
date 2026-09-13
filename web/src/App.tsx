@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
@@ -15,7 +15,9 @@ import {
   Info,
   LinkSimple,
   MagnifyingGlass,
+  Moon,
   SlidersHorizontal,
+  Sun,
   Table,
   X,
 } from "@phosphor-icons/react";
@@ -58,7 +60,10 @@ import {
   safeUrl,
   serialize,
   tableRows,
+  variantLabel,
   visiblePoints,
+  isUnmetered,
+  unmeteredNote,
 } from "./domain";
 
 const REPO = "https://github.com/FeiZhuLulu/real-api-pricing";
@@ -67,12 +72,16 @@ const boardLabels: Record<string, string> = {
   arena_agent_mode: "Agent Arena",
   aa_intelligence_index: "AA Intelligence",
   aa_coding_agent_index: "AA Coding Agent",
+  open_design_arena: "OpenDesign Arena",
+  terminal_bench_4: "Terminal-Bench 4.0",
 };
 const boardZh: Record<string, string> = {
   arena_code: "Code Arena · 网页开发",
   arena_agent_mode: "Agent Arena",
   aa_intelligence_index: "AA 智力榜",
   aa_coding_agent_index: "AA 编程 Agent",
+  open_design_arena: "OpenDesign 设计榜",
+  terminal_bench_4: "Terminal-Bench 4.0 终端榜",
 };
 const filterLabels: Record<FilterKey, [string, string]> = {
   vendors: ["Model developer", "模型厂商"],
@@ -94,6 +103,21 @@ function localLanguage() {
 function saveLanguage(lang: Lang) {
   try {
     localStorage.setItem("pricing-language", lang);
+  } catch {
+    /* Storage is optional. */
+  }
+}
+type Theme = "light" | "dark";
+function localTheme(): Theme {
+  try {
+    return localStorage.getItem("pricing-theme") === "dark" ? "dark" : "light";
+  } catch {
+    return "light";
+  }
+}
+function saveTheme(theme: Theme) {
+  try {
+    localStorage.setItem("pricing-theme", theme);
   } catch {
     /* Storage is optional. */
   }
@@ -135,6 +159,11 @@ function CheckBox({
 export default function App() {
   const [data, setData] = useState<SiteData | null>(null);
   const [loadError, setLoadError] = useState("");
+  const [theme, setTheme] = useState<Theme>(localTheme);
+  useLayoutEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    saveTheme(theme);
+  }, [theme]);
   useEffect(() => {
     const abort = new AbortController();
     fetch("/data/site.json", { signal: abort.signal })
@@ -167,9 +196,17 @@ export default function App() {
         <p>Loading the latest data…</p>
       </main>
     );
-  return <Explorer data={data} />;
+  return <Explorer data={data} theme={theme} onThemeChange={setTheme} />;
 }
-function Explorer({ data }: { data: SiteData }) {
+function Explorer({
+  data,
+  theme,
+  onThemeChange,
+}: {
+  data: SiteData;
+  theme: Theme;
+  onThemeChange: (theme: Theme) => void;
+}) {
   const initial = useMemo(
     () => restore(location.hash, data, localLanguage()),
     [data],
@@ -397,6 +434,22 @@ function Explorer({ data }: { data: SiteData }) {
           </nav>
           <div className="header-actions">
             <HeaderActions lang={state.lang} />
+            <button
+              className="icon-button theme-toggle"
+              onClick={() => onThemeChange(theme === "dark" ? "light" : "dark")}
+              aria-label={
+                theme === "dark"
+                  ? t("Switch to light mode", "切换为浅色模式")
+                  : t("Switch to dark mode", "切换为深色模式")
+              }
+              title={
+                theme === "dark"
+                  ? t("Light mode", "浅色模式")
+                  : t("Dark mode", "深色模式")
+              }
+            >
+              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
             <button
               className="language"
               onClick={() => patch({ lang: zh ? "en" : "zh" })}
@@ -798,6 +851,7 @@ function Explorer({ data }: { data: SiteData }) {
                   rows={rows}
                   state={state}
                   data={data}
+                  theme={theme}
                   onSelect={setDetail}
                   handle={chart}
                 />
@@ -1033,6 +1087,7 @@ function Explorer({ data }: { data: SiteData }) {
                         <td className="numeric">
                           {number(r.score, state.lang, 2)}
                           {r.mapping?.score_is_estimated && <small>{t("AA estimate", "AA 估计值")}</small>}
+                          {r.mapping?.score_is_self_reported && <small>{t("vendor self-report", "厂商自报")}</small>}
                         </td>
                         <td>
                           <span className={`confidence ${r.point.confidence}`}>
@@ -1466,6 +1521,16 @@ function Details({
                 "Metered API · public token prices weighted by the project standard workload.",
                 "按量 API · 三段公开标价按项目标准负载加权。",
               )
+            ) : isUnmetered(p) ? (
+              <>
+                {price(p.price_usd)} {t("/ month", "/ 月")} ÷{" "}
+                {t("unbounded usage", "无界可用量")} → ≈$0 / MTok ·{" "}
+                {unmeteredNote(p, lang)} ·{" "}
+                {t(
+                  "promotional price, not a permanent allowance",
+                  "促销价，非永久口径",
+                )}
+              </>
             ) : (
               <>
                 {price(p.price_usd)} {t("/ month", "/ 月")}
@@ -1573,10 +1638,10 @@ function Details({
               const m = r.mapping!;
               return (
                 <section className="configuration-detail" key={r.key}>
-                  <strong>{m.variant}</strong>
+                  <strong>{variantLabel(m.variant, lang)}</strong>
                   <dl>
                     <dt>{t("Score", "分数")}</dt>
-                    <dd>{number(m.score, lang, 4)}{m.score_is_estimated ? t(" · AA estimate; independent evaluation pending", " · AA 估计值，独立评测待完成") : ""}</dd>
+                    <dd>{number(m.score, lang, 4)}{m.score_is_estimated ? t(" · AA estimate; independent evaluation pending", " · AA 估计值，独立评测待完成") : ""}{m.score_is_self_reported ? t(" · vendor self-report, not an official leaderboard run", " · 厂商自报成绩，非官方榜单数据") : ""}</dd>
                     <dt>{t("Score interval", "分数区间")}</dt>
                     <dd>
                       {number(m.score_low, lang)} – {number(m.score_high, lang)}
@@ -1719,8 +1784,8 @@ function Method({
           </h2>
           <p>
             {t(
-              "Each leaderboard uses one selected snapshot; different benchmark versions are never mixed. Code Arena refers to WebDev Overall, not general coding ability. All configurations in that snapshot are shown by default; highest-score summaries are optional references. Harness, reasoning effort, service mode, and known score intervals are retained.",
-              "每张榜单使用一份选定快照，不混合不同版本的分数。Code Arena 指 WebDev Overall，不代表通用编程能力。默认保留该快照的全部配置，最高分汇总仅为可选参考。保留框架、推理强度、模式与已知分数区间。",
+              "Each leaderboard uses one selected snapshot; different benchmark versions are never mixed. Code Arena refers to WebDev Overall, not general coding ability. The default view is each model's highest-score configuration; every archived configuration and the reasoning-effort filter remain available. Harness, reasoning effort, service mode, and known score intervals are retained.",
+              "每张榜单使用一份选定快照，不混合不同版本的分数。Code Arena 指 WebDev Overall，不代表通用编程能力。默认取每个模型的最高分配置；全部存档配置和推理强度筛选仍可切换。保留框架、推理强度、模式与已知分数区间。",
             )}
           </p>
           <p>

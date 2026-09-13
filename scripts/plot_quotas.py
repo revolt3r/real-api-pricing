@@ -93,6 +93,8 @@ VENDOR_OF = {
     "command_code": "Command Code",
     "ollama": "Ollama",
     "deepseek": "DeepSeek",
+    "stepfun": "StepFun",
+    "devin": "Devin",
 }
 VENDOR_COLORS = {
     "OpenAI": "#00A86B",
@@ -108,6 +110,8 @@ VENDOR_COLORS = {
     "Ollama": "#A0785C",
     "DeepSeek": "#1F75FE",
     "Gemini": "#7CC12A",
+    "StepFun": "#00F4E5",
+    "Devin": "#7C3AED",
 }
 VIEW_CN = {"quotas": "额度", "prices": "单价", "multiple": "倍数", "plan_value": "套餐性价比"}
 BOARD_CN = {
@@ -115,6 +119,8 @@ BOARD_CN = {
     "arena_agent_mode": "AgentArena榜",
     "aa_intelligence_index": "AA智力榜",
     "aa_coding_agent_index": "AA编程Agent榜",
+    "open_design_arena": "OpenDesign设计榜",
+    "terminal_bench_4": "TB4终端榜",
 }
 
 
@@ -134,7 +140,7 @@ VENDOR_CODES = {
     "OpenAI": "OA", "Anthropic": "AN", "xAI": "XA", "Cursor": "CU",
     "Kimi": "KI", "GLM": "GL", "MiniMax": "MM", "Alibaba": "AL",
     "OpenCode": "OC", "Command Code": "CC", "Ollama": "OL",
-    "DeepSeek": "DS", "Gemini": "GE",
+    "DeepSeek": "DS", "Gemini": "GE", "StepFun": "SF", "Devin": "DV",
 }
 TEXT = {
     "zh": {
@@ -670,7 +676,8 @@ def plot(rows: list[dict], view: str, language: str, board: dict | None = None,
 
 def main() -> None:
     with open(ADOPTED, encoding="utf-8-sig") as f:
-        rows = [r for r in csv.DictReader(f) if r["real_usd_per_mtok"]]
+        # 不计额度（$0）点无 token 分母且无法上对数条形图，总览与前沿精简版不画；只在帕累托图上以专用刻度位呈现。
+        rows = [r for r in csv.DictReader(f) if r["real_usd_per_mtok"] and float(r["real_usd_per_mtok"]) > 0]
     os.makedirs(OUT_DIR, exist_ok=True)
     for band in FEE_BANDS:
         selected = sorted_rows(fee_band_rows(rows, band), "quotas")

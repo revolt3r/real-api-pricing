@@ -74,8 +74,16 @@ export function textLabelGroups(
   return densify(gs, front);
 }
 
-export function modelLabel(g: Group): string {
-  return [...new Set(g.rows.map((r) => r.point.model_display))].join(" / ");
+export function modelLabel(g: Group, lang = "en"): string {
+  const name = [...new Set(g.rows.map((r) => r.point.model_display))].join(
+    " / ",
+  );
+  const tag = g.rows.some((r) => r.mapping?.score_is_self_reported)
+    ? lang === "zh"
+      ? " [厂商自报]"
+      : " [self-reported]"
+    : "";
+  return name + tag;
 }
 
 export function labelProvider(g: Group): string {
@@ -102,7 +110,7 @@ function densify(gs: Group[], front: Group[], cap = 28): Group[] {
   for (const g of rest) {
     if (selected.length >= cap) break;
     const far = selected.every((s) => {
-      const dLog = Math.abs(Math.log10(g.price) - Math.log10(s.price));
+      const dLog = Math.abs(Math.log10(g.plotPrice) - Math.log10(s.plotPrice));
       const dScore = Math.abs(g.score - s.score) / span;
       return dLog >= 0.2 || dScore >= 0.05;
     });
@@ -373,20 +381,21 @@ export function frontierLogoViews(
   front: Group[],
   layout: PlotLayout,
   logos: Map<string, string>,
+  lang = "en",
 ): FrontierLogoView[] {
   const box = plotBox(layout);
   if (!box) return [];
   const half = LOGO_SIZE / 2;
   const out: FrontierLogoView[] = [];
   for (const g of front) {
-    const pt = dataToPixel(layout, g.price, g.score, box);
+    const pt = dataToPixel(layout, g.plotPrice, g.score, box);
     if (!pt) continue;
     out.push({
       key: g.key,
-      price: g.price,
+      price: g.plotPrice,
       score: g.score,
       provider: labelProvider(g),
-      label: modelLabel(g),
+      label: modelLabel(g, lang),
       x: pt.x,
       y: pt.y,
       logoUrl: logos.get(labelProvider(g)),
@@ -410,6 +419,7 @@ export function placeTextLabels(
   markers: AnchorPoint[],
   box: PlotBox,
   mobile: boolean,
+  lang = "en",
 ): ArenaPlacement[] {
   if (!groups.length) return [];
   const placed: { box: Box; lead: Segment | null }[] = [];
@@ -418,7 +428,7 @@ export function placeTextLabels(
   for (const g of groups) {
     const anchor = anchors.get(g.key);
     if (!anchor) continue;
-    const label = modelLabel(g);
+    const label = modelLabel(g, lang);
     const size = measureLabel(label, mobile);
     let best: { slot: (typeof DIRECTIONS)[number] & { ax: number; ay: number }; box: Box; lead: Segment | null } | null = null;
     let bestPenalty = Infinity;
@@ -469,7 +479,7 @@ export function placeTextLabels(
     placed.push({ box: best.box, lead: best.lead });
     out.push({
       key: g.key,
-      price: g.price,
+      price: g.plotPrice,
       score: g.score,
       label,
       provider: labelProvider(g),
@@ -552,7 +562,7 @@ export function buildExportDecorationsFromLayout(
   for (const g of front) {
     const src = logos.get(labelProvider(g));
     if (!src) continue;
-    const pt = dataToPixel(layout, g.price, g.score, box);
+    const pt = dataToPixel(layout, g.plotPrice, g.score, box);
     if (!pt) continue;
     // Plot-area normalized coords (Plotly paper for images/annotations/shapes).
     const fx = toPaperX(pt.x);

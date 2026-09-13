@@ -18,17 +18,23 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA, RESEARCH, OUT = ROOT / "data", ROOT / "data" / "research", ROOT / "derived"
 CONVENTIONS = json.loads((DATA / "conventions.json").read_text(encoding="utf-8"))
 STANDARD_MIX = CONVENTIONS["standardTokenMix"]
-BOARDS = ("arena_code", "arena_agent_mode", "aa_intelligence_index", "aa_coding_agent_index")
+BOARDS = ("arena_code", "arena_agent_mode", "aa_intelligence_index", "aa_coding_agent_index", "open_design_arena", "terminal_bench_4")
 SCORE_FILES = (
     "scores-2026-09.json",
     "scores-code-arena-round1-2026-09-06.json",
     "scores-aa-coding-agent-round1-2026-09-06.json",
     "scores-aa-round3-2026-09-09.json",
+    "scores-open-design-round1-2026-09-09.json",
+    "scores-terminal-bench4-round1-2026-09-10.json",
+    "scores-terminal-bench4-round2-selfreport-2026-09-12.json",
 )
 # 官方标价档案，同样按"从旧到新"排列；同一模型后档覆盖前档，缺失的模型沿用旧档。
 LIST_PRICE_FILES = (
     "list-prices-2026-09.json",
+    "list-prices-deepseek-v41-round1-2026-09-09.json",
     "list-prices-round2-2026-09-09.json",
+    "list-prices-deepseek-v41-round2-2026-09-10.json",
+    "list-prices-stepfun-round1-2026-09-10.json",
 )
 
 
@@ -37,14 +43,14 @@ def score_archives():
             for name in SCORE_FILES if (RESEARCH / name).exists()]
 
 DISPLAY = {
-    "gpt-5.6-sol": "GPT 5.6 Sol", "gpt-5.6-terra": "GPT 5.6 Terra", "gpt-5.6-luna": "GPT 5.6 Luna", "gpt-5.5": "GPT 5.5",
-    "claude-opus-5": "Claude Opus 5", "claude-fable-5": "Claude Fable 5", "claude-sonnet-5": "Claude Sonnet 5", "claude-opus-4.8": "Claude Opus 4.8",
+    "gpt-5.6-sol": "GPT 5.6 Sol", "gpt-5.6-terra": "GPT 5.6 Terra", "gpt-5.6-luna": "GPT 5.6 Luna", "gpt-5.5": "GPT 5.5", "gpt-6-astra": "GPT-6 Astra",
+    "claude-opus-5": "Claude Opus 5", "claude-fable-5": "Claude Fable 5", "claude-fable-5.1": "Claude Fable 5.1", "claude-sonnet-5": "Claude Sonnet 5", "claude-opus-4.8": "Claude Opus 4.8",
     "grok-4.6": "Grok 4.6", "grok-4.5": "Grok 4.5", "kimi-k3": "Kimi K3", "kimi-k2.7-code": "Kimi K2.7 Code", "kimi-k2.6": "Kimi K2.6",
     "glm-5.3": "GLM 5.3", "glm-5.3-flash": "GLM 5.3 Flash", "glm-5.2": "GLM 5.2", "glm-5.1": "GLM 5.1",
     "minimax-m3": "MiniMax M3", "minimax-m2.7": "MiniMax M2.7", "minimax-m2.5": "MiniMax M2.5",
     "qwen3.8-max": "Qwen3.8 Max", "qwen3.8-flash": "Qwen3.8 Flash", "qwen3.7-max": "Qwen3.7 Max",
     "qwen3.7-plus": "Qwen3.7 Plus", "qwen3.6-plus": "Qwen3.6 Plus",
-    "deepseek-v4-flash": "DeepSeek V4 Flash", "deepseek-v4-flash-fast": "DeepSeek V4 Flash Fast", "deepseek-v4-pro": "DeepSeek V4 Pro",
+    "deepseek-v4.1-flash": "DeepSeek V4.1 Flash", "deepseek-v4-flash": "DeepSeek V4 Flash", "deepseek-v4-flash-fast": "DeepSeek V4 Flash Fast", "deepseek-v4-pro": "DeepSeek V4 Pro",
     "deepseek-v4-flash-vision-exp": "DeepSeek V4 Flash Vision Exp",
     "gemini-3.1-pro": "Gemini 3.1 Pro", "gemini-3.7-flash": "Gemini 3.7 Flash", "gemini-3.8-flash": "Gemini 3.8 Flash",
     "mimo-v2.5": "MiMo V2.5", "mimo-v2.5-pro": "MiMo V2.5 Pro", "longcat-2.0": "LongCat 2.0",
@@ -55,11 +61,12 @@ DISPLAY = {
     "qwen3.8-27b": "Qwen3.8 27B", "qwen3.8-max-0902": "Qwen3.8 Max 0902",
     "step-3.5-flash": "Step 3.5 Flash", "step-3.7-flash": "Step 3.7 Flash",
     "hy3": "Hy3", "hy4-preview": "Hy4 Preview", "omen-alpha": "Omen Alpha", "composer-2.5": "Composer 2.5",
+    "swe-2": "SWE-2",
 }
 VENDOR = {
     "gpt": "OpenAI", "claude": "Anthropic", "grok": "xAI", "kimi": "Kimi", "glm": "Zhipu", "minimax": "MiniMax",
     "qwen": "Alibaba", "deepseek": "DeepSeek", "gemini": "Google", "mimo": "Xiaomi", "hy": "Tencent", "composer": "Cursor",
-    "longcat": "Meituan", "muse": "Muse", "omen": "OpenCode", "step": "StepFun",
+    "longcat": "Meituan", "muse": "Muse", "omen": "OpenCode", "step": "StepFun", "swe": "Cognition",
 }
 
 
@@ -77,6 +84,7 @@ CHANNEL = {
     "supergrok": "xAI", "xai": "xAI", "cursor": "Cursor", "kimi": "Kimi", "glm": "Zhipu",
     "minimax": "MiniMax", "aliyun": "Alibaba", "opencode": "OpenCode",
     "command_code": "Command Code", "ollama": "Ollama", "deepseek": "DeepSeek",
+    "stepfun": "StepFun", "devin": "Devin",
 }
 
 
@@ -159,10 +167,12 @@ def load_scores() -> list[dict]:
 def current_score_records(archives):
     # Files are explicitly ordered oldest to newest. A complete new board snapshot
     # replaces that board as a whole, including models removed from its coverage.
+    # Archives flagged "supplement" only append rows (e.g. vendor self-reports) to the
+    # current snapshot and never replace it.
     latest = {b["boardId"]: name for name, archive in archives for b in archive["boards"]
-              if b["boardId"] in BOARDS}
+              if b["boardId"] in BOARDS and not archive.get("supplement")}
     return [(name, record) for name, archive in archives for record in archive["scores"]
-            if latest.get(record["boardId"]) == name]
+            if latest.get(record["boardId"]) == name or archive.get("supplement")]
 
 
 def load_list_prices() -> dict[str, dict]:
@@ -178,9 +188,10 @@ def load_list_prices() -> dict[str, dict]:
                                        archive=name)
                 continue
             cached = m["cachedInput"] if m["cachedInput"] is not None else m["input"] * 0.1
+            rate = CONVENTIONS["usdPerCny"] if m.get("currency") == "CNY" else 1
             out[m["model"]] = dict(
                 blended=(STANDARD_MIX["cache"] * cached + STANDARD_MIX["input"] * m["input"]
-                         + STANDARD_MIX["output"] * m["output"]),
+                         + STANDARD_MIX["output"] * m["output"]) / rate,
                 # 旧档没有分级字段，按当时的口径一律视为官方标价。
                 tier=m.get("priceTier", "official"), confidence=m.get("priceConfidence", "high"),
                 source=m.get("source") or None, archive=name,
@@ -190,7 +201,7 @@ def load_list_prices() -> dict[str, dict]:
 
 def main() -> None:
     scores, list_prices = load_scores(), load_list_prices()
-    boards_meta = {b["boardId"]: b for archive in score_archives() for b in archive["boards"]}
+    boards_meta = {b["boardId"]: b for archive in score_archives() if not archive.get("supplement") for b in archive["boards"]}
 
     points, configuration_points, base_of, plan_ids = [], [], {}, {}
     with (DATA / "adopted.csv").open(encoding="utf-8-sig") as f:
@@ -220,6 +231,7 @@ def main() -> None:
                 api_price_tier=listed.get("tier"), api_price_confidence=listed.get("confidence"),
                 api_price_source=listed.get("source"), api_price_archive=listed.get("archive"),
                 d=round(real / lb, 4) if lb else None, confidence=r["confidence"], tier=r["chart_tier"], source=r["source"], note=r["decision_note"],
+                unmetered=r.get("unmetered") == "true", promo_until=r.get("promo_until") or None,
             )
             for b in BOARDS:
                 options = candidates(r, scores, b)
@@ -280,7 +292,7 @@ def main() -> None:
                     plan_worst_multiple=plan["worst_multiple"], plan_worst_model=plan["worst_model"],
                 ))
     (OUT / "points.json").write_text(json.dumps(dict(
-        generatedAt="2026-09-09", mix={k: round(v, 4) for k, v in STANDARD_MIX.items() if isinstance(v, (int, float))},
+        generatedAt="2026-09-13", mix={k: round(v, 4) for k, v in STANDARD_MIX.items() if isinstance(v, (int, float))},
         listPriceArchives=list(LIST_PRICE_FILES),
         boards={b: dict(name=boards_meta[b]["name"].replace("🏆 ", ""), metric=boards_meta[b]["metric"], url=boards_meta[b]["url"], snapshot=boards_meta[b]["snapshotDate"]) for b in BOARDS},
         points=points,

@@ -114,14 +114,56 @@ test("All source point values and stable IDs survive the adapter, including null
     );
   }
 });
+test("DeepSeek V4.1 Flash uses official USD off-peak and peak API prices", () => {
+  const offPeak = data.points.find((p) => p.id === "deepseek_v41_flash_offpeak::deepseek-v4.1-flash")!;
+  const peak = data.points.find((p) => p.id === "deepseek_v41_flash_peak::deepseek-v4.1-flash")!;
+  assert.equal(offPeak.real_usd_per_mtok, 0.00825);
+  assert.equal(peak.real_usd_per_mtok, 0.0165);
+});
+test("Step Plan CN uses official Credit pools and CNY list prices", () => {
+  const mini35 = data.points.find((p) => p.id === "stepfun_mini_cn::step-3.5-flash")!;
+  const max37 = data.points.find((p) => p.id === "stepfun_max_cn::step-3.7-flash")!;
+  assert.equal(mini35.monthly_yi, 25.173);
+  assert.equal(mini35.real_usd_per_mtok, 0.00287);
+  assert.equal(mini35.channel, "StepFun");
+  assert.equal(max37.monthly_yi, 1247.563);
+  assert.equal(accessLine(mini35), "StepFun");
+});
+test("Devin Pro SWE-2 is an unmetered $0 promo point that joins and leads the TB4 frontier on a dedicated slot", () => {
+  const p = data.points.find((p) => p.id === "devin_pro::swe-2")!;
+  assert.ok(p);
+  assert.equal(p.real_usd_per_mtok, 0);
+  assert.equal(p.unmetered, true);
+  assert.equal(p.promo_until, "2026-10-31");
+  assert.equal(p.monthly_yi, null);
+  assert.equal(p.channel, "Devin");
+  assert.equal(accessLine(p), "Devin");
+  const rows = rowsFor(data, { ...defaultState(), board: "terminal_bench_4" });
+  const gs = groups(rows);
+  const zero = gs.find((g) => g.price === 0)!;
+  assert.ok(zero, "unmetered group is plotted");
+  assert.ok(zero.plotPrice > 0 && zero.plotPrice < Math.min(...gs.filter((g) => g.price > 0).map((g) => g.price)));
+  assert.equal(zero.rows[0].mapping?.score_is_self_reported, true);
+  const front = pareto(gs);
+  assert.equal(front[0].key, zero.key);
+  assert.ok(front.every((g, i) => i === 0 || g.price > 0));
+  // Allowance ranking has no token denominator for it; price ranking keeps it.
+  assert.ok(!rowsFor(data, { ...defaultState(), view: "allowance" }).some((r) => r.point.id === p.id));
+  assert.ok(rowsFor(data, { ...defaultState(), view: "price" }).some((r) => r.point.id === p.id));
+});
+test("Command Code GOAT DeepSeek V4.1 Flash uses $40 monthly credits", () => {
+  const p = data.points.find((p) => p.id === "command_code_goat::deepseek-v4.1-flash")!;
+  assert.equal(p.monthly_yi, 48.485);
+  assert.equal(p.real_usd_per_mtok, 0.00206);
+});
 test("Default selection includes every adopted point, including unscored models", () => {
   const rows = rowsFor(data, defaultState());
   assert.equal(new Set(rows.map((r) => r.point.id)).size, data.points.length);
   assert.ok(rows.some((r) => r.score === null));
 });
-test("All four boards preserve all references; optional summary takes only matching maximum", () => {
+test("All boards preserve all references; optional summary takes only matching maximum", () => {
   for (const board of Object.keys(data.boards)) {
-    const s = { ...defaultState(), board };
+    const s = { ...defaultState(), board, configuration: "all" as const };
     const rows = rowsFor(data, s);
     assert.equal(
       rows.filter((r) => r.mapping).length,
@@ -227,7 +269,7 @@ test("Strict dominance retains both identical plans and drops equal-price lower 
     ["a", "b", "e"],
   );
 });
-test("Four-board frontiers agree with independent pairwise dominance", () => {
+test("All board frontiers agree with independent pairwise dominance", () => {
   for (const board of Object.keys(data.boards)) {
     const gs = groups(rowsFor(data, { ...defaultState(), board }));
     const expected = gs.filter(
@@ -341,7 +383,7 @@ test("Chart names never overlap each other and leave the plot rather than collid
   const group = (id: string, name: string): Group => {
     const r = row(id, 0.01, 1500);
     r.point = { ...r.point, model_display: name };
-    return { key: id, price: 0.01, score: 1500, rows: [r] };
+    return { key: id, price: 0.01, plotPrice: 0.01, score: 1500, rows: [r] };
   };
   const place = (
     spots: { x: number; y: number }[],
@@ -410,7 +452,7 @@ test("Chart names never overlap each other and leave the plot rather than collid
 test("Labels yield to ordinary points when every candidate slot is occupied", () => {
   const r = row("blocked", 0.01, 1500);
   r.point = { ...r.point, model_display: "Claude Opus 5" };
-  const g: Group = { key: r.key, price: 0.01, score: 1500, rows: [r] };
+  const g: Group = { key: r.key, price: 0.01, plotPrice: 0.01, score: 1500, rows: [r] };
   const anchor = { key: g.key, x: 120, y: 100, r: FRONTIER_RADIUS };
   const dots = [];
   for (let x = 6; x < 240; x += 12)

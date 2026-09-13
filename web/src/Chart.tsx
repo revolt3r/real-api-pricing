@@ -18,6 +18,10 @@ import {
   price,
   allowance,
   number,
+  unmeteredNote,
+  selfReportTag,
+  variantLabel,
+  ZERO_SLOT_RATIO,
 } from "./domain";
 import {
   type AnchorPoint,
@@ -54,12 +58,14 @@ export default function Chart({
   rows,
   state,
   data,
+  theme,
   onSelect,
   handle,
 }: {
   rows: Row[];
   state: State;
   data: SiteData;
+  theme: "light" | "dark";
   onSelect: (rows: Row[]) => void;
   handle: React.RefObject<ChartHandle | null>;
 }) {
@@ -97,6 +103,26 @@ export default function Chart({
     return () => media.removeEventListener("change", change);
   }, []);
   const zh = state.lang === "zh";
+  const dark = theme === "dark";
+  const chartTheme = dark
+    ? {
+        text: "#aeb5bf",
+        surface: "#15181c",
+        elevated: "#1d2126",
+        border: "#353b44",
+        ink: "#eef0f2",
+        frontier: "#eef0f2",
+        grid: "#292e35",
+      }
+    : {
+        text: "#737780",
+        surface: "#fff",
+        elevated: "#fff",
+        border: "#e1e4e8",
+        ink: "#20242a",
+        frontier: "#282b32",
+        grid: "#f0f1f3",
+      };
   useEffect(() => {
     let cancelled = false;
     let cleanup = () => {};
@@ -118,18 +144,18 @@ export default function Chart({
             family:
               "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
             size: 12,
-            color: "#737780",
+            color: chartTheme.text,
           },
-          paper_bgcolor: "#fff",
-          plot_bgcolor: "#fff",
+          paper_bgcolor: chartTheme.surface,
+          plot_bgcolor: chartTheme.surface,
           margin: { l: mobile ? 50 : 68, r: mobile ? 22 : 48, t: 48, b: 65 },
           showlegend: false,
           hovermode: "closest",
           dragmode: "pan",
           hoverlabel: {
-            bgcolor: "#fff",
-            bordercolor: "#e1e4e8",
-            font: { color: "#20242a", size: 12 },
+            bgcolor: chartTheme.elevated,
+            bordercolor: chartTheme.border,
+            font: { color: chartTheme.ink, size: 12 },
           },
           height: mobile ? 470 : 540,
         };
@@ -148,7 +174,9 @@ export default function Chart({
           textGroups = textLabelGroups(gs, front, state.labels);
           logoMap = await logoUrlMap(front.map((g) => labelProvider(g)));
           if (cancelled) return;
-          const prices = gs.map((g) => g.price);
+          const prices = gs.map((g) => g.plotPrice);
+          const hasZero = gs.some((g) => g.price === 0);
+          const zeroX = hasZero ? gs.find((g) => g.price === 0)!.plotPrice : 0;
           const lo = prices.length ? Math.log10(Math.min(...prices)) : -3,
             hi = prices.length ? Math.log10(Math.max(...prices)) : 1;
           const pad = Math.max((hi - lo) * 0.08, 0.2);
@@ -161,7 +189,7 @@ export default function Chart({
               mode: "lines",
               x: line.x,
               y: line.y,
-              line: { color: "#282b32", width: 1.6 },
+              line: { color: chartTheme.frontier, width: 1.6 },
               hoverinfo: "skip",
             });
           }
@@ -175,14 +203,17 @@ export default function Chart({
             traces.push({
               type: "scatter",
               mode: "markers",
-              x: selected.map((g) => g.price),
+              x: selected.map((g) => g.plotPrice),
               y: selected.map((g) => g.score),
               customdata: selected.map((g) => g.key),
               marker: {
                 color: selected.map((g) => color(g.rows[0].point)),
                 size: 8,
                 opacity: isFront ? 0 : 0.43,
-                line: { color: "#fff", width: isFront ? 0 : 1.4 },
+                line: {
+                  color: dark ? chartTheme.text : chartTheme.surface,
+                  width: dark ? 1.2 : isFront ? 0 : 1.4,
+                },
               },
               // Hover text is our own card: keep the events, drop Plotly's label.
               hoverinfo: "none",
@@ -197,19 +228,48 @@ export default function Chart({
                 : "Real price · USD / million tokens     → Less expensive",
               font: { size: 12 },
             },
-            gridcolor: "#f0f1f3",
+            gridcolor: chartTheme.grid,
             zeroline: false,
             tickprefix: "$",
             tickformat: ".3~g",
             ticks: "",
             fixedrange: false,
           };
+          if (hasZero) {
+            // The $0 slot is not a log value: label it explicitly and fence it
+            // off from the priced axis with a dotted separator.
+            const fence = zeroX * Math.sqrt(ZERO_SLOT_RATIO);
+            const ticks = [10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002, 0.001, 0.0005, 0.0002, 0.0001]
+              .filter((v) => v > fence && v <= xmax && v >= xmin);
+            layout.xaxis = {
+              ...layout.xaxis,
+              tickprefix: "",
+              tickformat: "",
+              tickvals: [...ticks, zeroX],
+              ticktext: [
+                ...ticks.map((v) => "$" + v),
+                zh ? "≈$0<br>不计额度" : "≈$0<br>unmetered",
+              ],
+            };
+            layout.shapes = [
+              {
+                type: "line",
+                xref: "x",
+                yref: "paper",
+                x0: fence,
+                x1: fence,
+                y0: 0,
+                y1: 1,
+                line: { color: chartTheme.border, width: 1, dash: "dot" },
+              },
+            ];
+          }
           layout.yaxis = {
             title: {
               text: data.boards[state.board].metric,
               font: { size: 12 },
             },
-            gridcolor: "#eaecf0",
+            gridcolor: chartTheme.grid,
             zeroline: false,
             ticks: "",
             automargin: true,
@@ -233,8 +293,13 @@ export default function Chart({
               ? r.point.real_usd_per_mtok
               : (r.point.monthly_yi ?? 0) / (zh ? 1 : 10),
           );
-          const min = vals.length ? Math.min(...vals) : 1;
-          const max = vals.length ? Math.max(...vals) : 10;
+          // Unmetered $0 rows cannot sit on a log bar axis: draw them as a sliver at
+          // the axis floor and say "≈$0" in the text instead.
+          const positive = vals.filter((v) => v > 0);
+          const min = positive.length ? Math.min(...positive) : 1;
+          const max = positive.length ? Math.max(...positive) : 10;
+          const floor = 10 ** (Math.log10(min) - 0.15);
+          const barVals = vals.map((v) => (v > 0 ? v : floor * 1.03));
           for (const r of sorted) rowLookup.set(r.key, [r]);
           const ticks = sorted.map(
             (r, i) =>
@@ -244,7 +309,7 @@ export default function Chart({
             {
               type: "bar",
               orientation: "h",
-              x: vals,
+              x: barVals,
               y: sorted.map((r) => r.key),
               customdata: sorted.map((r) => r.key),
               marker: {
@@ -254,7 +319,10 @@ export default function Chart({
               text: sorted.map(
                 (r) =>
                   (state.view === "price"
-                    ? price(r.point.real_usd_per_mtok)
+                    ? price(r.point.real_usd_per_mtok) +
+                      (r.point.real_usd_per_mtok === 0
+                        ? " · " + unmeteredNote(r.point, state.lang)
+                        : "")
                     : allowance(r.point, state.lang)) +
                   " · " +
                   r.point.channel,
@@ -281,7 +349,7 @@ export default function Chart({
               type: "log",
               range: [Math.log10(min) - 0.15, Math.log10(max) + 0.35],
               side: "top",
-              gridcolor: "#f0f1f3",
+              gridcolor: chartTheme.grid,
               title: {
                 text:
                   state.view === "price"
@@ -342,7 +410,7 @@ export default function Chart({
           if (!full) return;
           const box = plotBox(full);
           setArea(box);
-          setLogos(frontierLogoViews(front, full, logoMap));
+          setLogos(frontierLogoViews(front, full, logoMap, state.lang));
           if (!box || !textGroups.length) {
             setLabels([]);
             textPlacements = [];
@@ -352,7 +420,7 @@ export default function Chart({
             const anchors = new Map<string, AnchorPoint>();
             const markers: AnchorPoint[] = [];
             for (const g of plotted) {
-              const pt = dataToPixel(full, g.price, g.score, box);
+              const pt = dataToPixel(full, g.plotPrice, g.score, box);
               if (!pt) continue;
               const marker = {
                 key: g.key,
@@ -369,6 +437,7 @@ export default function Chart({
               markers,
               box,
               mobile,
+              state.lang,
             );
           }
           setLabels(textLabelViews(textPlacements, full));
@@ -503,9 +572,9 @@ export default function Chart({
               yanchor: "top" as const,
               showarrow: false,
               text: escape(
-                `${i + 1}. ${[...new Set(g.rows.map((r) => r.point.model_display))].join(" / ")} · ${price(g.price)} / MTok · ${number(g.score, state.lang)}`,
+                `${i + 1}. ${[...new Set(g.rows.map((r) => r.point.model_display))].join(" / ")} · ${price(g.price)} / MTok${g.price === 0 ? " · " + unmeteredNote(g.rows[0].point, state.lang) : ""} · ${number(g.score, state.lang)}${g.rows[0].mapping?.score_is_self_reported ? " · " + selfReportTag(state.lang) : ""}`,
               ),
-              font: { size: 12, color: "#303740" },
+              font: { size: 12, color: chartTheme.ink },
             }));
             try {
               await Plotly.newPlot(
@@ -529,7 +598,7 @@ export default function Chart({
                   const anchors = new Map<string, AnchorPoint>();
                   const markers: AnchorPoint[] = [];
                   for (const g of plotted) {
-                    const pt = dataToPixel(exportFull, g.price, g.score, box);
+                    const pt = dataToPixel(exportFull, g.plotPrice, g.score, box);
                     if (!pt) continue;
                     const marker = {
                       key: g.key,
@@ -546,6 +615,7 @@ export default function Chart({
                     markers,
                     box,
                     false,
+                    state.lang,
                   );
                 }
               }
@@ -561,7 +631,7 @@ export default function Chart({
               await Plotly.relayout(exportHost, {
                 annotations: [...baked.annotations, ...keyAnnotations],
                 images: baked.images,
-                shapes: baked.shapes,
+                shapes: [...(layout.shapes ?? []), ...baked.shapes],
               });
               await Plotly.downloadImage(exportHost, {
                 format,
@@ -624,6 +694,7 @@ export default function Chart({
     data,
     handle,
     small,
+    theme,
   ]);
   const hoverGroup = hover
     ? chartGroups.find((g) => g.key === hover.key)
@@ -755,17 +826,23 @@ export default function Chart({
             </div>
             {hoverGroup.rows[0]?.mapping?.variant && (
               <div className="hover-variant">
-                {hoverGroup.rows[0].mapping.variant}
+                {variantLabel(hoverGroup.rows[0].mapping.variant, state.lang)}
               </div>
             )}
             <div className="hover-stats">
               <span>
                 <small>{zh ? "真实单价" : "Real price"}</small>
                 {price(hoverGroup.price)} <i>/ MTok</i>
+                {hoverPoint && hoverGroup.price === 0 && (
+                  <i> · {unmeteredNote(hoverPoint, state.lang)}</i>
+                )}
               </span>
               <span>
                 <small>{zh ? "分数" : "Score"}</small>
                 {number(hoverGroup.score, state.lang)}
+                {hoverGroup.rows[0]?.mapping?.score_is_self_reported && (
+                  <i> · {selfReportTag(state.lang)}</i>
+                )}
               </span>
             </div>
             <div className="hover-foot">
@@ -810,7 +887,13 @@ export default function Chart({
                     " / ",
                   )}
                   <small>
-                    {price(g.price)} / MTok · {number(g.score, state.lang)}
+                    {price(g.price)} / MTok
+                    {g.price === 0 ? ` · ${unmeteredNote(g.rows[0].point, state.lang)}` : ""}
+                    {" · "}
+                    {number(g.score, state.lang)}
+                    {g.rows[0].mapping?.score_is_self_reported
+                      ? ` · ${selfReportTag(state.lang)}`
+                      : ""}
                   </small>
                 </span>
               </button>

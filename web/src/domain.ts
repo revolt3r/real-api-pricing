@@ -37,7 +37,8 @@ export const colors: Record<string, string> = {
   Ollama: "#A0785C",
   Xiaomi: "#FFA000",
   Tencent: "#26C6DA",
-  StepFun: "#00D4C8",
+  StepFun: "#00F4E5",
+  Devin: "#7C3AED",
 };
 export const defaultState = (): State => ({
   feeBand: "all",
@@ -53,7 +54,7 @@ export const defaultState = (): State => ({
   harness: [],
   effort: [],
   modes: [],
-  configuration: "all",
+  configuration: "summary",
   frontier: true,
   labels: "frontier",
   query: "",
@@ -166,13 +167,21 @@ export function tableRows(rows: Row[], s: State): Row[] {
       );
     });
 }
+/** Unmetered ($0) groups are drawn this far to the right of the cheapest priced group. */
+export const ZERO_SLOT_RATIO = 3.5;
+export const isUnmetered = (p: Point) =>
+  !!p.unmetered && p.real_usd_per_mtok === 0;
+export function zeroSlot(prices: number[]): number {
+  const priced = prices.filter((v) => v > 0);
+  return (priced.length ? Math.min(...priced) : 0.001) / ZERO_SLOT_RATIO;
+}
 export function groups(rows: Row[]): Group[] {
   const map = new Map<string, Group>();
   for (const r of rows)
     if (
       r.score !== null &&
       Number.isFinite(r.score) &&
-      r.point.real_usd_per_mtok > 0
+      (r.point.real_usd_per_mtok > 0 || isUnmetered(r.point))
     ) {
       const key = `${r.point.real_usd_per_mtok}|${r.score}`;
       const g = map.get(key);
@@ -181,11 +190,15 @@ export function groups(rows: Row[]): Group[] {
         map.set(key, {
           key,
           price: r.point.real_usd_per_mtok,
+          plotPrice: r.point.real_usd_per_mtok,
           score: r.score,
           rows: [r],
         });
     }
-  return [...map.values()];
+  const out = [...map.values()];
+  const slot = zeroSlot(out.map((g) => g.price));
+  for (const g of out) if (g.price === 0) g.plotPrice = slot;
+  return out;
 }
 export function pareto(gs: Group[]): Group[] {
   let best = -Infinity;
@@ -206,7 +219,7 @@ export function frontierPath(
 ) {
   if (!front.length) return { x: [], y: [] };
   return {
-    x: [minPrice, ...front.map((g) => g.price), maxPrice],
+    x: [minPrice, ...front.map((g) => g.plotPrice), maxPrice],
     y: [
       front[0].score,
       ...front.map((g) => g.score),
@@ -283,7 +296,9 @@ export const number = (n: number | null, lang = "en", digits = 3) =>
 export const price = (n: number | null) =>
   n === null
     ? "—"
-    : "$" +
+    : n === 0
+      ? "≈$0"
+      : "$" +
       new Intl.NumberFormat("en-US", { maximumSignificantDigits: 4 }).format(n);
 export const allowance = (p: Point, lang: string) =>
   p.monthly_yi === null
@@ -308,7 +323,27 @@ export const multiple = (n: number | null, lang = "en") =>
 export const safeUrl = (url: string) =>
   /^https?:\/\//i.test(url) || url.startsWith("/data/") ? url : undefined;
 export const manufacturer = (vendor: string) =>
-  vendor === "Muse" ? "Meta" : vendor;
+  vendor === "Muse" ? "Meta" : vendor === "Cognition" ? "Devin" : vendor;
+/** Short promo/unmetered qualifier for a $0 point, or "" for priced points. */
+export function unmeteredNote(p: Point, lang: string): string {
+  if (!isUnmetered(p)) return "";
+  const until = p.promo_until;
+  if (!until) return lang === "zh" ? "不计额度" : "unmetered";
+  return lang === "zh"
+    ? `促销至 ${until}，不计额度`
+    : `promo until ${until}, unmetered`;
+}
+/** Short badge for a vendor self-reported score. */
+export function selfReportTag(lang: string): string {
+  return lang === "zh" ? "厂商自报" : "self-reported";
+}
+/** Localize the bracketed provenance tags baked into variant names. */
+export function variantLabel(variant: string, lang: string): string {
+  if (lang !== "zh") return variant;
+  return variant
+    .replaceAll("[vendor self-report]", "[厂商自报]")
+    .replaceAll("[AA estimate]", "[AA 估计值]");
+}
 export const isThirdParty = (p: Point) => p.channel !== manufacturer(p.vendor);
 export const accessLine = (p: Point) =>
   isThirdParty(p)
@@ -326,6 +361,7 @@ export function displayPlan(plan: string, lang: string): string {
     闲时: "Off-peak",
     中间值: "Midpoint",
     忙时: "Peak",
+    "促销至 ": "promo until ",
   };
   return Object.entries(words).reduce(
     (s, [from, to]) => s.replaceAll(from, to),
@@ -357,6 +393,7 @@ export function csv(rows: Row[], lang: string): string {
           "评测配置",
           "分数",
           "AA 估计值",
+          "厂商自报",
           "Harness",
           "Effort",
           "分数来源",
@@ -384,6 +421,7 @@ export function csv(rows: Row[], lang: string): string {
           "Benchmark configuration",
           "Score",
           "AA estimated score",
+          "Vendor self-reported",
           "Harness",
           "Effort",
           "Score source",
@@ -420,6 +458,7 @@ export function csv(rows: Row[], lang: string): string {
         r.mapping?.variant,
         r.score,
         r.mapping?.score_is_estimated,
+        r.mapping?.score_is_self_reported,
         r.mapping?.agent_harness,
         r.mapping?.reasoning_effort,
         r.mapping?.source,

@@ -17,6 +17,10 @@ export interface Point {
   monthly_yi: number | null;
   monthly_tokens: number | null;
   real_usd_per_mtok: number;
+  /** Bundled model that draws no quota: real price is $0 with no token denominator. */
+  unmetered?: boolean;
+  /** ISO date when a promotional unmetered period ends, if any. */
+  promo_until?: string | null;
   list_blended_usd_per_mtok: number | null;
   /** The row's monthly allowance priced at the provider's official metered API rates. */
   api_cost_usd_month: number | null;
@@ -43,6 +47,7 @@ export interface Configuration {
   variant: string;
   score: number;
   score_is_estimated?: boolean | null;
+  score_is_self_reported?: boolean | null;
   agent_harness: string | null;
   reasoning_effort: string | null;
   service_mode: string | null;
@@ -122,7 +127,10 @@ export interface Row {
 }
 export interface Group {
   key: string;
+  /** Real price used for dominance and display; 0 for unmetered points. */
   price: number;
+  /** Position on the log axis; unmetered groups sit on a dedicated "$0" slot. */
+  plotPrice: number;
   score: number;
   rows: Row[];
 }

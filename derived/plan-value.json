@@ -9,9 +9,47 @@
  },
  "listPriceArchives": [
   "list-prices-2026-09.json",
-  "list-prices-round2-2026-09-09.json"
+  "list-prices-deepseek-v41-round1-2026-09-09.json",
+  "list-prices-round2-2026-09-09.json",
+  "list-prices-deepseek-v41-round2-2026-09-10.json",
+  "list-prices-stepfun-round1-2026-09-10.json"
  ],
  "plans": [
+  {
+   "plan_id": "stepfun_max_cn",
+   "plan": "Step Plan Max (¥699)",
+   "channel": "StepFun",
+   "fee_usd": 103.12,
+   "headline_multiple": 57.22,
+   "headline_cost_usd_month": 5900.82,
+   "headline_models": [
+    "Step 3.5 Flash",
+    "Step 3.7 Flash"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 1,
+   "best_multiple": 57.22,
+   "best_model": "Step 3.5 Flash",
+   "worst_multiple": 57.22,
+   "worst_model": "Step 3.7 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 57.22,
+    "cost": 5900.82,
+    "models": [
+     "Step 3.5 Flash",
+     "Step 3.7 Flash"
+    ],
+    "model_ids": [
+     "step-3.5-flash",
+     "step-3.7-flash"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
   {
    "plan_id": "claude_pro",
    "plan": "Claude Pro",
@@ -145,6 +183,41 @@
      "third_party_rate": false
     }
    ]
+  },
+  {
+   "plan_id": "stepfun_pro_cn",
+   "plan": "Step Plan Pro (¥199)",
+   "channel": "StepFun",
+   "fee_usd": 29.36,
+   "headline_multiple": 40.2,
+   "headline_cost_usd_month": 1180.16,
+   "headline_models": [
+    "Step 3.5 Flash",
+    "Step 3.7 Flash"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 1,
+   "best_multiple": 40.2,
+   "best_model": "Step 3.5 Flash",
+   "worst_multiple": 40.2,
+   "worst_model": "Step 3.7 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 40.2,
+    "cost": 1180.16,
+    "models": [
+     "Step 3.5 Flash",
+     "Step 3.7 Flash"
+    ],
+    "model_ids": [
+     "step-3.5-flash",
+     "step-3.7-flash"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
   },
   {
    "plan_id": "glm_coding_pro_cn_old_offpeak",
@@ -743,6 +816,41 @@
    ]
   },
   {
+   "plan_id": "stepfun_plus_cn",
+   "plan": "Step Plan Plus (¥99)",
+   "channel": "StepFun",
+   "fee_usd": 14.6,
+   "headline_multiple": 16.17,
+   "headline_cost_usd_month": 236.03,
+   "headline_models": [
+    "Step 3.5 Flash",
+    "Step 3.7 Flash"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 1,
+   "best_multiple": 16.17,
+   "best_model": "Step 3.5 Flash",
+   "worst_multiple": 16.17,
+   "worst_model": "Step 3.7 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 16.17,
+    "cost": 236.03,
+    "models": [
+     "Step 3.5 Flash",
+     "Step 3.7 Flash"
+    ],
+    "model_ids": [
+     "step-3.5-flash",
+     "step-3.7-flash"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
    "plan_id": "glm_coding_lite_cn_old_mid",
    "plan": "GLM Coding Lite (老客 ¥49) 中间值",
    "channel": "Zhipu",
@@ -1234,6 +1342,41 @@
    "exceptions": []
   },
   {
+   "plan_id": "stepfun_mini_cn",
+   "plan": "Step Plan Mini (¥49)",
+   "channel": "StepFun",
+   "fee_usd": 7.23,
+   "headline_multiple": 8.16,
+   "headline_cost_usd_month": 59.01,
+   "headline_models": [
+    "Step 3.5 Flash",
+    "Step 3.7 Flash"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 1,
+   "best_multiple": 8.16,
+   "best_model": "Step 3.5 Flash",
+   "worst_multiple": 8.16,
+   "worst_model": "Step 3.7 Flash",
+   "varies": false,
+   "headline": {
+    "multiple": 8.16,
+    "cost": 59.01,
+    "models": [
+     "Step 3.5 Flash",
+     "Step 3.7 Flash"
+    ],
+    "model_ids": [
+     "step-3.5-flash",
+     "step-3.7-flash"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
    "plan_id": "kimi_moderato_cn",
    "plan": "Kimi 会员 99",
    "channel": "Kimi",
@@ -1536,7 +1679,6 @@
    "headline_multiple": 6.0,
    "headline_cost_usd_month": 60.01,
    "headline_models": [
-    "DeepSeek V4 Flash",
     "GLM 5.1",
     "GLM 5.2",
     "Kimi K2.6",
@@ -1547,7 +1689,7 @@
     "Qwen3.6 Plus"
    ],
    "headline_inherited": false,
-   "model_count": 26,
+   "model_count": 25,
    "value_group_count": 12,
    "best_multiple": 21.37,
    "best_model": "MiMo V2.5 Pro",
@@ -1558,7 +1700,6 @@
     "multiple": 6.0,
     "cost": 60.01,
     "models": [
-     "DeepSeek V4 Flash",
      "GLM 5.1",
      "GLM 5.2",
      "Kimi K2.6",
@@ -1569,7 +1710,6 @@
      "Qwen3.6 Plus"
     ],
     "model_ids": [
-     "deepseek-v4-flash",
      "glm-5.1",
      "glm-5.2",
      "kimi-k2.6",
@@ -1647,13 +1787,13 @@
      "multiple": 3.0,
      "cost": 30.0,
      "models": [
-      "DeepSeek V4 Flash Vision Exp",
       "DeepSeek V4 Pro",
+      "DeepSeek V4.1 Flash",
       "Hy4 Preview"
      ],
      "model_ids": [
-      "deepseek-v4-flash-vision-exp",
       "deepseek-v4-pro",
+      "deepseek-v4.1-flash",
       "hy4-preview"
      ],
      "inherited": false,
@@ -2059,10 +2199,10 @@
     "MiniMax M2.7"
    ],
    "headline_inherited": false,
-   "model_count": 10,
+   "model_count": 11,
    "value_group_count": 4,
    "best_multiple": 6.0,
-   "best_model": "DeepSeek V4 Flash",
+   "best_model": "DeepSeek V4.1 Flash",
    "worst_multiple": 1.5,
    "worst_model": "MiniMax M3",
    "varies": false,
@@ -2094,11 +2234,13 @@
      "cost": 600.0,
      "models": [
       "DeepSeek V4 Flash",
-      "DeepSeek V4 Pro"
+      "DeepSeek V4 Pro",
+      "DeepSeek V4.1 Flash"
      ],
      "model_ids": [
       "deepseek-v4-flash",
-      "deepseek-v4-pro"
+      "deepseek-v4-pro",
+      "deepseek-v4.1-flash"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -2145,10 +2287,10 @@
     "MiniMax M2.7"
    ],
    "headline_inherited": false,
-   "model_count": 10,
+   "model_count": 11,
    "value_group_count": 4,
    "best_multiple": 6.0,
-   "best_model": "DeepSeek V4 Flash",
+   "best_model": "DeepSeek V4.1 Flash",
    "worst_multiple": 1.5,
    "worst_model": "MiniMax M3",
    "varies": false,
@@ -2180,11 +2322,13 @@
      "cost": 120.0,
      "models": [
       "DeepSeek V4 Flash",
-      "DeepSeek V4 Pro"
+      "DeepSeek V4 Pro",
+      "DeepSeek V4.1 Flash"
      ],
      "model_ids": [
       "deepseek-v4-flash",
-      "deepseek-v4-pro"
+      "deepseek-v4-pro",
+      "deepseek-v4.1-flash"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -2263,15 +2407,16 @@
     "Hy4 Preview",
     "Kimi K3",
     "Muse Spark 1.2",
-    "Muse Spark 1.2 Contributor"
+    "Muse Spark 1.2 Contributor",
+    "Step 3.7 Flash"
    ],
    "headline_inherited": false,
-   "model_count": 31,
-   "value_group_count": 19,
+   "model_count": 30,
+   "value_group_count": 18,
    "best_multiple": 28.54,
    "best_model": "MiMo V2.5 Pro",
-   "worst_multiple": 1.04,
-   "worst_model": "Step 3.5 Flash",
+   "worst_multiple": 1.29,
+   "worst_model": "Grok 4.5",
    "varies": true,
    "headline": {
     "multiple": 2.0,
@@ -2285,7 +2430,8 @@
      "Hy4 Preview",
      "Kimi K3",
      "Muse Spark 1.2",
-     "Muse Spark 1.2 Contributor"
+     "Muse Spark 1.2 Contributor",
+     "Step 3.7 Flash"
     ],
     "model_ids": [
      "gemini-3.7-flash",
@@ -2296,7 +2442,8 @@
      "hy4-preview",
      "kimi-k3",
      "muse-spark-1.2",
-     "muse-spark-1.2-contributor"
+     "muse-spark-1.2-contributor",
+     "step-3.7-flash"
     ],
     "inherited": false,
     "third_party_rate": true
@@ -2315,18 +2462,6 @@
      "third_party_rate": true
     },
     {
-     "multiple": 12.0,
-     "cost": 120.0,
-     "models": [
-      "DeepSeek V4 Flash"
-     ],
-     "model_ids": [
-      "deepseek-v4-flash"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
      "multiple": 8.43,
      "cost": 84.34,
      "models": [
@@ -2334,6 +2469,18 @@
      ],
      "model_ids": [
       "qwen3.8-27b"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 8.0,
+     "cost": 80.0,
+     "models": [
+      "DeepSeek V4.1 Flash"
+     ],
+     "model_ids": [
+      "deepseek-v4.1-flash"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -2402,12 +2549,10 @@
      "multiple": 4.0,
      "cost": 40.0,
      "models": [
-      "DeepSeek V4 Flash Vision Exp",
       "DeepSeek V4 Pro",
       "GLM 5.3 Flash"
      ],
      "model_ids": [
-      "deepseek-v4-flash-vision-exp",
       "deepseek-v4-pro",
       "glm-5.3-flash"
      ],
@@ -2422,6 +2567,18 @@
      ],
      "model_ids": [
       "qwen3.7-plus"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 2.06,
+     "cost": 20.65,
+     "models": [
+      "Step 3.5 Flash"
+     ],
+     "model_ids": [
+      "step-3.5-flash"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -2501,30 +2658,6 @@
      ],
      "inherited": false,
      "third_party_rate": false
-    },
-    {
-     "multiple": 1.18,
-     "cost": 11.76,
-     "models": [
-      "Step 3.7 Flash"
-     ],
-     "model_ids": [
-      "step-3.7-flash"
-     ],
-     "inherited": false,
-     "third_party_rate": true
-    },
-    {
-     "multiple": 1.04,
-     "cost": 10.36,
-     "models": [
-      "Step 3.5 Flash"
-     ],
-     "model_ids": [
-      "step-3.5-flash"
-     ],
-     "inherited": false,
-     "third_party_rate": true
     }
    ]
   },

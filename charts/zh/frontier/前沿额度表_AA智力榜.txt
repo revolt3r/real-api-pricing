@@ -4,16 +4,17 @@ Artificial Analysis Intelligence Index v4.3 | Intelligence Index | 2026-09-09
 默认月 = 4 周，Kimi独立月池 = 周池×5；饱和使用；全口径 token；按量 API 无月额度
 同套餐各模型额度不可相加。Claude Max (9/14+)：2026-09-14起永久额度估算，非当前活动期上限。数据：adopted.csv。
 颜色 = 套餐/API 提供方；置信度 [H] 高 / [M] 中 / [L] 低；编号为排序序号，同值依次列出，不代表模型能力排名。
-API标价成本/月 = 该行采用月额度 × 官方按量三段标价（按同一标准负载加权）；括号内为该金额 ÷ 订阅月费，即这份额度按标价值几倍月费；小于1×表示订阅比直接按量买同样的token更贵。* = 标价非厂商一手价目表（厂商页面JS渲染或仅开放权重，取具名网关/追踪站，置信度低）；‡ = 该行额度本身由同套餐基准模型按标价比推导，成本数字与基准行相同，不是该模型的独立证据。- = 未找到可辩护的公开标价，留空不补造。不含缓存写入费，故为下限。
 † Kimi：¥199的K3点以K3-256K为主，约84%反推周池×5得14.51亿；K2.7纯样本11.9M/月0.76%得15.68亿；其余档按官方倍率推算。OpenCode Go按官方美元池和三段价套统一标准负载换算。
 汇率：1 USD = 6.7787 CNY（2026-09-04，中国外汇交易中心中间价，新华社转载）；人民币月费 ÷ 汇率换算美元。
 汇率来源：https://www.xinhuanet.com/20260904/4c1ce1cbf39d416997cb9c237d6f5024/c.html
-序号  套餐                           价格/月  服务模型       月额度(亿)  $/MTok   API标价成本/月   置信度  Intelligence Index  得分版本             Harness  思考强度  映射
-----  -----------------------------  -------  -------------  ----------  -------  ---------------  ------  ------------------  -------------------  -------  --------  -----------------------------
-1     ChatGPT Pro 20x                USD 200  GPT 5.6 Luna   1502.22     0.00133  4,206 (21.03×)   medium  37.5048             GPT-5.6 Luna (max)   —        max       model_configuration_reference
-2     ChatGPT Pro 20x                USD 200  GPT 5.6 Terra  240.24      0.00833  6,727 (33.63×)‡  medium  42.2515             GPT-5.6 Terra (max)  —        max       model_configuration_reference
-3     Claude Max 20x (9/14+)         USD 200  Claude Opus 5  157         0.01274  10,715 (53.58×)  medium  50.7002             Claude Opus 5 (max)  —        max       model_configuration_reference
-4     OpenCode Go                    USD 10   MiMo V2.5      89.286      0.00112  158 (15.75×)*    medium  22.3039             MiMo-V2.5            —        —         model_configuration_reference
-5     Claude Max 5x (9/14+)          USD 100  Claude Opus 5  78.5        0.01274  5,358 (53.58×)   medium  50.7002             Claude Opus 5 (max)  —        max       model_configuration_reference
-6     GLM Coding Pro (v2 ¥149) 闲时  CNY 149  GLM 5.3 Flash  76.99       0.00285  264 (11.99×)     high    41.9074             GLM-5.3-Flash        —        —         model_configuration_reference
-7     GLM Coding Pro (v2 ¥149) 闲时  CNY 149  GLM 5.3        25.4        0.00865  759 (34.55×)     high    44.8557             GLM-5.3 (max)        —        max       model_configuration_reference
+序号  套餐                           价格/月  服务模型        月额度(亿)  $/MTok   置信度  Intelligence Index  得分版本                           Harness  思考强度  映射
+----  -----------------------------  -------  --------------  ----------  -------  ------  ------------------  ---------------------------------  -------  --------  -----------------------------
+1     Step Plan Max (¥699)           CNY 699  Step 3.5 Flash  2517.31     0.00041  medium  16.9641             Step 3.5 Flash 2603 [AA estimate]  —        —         model_configuration_reference
+2     ChatGPT Pro 20x                USD 200  GPT 5.6 Luna    1502.22     0.00133  medium  37.5048             GPT-5.6 Luna (max)                 —        max       model_configuration_reference
+3     Step Plan Max (¥699)           CNY 699  Step 3.7 Flash  1247.56     0.00083  medium  19.4813             Step 3.7 Flash [AA estimate]       —        —         model_configuration_reference
+4     ChatGPT Pro 20x                USD 200  GPT 5.6 Terra   240.24      0.00833  medium  42.2515             GPT-5.6 Terra (max)                —        max       model_configuration_reference
+5     Claude Max 20x (9/14+)         USD 200  Claude Opus 5   157         0.01274  medium  50.7002             Claude Opus 5 (max)                —        max       model_configuration_reference
+6     OpenCode Go                    USD 10   MiMo V2.5       89.286      0.00112  medium  22.3039             MiMo-V2.5                          —        —         model_configuration_reference
+7     Claude Max 5x (9/14+)          USD 100  Claude Opus 5   78.5        0.01274  medium  50.7002             Claude Opus 5 (max)                —        max       model_configuration_reference
+8     GLM Coding Pro (v2 ¥149) 闲时  CNY 149  GLM 5.3 Flash   76.99       0.00285  high    41.9074             GLM-5.3-Flash                      —        —         model_configuration_reference
+9     GLM Coding Pro (v2 ¥149) 闲时  CNY 149  GLM 5.3         25.4        0.00865  high    44.8557             GLM-5.3 (max)                      —        max       model_configuration_reference
