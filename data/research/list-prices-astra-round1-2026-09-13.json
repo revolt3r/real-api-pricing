@@ -1,0 +1,55 @@
+{
+  "collectedAt": "2026-09-13",
+  "supersedes": "list-prices-stepfun-round1-2026-09-10.json",
+  "role": "First list-price entry for gpt-6-astra, now that OpenAI publishes an official rate card. Used to value each plan's adopted monthly Astra allowance at metered API rates (the api_cost_usd_month column).",
+  "roleZh": "gpt-6-astra 首个标价档案：OpenAI 现已公布官方三段价，用于把各套餐的采用月额度按 API 标价折算成美元成本（api_cost_usd_month 列）。",
+  "usdPerCny": 6.7787,
+  "priceTiers": {
+    "official": "First-party vendor pricing page read this round. High confidence.",
+    "official_indirect": "First-party rate restated in vendor docs, announcement or console help because the pricing page itself is JS-rendered or gives no three-part split. Medium confidence.",
+    "third_party": "Open-weight or wrapper-only model with no first-party rate card; a named gateway or tracker rate is recorded instead. Low confidence.",
+    "unavailable": "No defensible public rate found. Prices stay null and the API cost column stays blank; no value is invented."
+  },
+  "conventions": {
+    "unit": "USD per million tokens",
+    "regionRule": "Where a vendor publishes both an international and a domestic-CNY list, the international USD list is recorded as the base, matching the existing qwen3.7-plus decision.",
+    "promoRule": "Base fields hold the standing list price; promotional and speed/context variants stay in variants and are not used for the API cost column.",
+    "cacheFallback": "cachedInput null means the vendor publishes no cache-read rate; compute.py falls back to 0.1x input, which is the multiplier every vendor that does publish one uses.",
+    "blendRule": "The API cost column weights cachedInput/input/output by the project standard workload in conventions.json (97.5% / 2.15% / 0.35%). Cache writes are still not modeled, so API cost is a floor for providers that bill them."
+  },
+  "models": [
+    {
+      "model": "gpt-6-astra",
+      "vendor": "OpenAI",
+      "input": 10.0,
+      "cachedInput": 1.0,
+      "output": 50.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": { "input": 20.0, "cachedInput": 2.0, "output": 75.0, "note": ">272K input" },
+        "fast": { "input": 20.0, "cachedInput": 2.0, "output": 100.0, "note": "long-context Fast: 40 / 4 / 150" },
+        "batch": { "input": 5.0, "cachedInput": 0.5, "output": 25.0, "note": "long-context Batch: 10 / 1 / 37.5" },
+        "flex": { "input": 5.0, "cachedInput": 0.5, "output": 25.0, "note": "long-context Flex: 10 / 1 / 37.5" },
+        "cacheWrite": { "input": 12.5, "note": "Cache writes billed separately: standard short 12.5, long 25, batch/flex 6.25, fast 25/50. Not modeled in the API cost column, so computed API cost is a floor." }
+      },
+      "source": "https://developers.openai.com/api/docs/pricing",
+      "checkedAt": "2026-09-13",
+      "changeSincePreviousRound": "new this round",
+      "note": "New this round. First official rate card; short-context Standard rates used as base. Priority processing renamed Fast mode on 2026-07-30. Verified live against the pricing page today."
+    }
+  ],
+  "unpricedModels": [
+    "kimi-k2.7-code-highspeed",
+    "glm-5.2-fast",
+    "deepseek-v4-flash-fast",
+    "muse-spark-1.3",
+    "muse-spark-1.3-contributor",
+    "inkling",
+    "inkling-small",
+    "omen-alpha"
+  ],
+  "unpricedRationale": "Speed/Fast tiers inside wrapper products and wrapper-exclusive models have no separately published metered rate. Their API cost column stays blank; the subscription rows themselves are unaffected.",
+  "notFound": []
+}

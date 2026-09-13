@@ -12,7 +12,8 @@
   "list-prices-deepseek-v41-round1-2026-09-09.json",
   "list-prices-round2-2026-09-09.json",
   "list-prices-deepseek-v41-round2-2026-09-10.json",
-  "list-prices-stepfun-round1-2026-09-10.json"
+  "list-prices-stepfun-round1-2026-09-10.json",
+  "list-prices-astra-round1-2026-09-13.json"
  ],
  "plans": [
   {
@@ -277,8 +278,8 @@
     "GPT 5.6 Terra"
    ],
    "headline_inherited": false,
-   "model_count": 4,
-   "value_group_count": 2,
+   "model_count": 5,
+   "value_group_count": 3,
    "best_multiple": 33.63,
    "best_model": "GPT 5.6 Sol",
    "worst_multiple": 21.03,
@@ -301,6 +302,18 @@
     "third_party_rate": false
    },
    "exceptions": [
+    {
+     "multiple": 32.81,
+     "cost": 6562.92,
+     "models": [
+      "GPT-6 Astra"
+     ],
+     "model_ids": [
+      "gpt-6-astra"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
     {
      "multiple": 21.03,
      "cost": 4206.22,
@@ -726,8 +739,8 @@
     "GPT 5.6 Terra"
    ],
    "headline_inherited": false,
-   "model_count": 4,
-   "value_group_count": 2,
+   "model_count": 5,
+   "value_group_count": 3,
    "best_multiple": 16.82,
    "best_model": "GPT 5.6 Sol",
    "worst_multiple": 10.52,
@@ -750,6 +763,18 @@
     "third_party_rate": false
    },
    "exceptions": [
+    {
+     "multiple": 10.85,
+     "cost": 217.03,
+     "models": [
+      "GPT-6 Astra"
+     ],
+     "model_ids": [
+      "gpt-6-astra"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
     {
      "multiple": 10.52,
      "cost": 210.31,
@@ -1051,6 +1076,38 @@
      "third_party_rate": false
     }
    ]
+  },
+  {
+   "plan_id": "devin_max",
+   "plan": "Devin Max",
+   "channel": "Devin",
+   "fee_usd": 200.0,
+   "headline_multiple": 11.08,
+   "headline_cost_usd_month": 2216.76,
+   "headline_models": [
+    "GPT-6 Astra"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 11.08,
+   "best_model": "GPT-6 Astra",
+   "worst_multiple": 11.08,
+   "worst_model": "GPT-6 Astra",
+   "varies": false,
+   "headline": {
+    "multiple": 11.08,
+    "cost": 2216.76,
+    "models": [
+     "GPT-6 Astra"
+    ],
+    "model_ids": [
+     "gpt-6-astra"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
   },
   {
    "plan_id": "glm_coding_pro_cn_new_offpeak",

@@ -8,8 +8,9 @@ claude_max_5x,Claude Max 5x (9/14+),Anthropic,100.0,exception,12.61,1260.58,Clau
 stepfun_pro_cn,Step Plan Pro (¥199),StepFun,29.36,shared,40.2,1180.16,Step 3.5 Flash | Step 3.7 Flash,2,False,False,2,1,False,40.2,Step 3.5 Flash,40.2,Step 3.7 Flash
 glm_coding_pro_cn_old_offpeak,GLM Coding Pro (老客 ¥149) 闲时,Zhipu,21.98,shared,34.55,759.46,GLM 5.3,1,False,False,2,2,False,34.55,GLM 5.3,11.99,GLM 5.3 Flash
 glm_coding_pro_cn_old_offpeak,GLM Coding Pro (老客 ¥149) 闲时,Zhipu,21.98,exception,11.99,263.5,GLM 5.3 Flash,1,False,False,2,2,False,34.55,GLM 5.3,11.99,GLM 5.3 Flash
-chatgpt_pro_20x,ChatGPT Pro 20x,OpenAI,200.0,shared,33.63,6726.72,GPT 5.5 | GPT 5.6 Sol | GPT 5.6 Terra,3,False,False,4,2,False,33.63,GPT 5.6 Sol,21.03,GPT 5.6 Luna
-chatgpt_pro_20x,ChatGPT Pro 20x,OpenAI,200.0,exception,21.03,4206.22,GPT 5.6 Luna,1,False,False,4,2,False,33.63,GPT 5.6 Sol,21.03,GPT 5.6 Luna
+chatgpt_pro_20x,ChatGPT Pro 20x,OpenAI,200.0,shared,33.63,6726.72,GPT 5.5 | GPT 5.6 Sol | GPT 5.6 Terra,3,False,False,5,3,False,33.63,GPT 5.6 Sol,21.03,GPT 5.6 Luna
+chatgpt_pro_20x,ChatGPT Pro 20x,OpenAI,200.0,exception,32.81,6562.92,GPT-6 Astra,1,False,False,5,3,False,33.63,GPT 5.6 Sol,21.03,GPT 5.6 Luna
+chatgpt_pro_20x,ChatGPT Pro 20x,OpenAI,200.0,exception,21.03,4206.22,GPT 5.6 Luna,1,False,False,5,3,False,33.63,GPT 5.6 Sol,21.03,GPT 5.6 Luna
 glm_coding_pro_cn_old_mid,GLM Coding Pro (老客 ¥149) 中间值,Zhipu,21.98,shared,25.91,569.6,GLM 5.3,1,False,False,2,2,False,25.91,GLM 5.3,8.99,GLM 5.3 Flash
 glm_coding_pro_cn_old_mid,GLM Coding Pro (老客 ¥149) 中间值,Zhipu,21.98,exception,8.99,197.62,GLM 5.3 Flash,1,False,False,2,2,False,25.91,GLM 5.3,8.99,GLM 5.3 Flash
 glm_coding_max_cn_old_offpeak,GLM Coding Max (老客 ¥469) 闲时,Zhipu,69.19,shared,25.61,1771.87,GLM 5.3,1,False,False,2,2,False,25.61,GLM 5.3,8.89,GLM 5.3 Flash
@@ -27,8 +28,9 @@ kimi_allegro_cn,Kimi 会员 699,Kimi,103.12,shared,17.29,1782.55,Kimi K3,1,False
 kimi_allegro_cn,Kimi 会员 699,Kimi,103.12,exception,10.02,1033.35,Kimi K2.7 Code,1,False,False,2,2,False,17.29,Kimi K3,10.02,Kimi K2.7 Code
 glm_coding_pro_cn_old_peak,GLM Coding Pro (老客 ¥149) 忙时,Zhipu,21.98,shared,17.28,379.73,GLM 5.3,1,False,False,2,2,False,17.28,GLM 5.3,5.99,GLM 5.3 Flash
 glm_coding_pro_cn_old_peak,GLM Coding Pro (老客 ¥149) 忙时,Zhipu,21.98,exception,5.99,131.77,GLM 5.3 Flash,1,False,False,2,2,False,17.28,GLM 5.3,5.99,GLM 5.3 Flash
-chatgpt_plus,ChatGPT Plus,OpenAI,20.0,shared,16.82,336.34,GPT 5.5 | GPT 5.6 Sol | GPT 5.6 Terra,3,False,False,4,2,False,16.82,GPT 5.6 Sol,10.52,GPT 5.6 Luna
-chatgpt_plus,ChatGPT Plus,OpenAI,20.0,exception,10.52,210.31,GPT 5.6 Luna,1,False,False,4,2,False,16.82,GPT 5.6 Sol,10.52,GPT 5.6 Luna
+chatgpt_plus,ChatGPT Plus,OpenAI,20.0,shared,16.82,336.34,GPT 5.5 | GPT 5.6 Sol | GPT 5.6 Terra,3,False,False,5,3,False,16.82,GPT 5.6 Sol,10.52,GPT 5.6 Luna
+chatgpt_plus,ChatGPT Plus,OpenAI,20.0,exception,10.85,217.03,GPT-6 Astra,1,False,False,5,3,False,16.82,GPT 5.6 Sol,10.52,GPT 5.6 Luna
+chatgpt_plus,ChatGPT Plus,OpenAI,20.0,exception,10.52,210.31,GPT 5.6 Luna,1,False,False,5,3,False,16.82,GPT 5.6 Sol,10.52,GPT 5.6 Luna
 chatgpt_pro_5x,ChatGPT Pro 5x,OpenAI,100.0,shared,16.82,1681.68,GPT 5.5 | GPT 5.6 Sol | GPT 5.6 Terra,3,False,False,4,2,False,16.82,GPT 5.6 Sol,10.52,GPT 5.6 Luna
 chatgpt_pro_5x,ChatGPT Pro 5x,OpenAI,100.0,exception,10.52,1051.57,GPT 5.6 Luna,1,False,False,4,2,False,16.82,GPT 5.6 Sol,10.52,GPT 5.6 Luna
 stepfun_plus_cn,Step Plan Plus (¥99),StepFun,14.6,shared,16.17,236.03,Step 3.5 Flash | Step 3.7 Flash,2,False,False,2,1,False,16.17,Step 3.5 Flash,16.17,Step 3.7 Flash
@@ -40,6 +42,7 @@ glm_coding_max_cn_old_peak,GLM Coding Max (老客 ¥469) 忙时,Zhipu,69.19,exce
 supergrok_plus,SuperGrok Plus,xAI,100.0,shared,11.25,1125.06,Grok 4.6,1,False,False,1,1,False,11.25,Grok 4.6,11.25,Grok 4.6
 glm_coding_max_cn_new_offpeak,GLM Coding Max (新客 ¥1078) 闲时,Zhipu,159.03,shared,11.14,1771.87,GLM 5.3,1,False,False,2,2,False,11.14,GLM 5.3,3.87,GLM 5.3 Flash
 glm_coding_max_cn_new_offpeak,GLM Coding Max (新客 ¥1078) 闲时,Zhipu,159.03,exception,3.87,614.85,GLM 5.3 Flash,1,False,False,2,2,False,11.14,GLM 5.3,3.87,GLM 5.3 Flash
+devin_max,Devin Max,Devin,200.0,shared,11.08,2216.76,GPT-6 Astra,1,False,False,1,1,False,11.08,GPT-6 Astra,11.08,GPT-6 Astra
 glm_coding_pro_cn_new_offpeak,GLM Coding Pro (新客 ¥538) 闲时,Zhipu,79.37,shared,9.57,759.46,GLM 5.3,1,False,False,2,2,False,9.57,GLM 5.3,3.32,GLM 5.3 Flash
 glm_coding_pro_cn_new_offpeak,GLM Coding Pro (新客 ¥538) 闲时,Zhipu,79.37,exception,3.32,263.5,GLM 5.3 Flash,1,False,False,2,2,False,9.57,GLM 5.3,3.32,GLM 5.3 Flash
 supergrok,SuperGrok,xAI,30.0,shared,9.36,280.71,Grok 4.6,1,False,False,2,2,False,9.36,Grok 4.6,6.05,Grok 4.5
