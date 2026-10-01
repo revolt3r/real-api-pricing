@@ -1,6 +1,6 @@
 # Reproducing the charts
 
-Use Python 3.10+ and Node.js 20+. Install dependencies with `python -m pip install -r requirements.txt` and `npm install`.
+Use Python 3.10+ and Node.js 22.12+ (CI uses 22; the root deployment dependency requires Node.js 22). Install dependencies with `python -m pip install -r requirements.txt`, `npm ci` (repository root) and `npm --prefix web ci` (website).
 For Chinese chart text, install Microsoft YaHei or Noto Sans CJK SC. Font substitution can change the layout on other systems. Interactive HTML loads Plotly from its CDN.
 
 Run from the repository root, in order:
@@ -8,17 +8,33 @@ Run from the repository root, in order:
 ```sh
 python scripts/build_adopted.py
 python scripts/compute.py
+python scripts/readme_stats.py
 python scripts/checks/verify_benchmark_configs.py
+python scripts/checks/verify_aa_snapshot.py
+python scripts/checks/verify_deepswe.py
 python scripts/plot_svg.py
 node scripts/render_svg.cjs
 python scripts/build_html.py
 node scripts/checks/verify_configuration_html.cjs
 python scripts/plot_quotas.py
+python scripts/checks/verify_fee_bands.py
+python scripts/checks/verify_chart_labels.py
 python scripts/publish_charts.py
 python scripts/checks/verify_svg.py
+python scripts/checks/verify_label_overlap.py
 python scripts/checks/verify_four_boards.py
 python scripts/checks/verify_publication.py
+python scripts/checks/verify_palette.py
 ```
+
+CI (`.github/workflows/ci.yml`) checks the committed outputs against a fresh run:
+
+- It runs the pipeline above on Ubuntu for every PR and every push to `main`, then fails if the committed `data/`, `derived/` or text-comparable `charts/` outputs (tables, interactive HTML, hand-written Pareto SVGs) differ from a fresh run.
+- `python scripts/readme_stats.py --check` fails on stale README statistics; it now also covers `data/README.md`.
+- On pull requests the data job runs `python scripts/checks/verify_snapshot_date.py --base FETCH_HEAD`, which fails when `data/adopted.csv` changed without `conventions.json` `updatedAt` advancing past the base branch — or being equal to today's date when the base is already today.
+- PNGs and matplotlib SVGs depend on the rendering machine's fonts, so CI rebuilds them only to feed the checks; render and commit them locally.
+- `verify_label_overlap.py` measures real glyph boxes and therefore needs the chart fonts (Microsoft YaHei / Noto Sans CJK SC); it prints a SKIP line and passes under `CHART_FONT_FALLBACK=1`.
+- A second job runs the website's `npm test` and `npm run build`.
 
 On Windows, set `PYTHONIOENCODING=utf-8` if the console cannot print Chinese filenames. `plot_static.py` is a compatibility entry point for `plot_svg.py`.
 
@@ -28,14 +44,17 @@ On Windows, set `PYTHONIOENCODING=utf-8` if the console cannot print Chinese fil
 - `data/raw/`: aggregate usage evidence, retained for traceability.
 - `data/conventions.json`: shared calculation conventions and exchange rate.
 - `data/research/list-prices-*.json`: dated official API list prices, oldest to newest, listed in `compute.py`'s `LIST_PRICE_FILES`. A later archive overrides a model's rate; models it omits keep the earlier rate. These feed `list_blended_usd_per_mtok` and the API cost column. To refresh prices, add a new dated archive and append it to that tuple rather than editing an existing one.
+- `config/channel-colors.json`: the single channel palette for the website and every Python chart; its `channels` array is also the single id-prefix → channel map.
+- `config/allowance-fee-bands.json`: monthly-fee band boundaries shared by the website and the Python overview charts.
 - `scripts/build_adopted.py`: adopted values, confidence and rationale; generates `data/adopted.csv`.
 - `derived/`: price/score summary pairs, lossless benchmark configurations, explicit plan/configuration reference mappings and `plan-value.*` (per-subscription value: the shared multiple plus each exception group). Run `compute.py` to regenerate all of them. `plot_quotas.py` reads `plan-value.json` for the plan-value chart, and a web test asserts the site's client-side grouping matches it.
 - `charts/`: public bilingual charts and tables; start with `charts/README.md`. English and Chinese filenames live in `en/` and `zh/`, grouped into `pareto/`, `overview/` and `frontier/`.
 - `_build/`: ignored intermediate renders, interactive HTML and audit reports. `publish_charts.py` exports full-data Pareto charts and all overview/frontier figures to `charts/`. Selected-data renders are never published.
 - `scripts/checks/`: coordinate, frontier and language checks.
+- `web/`: the interactive site (Vite/React); see [web/README.md](web/README.md).
 
 Older `data/subscription-quotas*.json`, `data/subscriptions.json` and claim archives are historical evidence, not current build inputs. The build uses the adoption script and dated research scores. Local `_backup/` and caches are ignored by Git and are not publication assets.
 
 ## Publication status
 
-Original software is licensed under MIT; third-party attribution and license boundaries are documented in SOURCES.md. Data files are the documented public redacted edition; original evidence is preserved only in ignored local backups. Aggregate measurements remain for reproducibility. See PUBLICATION.md for the redaction scope. Public chart discovery starts at charts/README.md; all full-data charts, both languages and both SVG/PNG formats are retained.
+License and attribution boundaries: [SOURCES.md](SOURCES.md). Redaction scope and local-backup policy: [PUBLICATION.md](PUBLICATION.md).

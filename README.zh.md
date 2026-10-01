@@ -1,41 +1,128 @@
-## [打开交互网站 →](https://real-api-pricing.vercel.app)
-
-自选模型，对比价格与额度 · 支持中英文
-
 [English](README.md) | **中文**
 
 # 真实 API 定价
 
-**真实单价 = 订阅月费 ÷ 每月实际可用 token。**
+AI 编程订阅只标月费，不标每 token 多少钱。本项目把每个套餐折算成真实的每百万 token 单价，再和公开榜单的分数画在一起，看同样的钱哪家买到的能力最多。
 
-先展示完整采用数据，再按榜单展示帕累托图。默认按饱和使用、每月四周计算；厂商另设独立月池时保留厂商口径（Kimi 月池为周池5倍）。输入、输出与缓存 token 全部计入；单价使用对数轴，越右越便宜。
+**真实单价 = 订阅月费 ÷ 每月实际能用掉的 token。**
 
-凡是由美元/credits 额度和缓存、输入、输出三段价格换算 token，统一使用项目标准负载：**缓存读取 97.5%、普通输入 2.15%、输出 0.35%**。这是统一比较口径，不代表任何厂商或用户的实际负载。已经直接给出 total tokens 的面板反推、本地日志、受控跑满和官方绝对 token 表不再重复归一；只有 total tokens 和按费用扣减的百分比、但缺 token 类型拆分时，保留实际观测并明确限制，不编造组成。当前标准不单列 cache write；厂商另收缓存写入费时，换算结果可能偏高估 token。详见[统一口径](data/conventions.json)与[token 组成审计](data/research/token-mix-audit-round2-2026-09-07.json)。
+**[打开交互网站 →](https://realapipricing.com)** 自选模型、筛选渠道，对比单价和额度，支持中英文。
 
-GLM Coding Plan 现已改用智谱官方周积分和缓存/输入/输出三段积分系数，并按同一标准负载重算；忙时、中间值和闲时三个情景分开展示，不再直接抄官方95%缓存示例表。《财经》跑满成本和社区证据在量级上吻合，但目前仍没有信息完整的 V3 Pro/Max 独立跑满样本。详见[官方表存档](data/research/quotas-web-2026-09.json)与[社区证据复核](data/research/glm-community-round1-2026-09-07.json)。Step Plan 国内站按阶跃官方月度 Credit 池（1M Credit=¥1）经人民币三段价套同一标准负载折算；国际站美元牌价不同、不采用，旧 Coding Plan 的 Prompt/5h 口径仅留作证据。
+![真实单价 × AA 智力榜 帕累托前沿](charts/zh/pareto/帕累托_AA智力榜.svg)
 
-六张图的 Y 轴分别取自对应榜单，分数互不混用。这里的 Code Arena 特指 WebDev Overall 的 Arena Score，不代表通用编程能力。OpenDesign Arena 使用 0–100 的任务平均分（需求完成度30分 + 设计质量70分），不采用混入成本和速度的选型参考分。GPT-5.6 Luna 现改用 ChatGPT Plus 用户面板实测：1.1267亿 total tokens 约占周额度6%，反推 Plus 75.11亿/月；5x、20x从这条实测基准按官方倍率推算，因此最右侧 Luna 点为1502.22亿/月、置信度 medium，不再采用旧的2402.4亿 Sol credits等池派生值。Claude Max 157亿则是2026年9月14日起永久口径的估算，不是活动期上限。中文图以“亿”为单位，英文图以 billion 为单位，77.37亿对应7.737 billion。
+**怎么看图**
 
-**[全部图表：中英文、SVG / PNG](charts/README.md)** · [English files](charts/en/) · [中文文件](charts/zh/)
+- 每个点是一个「套餐 × 实际服务的模型」。横轴是真实单价（美元/百万 token），对数刻度，越往右越便宜；纵轴是该榜单的分数。
+- 实心方块是订阅，空心菱形是按量 API 标价，两者在同一条前沿上比较。
+- 黑线是帕累托前沿：线上的每个点，都找不到另一个点比它更便宜、分数又更高。
+- 订阅单价按用满额度计算。只用掉一半，实际单价就翻倍。
 
-## 数据快照
+快照日期 <!-- stat:snapshot -->2026-10-01<!-- /stat --> · 共 <!-- stat:points_total -->318<!-- /stat --> 个「套餐 × 模型」点 · [全部图表（中英文、SVG / PNG）](charts/README.md)
 
-AA 智力榜改用 **Intelligence Index v4.3**（2026-09-07 发布），AA Coding Agent 仍为 **v1.4**。智力榜按新版整榜替换，不能把跨版本分数降低解释为模型能力退步。保留选定快照内的全部配置，并明确标注 AA 估计值；历史证据继续保存在 `data/research/`。
+## 数字怎么来的
 
-快照日期：2026-09-09。每行代表一个**套餐 × 实际服务模型**；同一套餐下不同模型的额度是替代关系，不能相加。
+- **月额度**：饱和使用下每月能用的 token。默认一个月按四周算；厂商另设月池的按厂商口径（Kimi 月池是周池的 5 倍）。输入、输出、缓存 token 全部计入。
+- **能实测就用实测**：最好的证据是直接测量，包括面板额度百分比变化对应用掉的 token、本地用量日志、受控跑满，以及官方给出的绝对 token 表。带 token 分项的实测样本先按公开标价折成美元价值、再按渠道负载档换算；缺分项的实测样本和官方 token 表直接用 raw 合计，网页标「未折算」。
+- **只能换算时统一口径**：美元额度、credits 额度和 API 标价，统一按一个标准负载折成 token：缓存读取 97%、普通输入 2.5%、输出 0.5%。这是为了横向可比，不代表任何人的真实用法。Anthropic 模型的普通输入份额按缓存写入价计，阶跃和 Google 用低缓存档。详见 [CONVENTIONS.md](CONVENTIONS.md)。
+- **闲时优惠**（GLM、DeepSeek、MiMo）单独画成情景点，不取平均。
+- **置信度**：每行标 high / medium / low。high 是面板反推、受控实测或官方表；medium 是官方倍率乘一个 high 基准，或多个独立来源量级一致；low 是单一口述或跨档位假设。推算值不会当成实测来写。
+- **一个套餐多个模型**：同一套餐下每个模型各占一个点，这些额度是「选一个用」，不能相加。
+- **分数**直接取自各榜单，不同榜单不混用。静态图取每个模型存档里的最高配置。
+- **促销期不计额度**：套餐临时不计额度的模型画在右端 ≈$0 的专用刻度上。目前有 <!-- stat:points_unmetered -->1<!-- /stat --> 个这样的点：Devin Pro 的 SWE-2，促销到 2026-10-31。
 
-| 覆盖范围 | 行数 |
-|---|---:|
-| 全部采用的套餐 × 模型点 | 202 |
-| 有月额度的订阅点 | 188 |
-| 按量 API 基准点 | 13 |
-| OpenCode Go / Command Code GOAT / Ollama / Step Plan | 27 / 37 / 22 / 8 |
-| Code Arena / Agent Arena 有分点 | 136 / 140 |
-| AA 智力榜 / AA 编程 Agent 榜有分点 | 173 / 71 |
-| OpenDesign Arena 有分点 | 70 |
-| Terminal-Bench 4.0 有分点 | 70 |
+每个采用值的证据和取舍理由见 [DECISIONS.md](DECISIONS.md)，以及 [adopted.csv](data/adopted.csv) 的 `decision_note` 列。
 
-**下载数据：** [采用值 CSV](data/adopted.csv) · [完整计算结果 CSV](derived/points.csv) · [完整计算结果 JSON](derived/points.json) · [数据说明及缺分清单](data/README.md) · [分日期原始证据](data/research/)
+## 分榜帕累托图
+
+每个榜单单独一张图，各用各的分数和快照日期。某榜没有分数的模型不出现在该榜图上，但仍保留在单价和额度数据里。
+
+### AA 智力榜
+
+[SVG](charts/zh/pareto/帕累托_AA智力榜.svg) · [PNG](charts/zh/pareto/帕累托_AA智力榜.png) · [English SVG](charts/en/pareto/pareto-aa-intelligence.svg) · [English PNG](charts/en/pareto/pareto-aa-intelligence.png) · 图见页首
+
+Artificial Analysis Intelligence Index v4.3。新旧版本的分数不能直接比：换版后分数变低，不代表模型变差了。标 [AA estimate] 的是 AA 自己的估计值。
+
+### AA 编程 Agent 榜
+
+[SVG](charts/zh/pareto/帕累托_AA编程Agent榜.svg) · [PNG](charts/zh/pareto/帕累托_AA编程Agent榜.png) · [English SVG](charts/en/pareto/pareto-aa-coding-agent.svg) · [English PNG](charts/en/pareto/pareto-aa-coding-agent.png)
+
+![AA 编程 Agent 榜](charts/zh/pareto/帕累托_AA编程Agent榜.svg)
+
+Coding Agent Index v1.5。每个分数对应一组测过的 harness × 模型 × effort。effort 调高不改变每 token 单价，但可能让每个任务多用 token。
+
+### Code Arena
+
+[SVG](charts/zh/pareto/帕累托_CodeArena榜.svg) · [PNG](charts/zh/pareto/帕累托_CodeArena榜.png) · [English SVG](charts/en/pareto/pareto-code-arena.svg) · [English PNG](charts/en/pareto/pareto-code-arena.png)
+
+![Code Arena](charts/zh/pareto/帕累托_CodeArena榜.svg)
+
+取 WebDev Overall 的 Arena Score，衡量的是做网页应用，不代表通用编程能力。
+
+### Agent Arena
+
+[SVG](charts/zh/pareto/帕累托_AgentArena榜.svg) · [PNG](charts/zh/pareto/帕累托_AgentArena榜.png) · [English SVG](charts/en/pareto/pareto-agent-arena.svg) · [English PNG](charts/en/pareto/pareto-agent-arena.png)
+
+![Agent Arena](charts/zh/pareto/帕累托_AgentArena榜.svg)
+
+### OpenDesign 设计榜
+
+[SVG](charts/zh/pareto/帕累托_OpenDesign设计榜.svg) · [PNG](charts/zh/pareto/帕累托_OpenDesign设计榜.png) · [English SVG](charts/en/pareto/pareto-open-design-arena.svg) · [English PNG](charts/en/pareto/pareto-open-design-arena.png)
+
+![OpenDesign 设计榜](charts/zh/pareto/帕累托_OpenDesign设计榜.svg)
+
+取 0–100 的任务平均分（需求完成度 30 + 设计质量 70），不用它混入成本和速度的推荐分。存档的 <!-- stat:configs_mapped_open_design_arena -->13<!-- /stat --> 个模型全部对上了采用点。
+
+### Terminal-Bench 4.0
+
+[SVG](charts/zh/pareto/帕累托_TB4终端榜.svg) · [PNG](charts/zh/pareto/帕累托_TB4终端榜.png) · [English SVG](charts/en/pareto/pareto-terminal-bench-4.svg) · [English PNG](charts/en/pareto/pareto-terminal-bench-4.png)
+
+![Terminal-Bench 4.0](charts/zh/pareto/帕累托_TB4终端榜.svg)
+
+Stanford、Harbor 和 Laude Institute 维护的 66 题官方榜（快照 2026-09-03），<!-- stat:configs_terminal_bench_4 -->22<!-- /stat --> 个公开配置全部收录。官方榜还没收的模型，补上厂商自报分并标 [self-reported]，例如 Cognition 发布博客里 SWE-2 · Devin Pro 的 27.3%。
+
+### Terminal-Bench 4.0（AA）
+
+[SVG](charts/zh/pareto/帕累托_TB4·AA榜.svg) · [PNG](charts/zh/pareto/帕累托_TB4·AA榜.png) · [English SVG](charts/en/pareto/pareto-aa-terminal-bench-4.svg) · [English PNG](charts/en/pareto/pareto-aa-terminal-bench-4.png)
+
+![Terminal-Bench 4.0（AA）](charts/zh/pareto/帕累托_TB4·AA榜.svg)
+
+同样 66 道题，由 Artificial Analysis 用自家 harness 跑（快照 2026-09-23）。两个 TB4 榜不能混用：同配置对比，中位差约 2.6 分，个别差得多，比如 Grok 4.7 xhigh 在官方榜 37.58，这里只有 25.76。
+
+### DeepSWE v1.1
+
+[SVG](charts/zh/pareto/帕累托_DeepSWE榜.svg) · [PNG](charts/zh/pareto/帕累托_DeepSWE榜.png) · [English SVG](charts/en/pareto/pareto-deepswe-1-1.svg) · [English PNG](charts/en/pareto/pareto-deepswe-1-1.png)
+
+![DeepSWE v1.1](charts/zh/pareto/帕累托_DeepSWE榜.svg)
+
+113 题的 Pass@1，官方行统一用 mini-swe-agent 跑（快照 2026-09-03）。厂商自报分作为补充收录，标 [self-reported]。
+
+## 全部套餐的单价与月额度
+
+### 真实单价
+
+全部 <!-- stat:points_priced -->317<!-- /stat --> 个有价格的订阅和 API 点，放在同一把 $/MTok 尺子上。
+
+[SVG](charts/zh/overview/单价总览.svg) · [PNG](charts/zh/overview/单价总览.png) · [数据表](charts/zh/overview/单价总览表.txt) · [English SVG](charts/en/overview/real-price-overview.svg) · [English PNG](charts/en/overview/real-price-overview.png) · [English table](charts/en/overview/real-price-overview-table.txt)
+
+![真实单价总览](charts/zh/overview/单价总览.svg)
+
+### 月额度
+
+<!-- stat:points_allowance -->298<!-- /stat --> 个有月额度的订阅点，按美元月费分三档，各档单独排序。不分档的全量图和混合比例图见[图表目录](charts/README.md)。
+
+**$0–30** · [SVG](charts/zh/overview/额度总览_月费0-30美元.svg) · [PNG](charts/zh/overview/额度总览_月费0-30美元.png) · [数据表](charts/zh/overview/额度总览表_月费0-30美元.txt) · [English SVG](charts/en/overview/monthly-allowance-overview-fee-0-30-usd.svg) · [English PNG](charts/en/overview/monthly-allowance-overview-fee-0-30-usd.png) · [English table](charts/en/overview/monthly-allowance-overview-fee-0-30-usd-table.txt)
+
+![月额度 $0–30](charts/zh/overview/额度总览_月费0-30美元.svg)
+
+**$30 以上、$100 以内** · [SVG](charts/zh/overview/额度总览_月费30-100美元.svg) · [PNG](charts/zh/overview/额度总览_月费30-100美元.png) · [数据表](charts/zh/overview/额度总览表_月费30-100美元.txt) · [English SVG](charts/en/overview/monthly-allowance-overview-fee-30-100-usd.svg) · [English PNG](charts/en/overview/monthly-allowance-overview-fee-30-100-usd.png) · [English table](charts/en/overview/monthly-allowance-overview-fee-30-100-usd-table.txt)
+
+![月额度 $30 以上、$100 以内](charts/zh/overview/额度总览_月费30-100美元.svg)
+
+**$100 以上、$300 以内** · [SVG](charts/zh/overview/额度总览_月费100-300美元.svg) · [PNG](charts/zh/overview/额度总览_月费100-300美元.png) · [数据表](charts/zh/overview/额度总览表_月费100-300美元.txt) · [English SVG](charts/en/overview/monthly-allowance-overview-fee-100-300-usd.svg) · [English PNG](charts/en/overview/monthly-allowance-overview-fee-100-300-usd.png) · [English table](charts/en/overview/monthly-allowance-overview-fee-100-300-usd-table.txt)
+
+![月额度 $100 以上、$300 以内](charts/zh/overview/额度总览_月费100-300美元.svg)
+
+中文图的额度以「亿」为单位，英文图以 billion 为单位（77.37 亿 = 7.737 billion）。
 
 ## 每行的 API 标价成本
 
@@ -43,24 +130,24 @@ AA 智力榜改用 **Intelligence Index v4.3**（2026-09-07 发布），AA Codin
 
 `api_cost_usd_month = 月 token ÷ 1,000,000 × 标价混合单价`，`api_cost_multiple = api_cost_usd_month ÷ 月费`，即已有字段 `d` 的倒数。公开数字均由公开的混合单价算出，读者用公开值可完全复现。
 
-标价已于 2026-09-09 对照厂商一手价目页重新核对，覆盖模型从 24 个扩到 43 个，见[标价档案](data/research/list-prices-round2-2026-09-09.json)。主流模型标价与 2026-09-05 那轮相比没有变化。
+标价已于 2026-10-01 对照厂商一手价目页重新核对，已有标价均无变化。本轮新增 22 个模型的标价，见[第三轮标价档案](data/research/list-prices-round3-2026-10-01.json)；更早的标价仍在[第二轮档案](data/research/list-prices-round2-2026-09-09.json)。
 
 | 标价来源 | 行数 | 含义 |
 |---|---:|---|
-| 厂商一手价目表 | 166 | 本轮直接读取厂商价目页 |
-| 厂商文档或公告（`*`） | 5 | 价目页为 JS 渲染，或未给三段拆分 |
-| 具名网关或追踪站（`*`） | 8 | 仅开放权重或仅在套壳产品内提供，无一手价目表 |
-| 无可辩护标价 | 9 | 该列留空，不补造 |
+| 厂商一手价目表 | 252 | 本轮直接读取厂商价目页 |
+| 厂商文档或公告（`*`） | 12 | 价目页为 JS 渲染，或未给三段拆分 |
+| 具名网关或追踪站（`*`） | 28 | 仅开放权重或仅在套壳产品内提供，无一手价目表 |
+| 无可辩护标价 | 6 | 该列留空，不补造 |
 
-188 行中 168 行有成本。11 条按量 API 行本身没有月额度，按定义无此列；另有 9 条订阅行的服务模型没有公开标价：`deepseek-v4-flash-fast`、`glm-5.2-fast`、`kimi-k2.7-code-highspeed`（套壳产品内的加速档），`muse-spark-1.3` 与 `muse-spark-1.3-contributor`（Meta 未公布 1.3 价目表，各追踪站对是否沿用 1.2 价目表说法冲突），以及 `inkling`、`inkling-small`、`omen-alpha`。
+299 条订阅行中 292 行有成本。19 条按量 API 行本身没有月额度，按定义无此列。6 条订阅行的服务模型是 `minimax-m3.1-flash-preview`：MiniMax 只在 M Plan 套餐内提供，没有按 token 标价。Devin Pro 的 SWE-2 行是不计额度的促销，有标价但没有可折算的额度。DeepSeek 与 GLM 的加速档、Inkling、Inkling Small 没有一手标价，取自实际提供该模型的平台，标 `*`。
 
-读这一列要注意三点。当前仍不单列缓存写入费，故所有数字都是**下限**。15 行标了 `‡`：该套餐下此模型的额度本身由同套餐基准模型按标价比推导，其成本只是把基准行的数字重复一遍，不是独立证据——例如 Claude Max 的 Opus 5 与 Sonnet 5 两行数值相同，不能当成两次测量。倍数比较的是标价与打满订阅，不代表任何用户真能用到那个额度。
+读这一列要注意三点。当前仍不单列缓存写入费，故所有数字都是**下限**。16 行标了 `‡`：该套餐下此模型的额度本身由同套餐基准模型按标价比推导，其成本只是把基准行的数字重复一遍，不是独立证据——例如 Claude Max 的 Opus 5 与 Sonnet 5 两行数值相同，不能当成两次测量。倍数比较的是标价与打满订阅，不代表任何用户真能用到那个额度。
 
-按标价看，多数订阅返还远超月费：Claude Max 20x 最高，$200 换约 $10,715/月的 Opus 5 token（×54）；ChatGPT Pro 20x 约 $6,727（×34）。有两行是倒挂——阿里云百炼 Coding Plan Pro 的 Qwen3.7 Plus 为 ×0.37 与 ×0.62，即套餐比直接按量买同样的 token 更贵。
+按标价看，多数订阅返还远超月费。Claude Pro 最高，$20 换约 $1,903/月的 Opus 5 token（×95）。Claude Max 20x 的 Opus 5.5 行约 $12,426（$200，×62），ChatGPT Pro 20x 约 $7,586（×38）。有六行倒挂，即套餐比直接按量买同样的 token 更贵：两个阿里云 Coding Plan Pro 的 Qwen3.7 Plus（×0.38 与 ×0.64）、Command Code GOAT 的 GLM 5.2 Fast（×0.95），以及三条 MiMo Token Plan 日间行（×0.96 到 ×0.99）。
 
 ### 订阅性价比排名（按倍数排序）
 
-全部 168 条有标价的行按倍数从高到低排列。红色虚线为 1× 盈亏线：线右侧的条，同样月费买到的 token 比直接按量买更多；线左侧的条更少。每条标签同时给出倍数背后的美元金额，避免"小基数上的大倍数"被误读。
+全部 292 条有标价的行按倍数从高到低排列。红色虚线为 1× 盈亏线：线右侧的条，同样月费买到的 token 比直接按量买更多；线左侧的条更少。每条标签同时给出倍数背后的美元金额，避免"小基数上的大倍数"被误读。
 
 [English SVG](charts/en/overview/api-cost-multiple-overview.svg) · [中文 SVG](charts/zh/overview/倍数总览.svg) · [English PNG](charts/en/overview/api-cost-multiple-overview.png) · [中文 PNG](charts/zh/overview/倍数总览.png)
 
@@ -68,11 +155,11 @@ AA 智力榜改用 **Intelligence Index v4.3**（2026-09-07 发布），AA Codin
 
 **表格：** [English TXT](charts/en/overview/api-cost-multiple-overview-table.txt) · [中文 TXT](charts/zh/overview/倍数总览表.txt)
 
-榜首被 Anthropic 与 OpenAI 占据（×54 到 ×34），原因之一是它们的官方标价本身在本样本里最高——倍数高，部分来自"按量替代方案很贵"，不只来自"额度大"。20 条没有公开标价的行不出现在此图，而不是按 0 画出。
+榜首被 Anthropic 与 OpenAI 占据（×95 到 ×38），原因之一是它们的官方标价本身在本样本里最高——倍数高，部分来自"按量替代方案很贵"，不只来自"额度大"。7 条没有 API 成本的行不出现在此图，而不是按 0 画出。
 
 ### 订阅性价比排名（每个套餐一条）
 
-上一张图排的是 168 条"套餐 × 模型"。这张把它们收敛到 **51 个订阅**，按每个套餐多数模型共享的价值排序——也就是下方对比面板的静态版本。
+上一张图排的是 292 条"套餐 × 模型"。这张把它们收敛到 **69 个订阅**，按每个套餐多数模型共享的价值排序——也就是下方对比面板的静态版本。
 
 [English SVG](charts/en/overview/plan-value-overview.svg) · [中文 SVG](charts/zh/overview/套餐性价比总览.svg) · [English PNG](charts/en/overview/plan-value-overview.png) · [中文 PNG](charts/zh/overview/套餐性价比总览.png)
 
@@ -80,7 +167,7 @@ AA 智力榜改用 **Intelligence Index v4.3**（2026-09-07 发布），AA Codin
 
 **表格：** [English TXT](charts/en/overview/plan-value-overview-table.txt) · [中文 TXT](charts/zh/overview/套餐性价比总览表.txt) —— 一行一个"套餐 × 价值组"，每个例外都保留自己的一行
 
-深色条是共享价值，浅色延伸段到该套餐**最优**模型，竖线标出**最差**模型：这样"选哪个模型"和"套餐整体值多少"都能看到，而不必把互斥的额度加起来。`⚠` 标出主数字覆盖不到一半模型的 2 个套餐——OpenCode Go 的 ×6 落在 ×1.26–×21.37 的区间里，Command Code GOAT 的 ×2 落在 ×1.04–×28.54 里，这两个只有按区间读才成立。
+深色条是共享价值，浅色延伸段到该套餐**最优**模型，竖线标出**最差**模型：这样"选哪个模型"和"套餐整体值多少"都能看到，而不必把互斥的额度加起来。`⚠` 标出主数字覆盖不到一半模型的 19 个套餐。差距最大的是套壳套餐：OpenCode Go 的 ×6 落在 ×1.27–×18.73 的区间里，Command Code GOAT 的 ×2 落在 ×0.95–×25 里，只能按区间读。
 
 套餐级数据已发布为 [plan-value.json](derived/plan-value.json) / [plan-value.csv](derived/plan-value.csv)；网站在前端算同一套分组，并有测试断言两者一致。
 
@@ -88,114 +175,57 @@ AA 智力榜改用 **Intelligence Index v4.3**（2026-09-07 发布），AA Codin
 
 **[打开套餐对比 →](https://real-api-pricing.vercel.app)** · 交互网站的第四个视图
 
-选中真正在纠结的几个套餐——比如 $200 档的五个——面板会每个套餐一行并排给出：该套餐多数模型**共享**的价值，以及价值落在别处的模型，单独列成自己的一行。
+选中真正在纠结的几个套餐——比如 $200 档的七个——面板会每个套餐一行并排给出：该套餐多数模型**共享**的价值，以及价值落在别处的模型，单独列成自己的一行。
 
 | $200 / 月 | 共享价值 | 按 API 标价 | 共享此价值的模型 | 例外 |
 |---|---:|---:|---|---|
-| Claude Max 20x (9/14+) | ×53.6 | $10,715 | Opus 5、Sonnet 5、Opus 4.8 | ×8.2 Fable 5（$1,649） |
-| ChatGPT Pro 20x | ×33.6 | $6,727 | GPT 5.6 Sol、5.6 Terra、5.5 | ×21 GPT 5.6 Luna（$4,206） |
-| Cursor Ultra | ×21.3 | $4,267 | Grok 4.6、Composer 2.5 | ×13.8 Grok 4.5（$2,758） |
+| Claude Max 20x (9/14+) | ×57.7 | $11,540 | Opus 5、Sonnet 5、Opus 4.8 | ×62.1 Opus 5.5（$12,426）· ×8.9 Fable 5（$1,775）· ×6.4 Fable 5.1（$1,283） |
+| ChatGPT Pro 20x | ×37.9 | $7,586 | GPT 5.6 Sol、5.6 Terra、5.5 | ×28 GPT-6 Astra（$5,604）· ×21.5 GPT 5.6 Luna（$4,291） |
+| Cursor Ultra | ×21.9 | $4,371 | Grok 4.6、Composer 2.5 | ×14.4 Grok 4.5（$2,870） |
 
 可按**性价比（× 月费）**、**API 标价成本**或**订阅月费**排序；主数字与其副行始终展示两个不同的数，相对月费和绝对金额同时在屏。所有条形——包括例外行的条形——共用同一原点和同一线性刻度：改用对数轴会把这个视图想要展示的差距压平。
 
-面板刻意不做两件事。绝不把同套餐各模型相加：同套餐额度是互斥选项，价值是"选一个模型能得到这么多"，不是总量。以及，当"共享价值"会误导时就不给主数字——Command Code GOAT 转售 31 个模型、19 个不同数值，因此标注**各模型价值差异很大**，改为给出区间与最优模型。51 个有标价的套餐里只有 2 个属于这种情况。
+面板刻意不做两件事。绝不把同套餐各模型相加：同套餐额度是互斥选项，价值是"选一个模型能得到这么多"，不是总量。以及，当"共享价值"会误导时就不给主数字——Command Code GOAT 转售 58 个模型、27 个不同数值，因此标注**各模型价值差异很大**，改为给出区间与最优模型。69 个有标价的套餐里有 19 个属于这种情况。
 
-共享价值之所以共享，其原因本身值得知道：Claude Max 下 Sonnet 5 与 Opus 4.8 的额度是由 Opus 5 的实测按标价比推导的，所以三者都落在 ×53.6，这些模型标了 `‡`。Fable 5 不同，是因为它的额度来自实测的订阅内权重——真正的独立证据其实在例外这一行。
+共享价值之所以共享，其原因本身值得知道：Claude Max 下 Sonnet 5 与 Opus 4.8 的额度是由 Opus 5 的实测按标价比推导的，所以三者都落在 ×57.7，这些模型标了 `‡`。Fable 5 不同，是因为它的额度来自实测的订阅内权重——真正的独立证据其实在例外这一行。
 
-## 月额度总览
+## 数据
 
-188 个订阅套餐 × 模型点按采用数据里的美元月费拆成三档，避免 GitHub 首页一张图挤满：**$0–30（含 $30）**、**>$30 且 ≤$100**、**>$100–$300**。各档内部按月可用 token 排序。未拆档的全量图和混合比例图仍在 [图表目录](charts/README.md)。
+| 点 | 数量 |
+|---|---:|
+| 全部「套餐 × 模型」点 | <!-- stat:points_total -->318<!-- /stat --> |
+| 有月额度的订阅 | <!-- stat:points_allowance -->298<!-- /stat --> |
+| 促销期不计额度（≈$0） | <!-- stat:points_unmetered -->1<!-- /stat --> |
+| 按量 API（标价） | <!-- stat:points_metered -->19<!-- /stat --> |
 
-### $0–30
+| 榜单 | 有分点 |
+|---|---:|
+| AA 智力榜 | <!-- stat:scored_aa_intelligence_index -->268<!-- /stat --> |
+| AA 编程 Agent 榜 | <!-- stat:scored_aa_coding_agent_index -->97<!-- /stat --> |
+| Code Arena | <!-- stat:scored_arena_code -->178<!-- /stat --> |
+| Agent Arena | <!-- stat:scored_arena_agent_mode -->164<!-- /stat --> |
+| OpenDesign 设计榜 | <!-- stat:scored_open_design_arena -->88<!-- /stat --> |
+| Terminal-Bench 4.0 | <!-- stat:scored_terminal_bench_4 -->111<!-- /stat --> |
+| Terminal-Bench 4.0（AA） | <!-- stat:scored_aa_terminal_bench_4 -->36<!-- /stat --> |
+| DeepSWE v1.1 | <!-- stat:scored_deepswe_1_1 -->195<!-- /stat --> |
 
-[English SVG](charts/en/overview/monthly-allowance-overview-fee-0-30-usd.svg) · [中文 SVG](charts/zh/overview/额度总览_月费0-30美元.svg) · [English PNG](charts/en/overview/monthly-allowance-overview-fee-0-30-usd.png) · [中文 PNG](charts/zh/overview/额度总览_月费0-30美元.png)
+点数最多的几个套餐家族：Command Code GOAT <!-- stat:plans_command_code_goat -->58<!-- /stat --> 个、MiMo Token Plan <!-- stat:plans_mimo_token -->32<!-- /stat --> 个、OpenCode Go <!-- stat:plans_opencode_go -->28<!-- /stat --> 个、Droid Max <!-- stat:plans_droid_max -->27<!-- /stat --> 个、Ollama <!-- stat:plans_ollama -->22<!-- /stat --> 个、Step Plan <!-- stat:plans_step_plan -->12<!-- /stat --> 个。
 
-![月额度 $0–30](charts/zh/overview/额度总览_月费0-30美元.svg)
+**下载：** [采用值 CSV](data/adopted.csv) · [计算结果 CSV](derived/points.csv) / [JSON](derived/points.json) · [数据说明](data/README.md) · [分日期原始证据](data/research/)
 
-**数据表：** [中文 TXT](charts/zh/overview/额度总览表_月费0-30美元.txt) · [English TXT](charts/en/overview/monthly-allowance-overview-fee-0-30-usd-table.txt)
+**全部评测配置**（不只每个模型的最高分）：[评测配置存档](derived/benchmark-configurations.json)（[CSV](derived/benchmark-configurations.csv)）完整保留 <!-- stat:configs_total -->330<!-- /stat --> 条记录，含原始标签、harness、effort、分数区间和任务成本。[套餐与配置的映射](derived/benchmark-points.json)（[CSV](derived/benchmark-points.csv)）有 <!-- stat:refs_total -->1854<!-- /stat --> 条明确对应。不知道的 harness、effort 和区间一律留空，不猜。[全配置交互图](charts/zh/pareto/帕累托交互图.html)可以切换配置和思考强度；需下载后本地打开，Plotly 要联网。
 
-### >$30–$100
+## 已知局限
 
-[English SVG](charts/en/overview/monthly-allowance-overview-fee-30-100-usd.svg) · [中文 SVG](charts/zh/overview/额度总览_月费30-100美元.svg) · [English PNG](charts/en/overview/monthly-allowance-overview-fee-30-100-usd.png) · [中文 PNG](charts/zh/overview/额度总览_月费30-100美元.png)
+- 真实单价是下限，前提是额度全部用完。
+- 榜单分数是某组 harness × 模型 × effort 的参考值，不是对每个订阅渠道的实测。额度样本用的 effort 和 harness 是否与之一致，尚未核实。
+- 分数区间已保留（交互图悬停可见），但暂不参与前沿判定。置信度是定性标签，不是误差范围。
+- 来源里的任务成本单独保留，不等于在订阅里跑同一任务的成本。
+- 不同厂商分词器的差异没有校正。
+- ≈$0 的促销点在促销结束后要重新核对。
 
-![月额度 >$30–$100](charts/zh/overview/额度总览_月费30-100美元.svg)
+## 复现、贡献与致谢
 
-**数据表：** [中文 TXT](charts/zh/overview/额度总览表_月费30-100美元.txt) · [English TXT](charts/en/overview/monthly-allowance-overview-fee-30-100-usd-table.txt)
-
-### >$100 且 ≤$300
-
-[English SVG](charts/en/overview/monthly-allowance-overview-fee-100-300-usd.svg) · [中文 SVG](charts/zh/overview/额度总览_月费100-300美元.svg) · [English PNG](charts/en/overview/monthly-allowance-overview-fee-100-300-usd.png) · [中文 PNG](charts/zh/overview/额度总览_月费100-300美元.png)
-
-![月额度 >$100 且 ≤$300](charts/zh/overview/额度总览_月费100-300美元.svg)
-
-**数据表：** [中文 TXT](charts/zh/overview/额度总览表_月费100-300美元.txt) · [English TXT](charts/en/overview/monthly-allowance-overview-fee-100-300-usd-table.txt)
-
-## 真实单价总览
-
-把全部 200 个订阅和 API 点放在同一套 $/MTok 口径下比较。
-
-[English SVG](charts/en/overview/real-price-overview.svg) · [中文 SVG](charts/zh/overview/单价总览.svg) · [English PNG](charts/en/overview/real-price-overview.png) · [中文 PNG](charts/zh/overview/单价总览.png)
-
-![真实单价总览](charts/zh/overview/单价总览.svg)
-
-**完整数据表：** [中文 TXT](charts/zh/overview/单价总览表.txt) · [English TXT](charts/en/overview/real-price-overview-table.txt)
-
-## 分榜帕累托图
-
-依据“真实 API 定价”这一新基准，结合不同榜单的分数作为 Y 轴，重新绘制帕累托前沿图；图中的连线即代表帕累托前沿。订阅与按量 API 使用同一支配规则，共同参与前沿筛选。
-
-### Code Arena
-
-[English SVG](charts/en/pareto/pareto-code-arena.svg) · [中文 SVG](charts/zh/pareto/帕累托_CodeArena榜.svg) · [English PNG](charts/en/pareto/pareto-code-arena.png) · [中文 PNG](charts/zh/pareto/帕累托_CodeArena榜.png)
-
-![Code Arena](charts/zh/pareto/帕累托_CodeArena榜.svg)
-
-### Agent Arena
-
-[English SVG](charts/en/pareto/pareto-agent-arena.svg) · [中文 SVG](charts/zh/pareto/帕累托_AgentArena榜.svg) · [English PNG](charts/en/pareto/pareto-agent-arena.png) · [中文 PNG](charts/zh/pareto/帕累托_AgentArena榜.png)
-
-![Agent Arena](charts/zh/pareto/帕累托_AgentArena榜.svg)
-
-### AA Intelligence
-
-[English SVG](charts/en/pareto/pareto-aa-intelligence.svg) · [中文 SVG](charts/zh/pareto/帕累托_AA智力榜.svg) · [English PNG](charts/en/pareto/pareto-aa-intelligence.png) · [中文 PNG](charts/zh/pareto/帕累托_AA智力榜.png)
-
-![AA Intelligence](charts/zh/pareto/帕累托_AA智力榜.svg)
-
-### AA Coding Agent
-
-[English SVG](charts/en/pareto/pareto-aa-coding-agent.svg) · [中文 SVG](charts/zh/pareto/帕累托_AA编程Agent榜.svg) · [English PNG](charts/en/pareto/pareto-aa-coding-agent.png) · [中文 PNG](charts/zh/pareto/帕累托_AA编程Agent榜.png)
-
-![AA Coding Agent](charts/zh/pareto/帕累托_AA编程Agent榜.svg)
-
-### OpenDesign Arena
-
-[English SVG](charts/en/pareto/pareto-open-design-arena.svg) · [中文 SVG](charts/zh/pareto/帕累托_OpenDesign设计榜.svg) · [English PNG](charts/en/pareto/pareto-open-design-arena.png) · [中文 PNG](charts/zh/pareto/帕累托_OpenDesign设计榜.png)
-
-![OpenDesign Arena](charts/zh/pareto/帕累托_OpenDesign设计榜.svg)
-
-### Terminal-Bench 4.0
-
-[English SVG](charts/en/pareto/pareto-terminal-bench-4.svg) · [中文 SVG](charts/zh/pareto/帕累托_TB4终端榜.svg) · [English PNG](charts/en/pareto/pareto-terminal-bench-4.png) · [中文 PNG](charts/zh/pareto/帕累托_TB4终端榜.png)
-
-![Terminal-Bench 4.0](charts/zh/pareto/帕累托_TB4终端榜.svg)
-
-OpenDesign 的 13 模型完整效果榜已存档，其中 11 个模型与当前采用点精确映射；GPT-6 Astra、Claude Fable 5.1 因项目暂无精确采用行，只保留榜单记录，不借用邻近型号。DeepSeek V4.1 Flash 采用 9 月 10 日起生效的官方美元标价：闲时缓存输入 $0.003、未缓存输入 $0.15、输出 $0.60，并另列高峰 2 倍价。分数属于 OpenDesign Harness 配置参考，不代表各订阅/API渠道实测。
-
-AA 编程 Agent 分数属于已测试的 harness × 模型 × effort 配置。静态图和 `points.*` 明确为**最高存档配置参考汇总**，不代表各订阅/API渠道实测；额度样本的effort、产品harness是否对齐仍未验证。更高effort不自动提高每百万token单价，但可能增加每任务token消耗。
-
-Terminal-Bench 4.0 是 Stanford / Harbor / Laude Institute 托管的 66 任务官方榜（快照 2026-09-03）。每行是一个 harness × 模型 × effort 配置，18 行全部存档，包括 GPT-6 Astra 的五个 effort 档。Claude Fable 5.1 暂无采用行，只保留榜单记录并列入缺分，不做近似。另有一行补充档追加在官方快照之后、不替换快照：**SWE-2 · Devin Pro** 27.3%，来自 Cognition 发布博客的自报数字（官方榜无 SWE-2 行）。SWE-2 在促销期内对 Pro/Max/Teams 订阅者不计额度，官推只写 "the next month"，本项目记为截止 2026-10-31，因此真实单价显示为 **≈$0/MTok**、放在专用刻度位，并成为前沿最便宜端点。这是促销价而非永久口径，促销结束后必须复核。
-
-[全配置交互图](charts/zh/pareto/帕累托交互图.html) 默认展示每模型最高分汇总，可切换全部存档配置，并提供思考强度档位选择。下载HTML后本地打开，Plotly需要联网。目前全部采用参考映射，尚不是已验证产品配置的严格前沿。
-
-[评测配置JSON](derived/benchmark-configurations.json) / [CSV](derived/benchmark-configurations.csv) 完整保留235条记录、原始标签、已知harness/effort、来源分数区间和来源任务成本。[套餐配置映射JSON](derived/benchmark-points.json) / [CSV](derived/benchmark-points.csv) 包含1011条明确参考映射，保留低effort配置。Composer Standard/Fast只匹配本模式，缺失时留空；未知harness、effort、区间均不推测。
-
-来源任务成本的均值和中位数分别保留，不作为订阅内任务成本。分数区间可在交互图悬停查看，目前尚不参与前沿筛选。额度数值范围、稳健前沿和负载敏感性分析留待后续；不把定性置信度编成误差百分比。
-
-## 口径与复现
-
-[构建说明](BUILD.md) · [数据文档](data/README.md) · [来源与署名](SOURCES.md)
-
-## 许可与致谢
-
-原创代码采用 [MIT](LICENSE)。数据参考 [Awesome Coding Plan](https://github.com/mahonzhan/awesome-coding-plan)（CC BY 4.0）及《财经》的《Token经济，中国账本》等。署名、改动和第三方许可见 [SOURCES.md](SOURCES.md)。
+- 从头重建：[BUILD.md](BUILD.md)。口径与换算规则：[CONVENTIONS.md](CONVENTIONS.md)。每个值为什么这么取：[DECISIONS.md](DECISIONS.md)。
+- 手上有自己的用量实测（用了多少 token、额度走了百分之几）？欢迎[提交数据 Issue](https://github.com/FeiZhuLulu/real-api-pricing/issues/new?template=contribute-data.md)。
+- 原创代码采用 [MIT](LICENSE)。数据参考 [Awesome Coding Plan](https://github.com/mahonzhan/awesome-coding-plan)（CC BY 4.0）及《财经》的《Token经济，中国账本》等。署名、改动和第三方许可见 [SOURCES.md](SOURCES.md)，公开版的脱敏范围见 [PUBLICATION.md](PUBLICATION.md)。

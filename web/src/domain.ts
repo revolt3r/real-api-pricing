@@ -1,5 +1,6 @@
-import type { State, SiteData, Row, Point, Group, FilterKey } from "./types";
+import type { State, SiteData, Row, Point, Group, FilterKey, Lang } from "./types";
 import feeBandDefinitions from "../../config/allowance-fee-bands.json";
+import { channelColors, FALLBACK_COLOR } from "./palette";
 export const feeBands = feeBandDefinitions;
 export function matchesFeeBand(fee: number | null, id: string): boolean {
   if (id === "all") return true;
@@ -21,30 +22,12 @@ export const filterKeys: FilterKey[] = [
   "effort",
   "modes",
 ];
-export const colors: Record<string, string> = {
-  OpenAI: "#00A86B",
-  Anthropic: "#F07826",
-  xAI: "#B65CFF",
-  Cursor: "#FFB81C",
-  Kimi: "#2FA8FF",
-  Zhipu: "#1E1E1E",
-  MiniMax: "#D23A7D",
-  Alibaba: "#FF4545",
-  OpenCode: "#00B9A4",
-  DeepSeek: "#1F75FE",
-  Google: "#82BE2C",
-  "Command Code": "#64748B",
-  Ollama: "#A0785C",
-  Xiaomi: "#FFA000",
-  Tencent: "#26C6DA",
-  StepFun: "#00F4E5",
-  Devin: "#7C3AED",
-};
+export const colors = channelColors;
 export const defaultState = (): State => ({
   feeBand: "all",
   lang: "en",
   view: "pareto",
-  board: "arena_code",
+  board: "aa_intelligence_index",
   selected: null,
   vendors: [],
   channels: [],
@@ -57,11 +40,21 @@ export const defaultState = (): State => ({
   configuration: "summary",
   frontier: true,
   labels: "frontier",
+  find: "",
+  lock: null,
   query: "",
   sort: "price",
   direction: "asc",
 });
-export const color = (p: Point) => colors[p.channel] || "#00A8A8";
+export const color = (p: Point) => colors[p.channel] || FALLBACK_COLOR;
+/** Channel colour at a given alpha, for search-hit rings. */
+export function colorAlpha(p: Point, alpha: number): string {
+  const hex = color(p);
+  const m = /^#([0-9a-f]{6})$/i.exec(hex);
+  if (!m) return hex;
+  const n = parseInt(m[1], 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+}
 const matches = (items: string[], value: string | null) =>
   !items.length || items.includes(value ?? "unknown");
 export function options(data: SiteData): Record<FilterKey, string[]> {
@@ -97,6 +90,46 @@ export function visiblePoints(data: SiteData, s: State): Point[] {
       (s.view !== "multiple" || p.api_cost_multiple !== null),
   );
 }
+/**
+ * Decade-aligned log axis for the ranking bars, spanning every point that the
+ * unfiltered view could show, so a bar's length depends only on its own value.
+ */
+export function barAxis(
+  data: SiteData,
+  view: State["view"],
+): { low: number; high: number } {
+  const values = data.points
+    .filter(
+      (p) =>
+        view === "multiple"
+          ? p.api_cost_multiple !== null
+          : view !== "allowance" ||
+            (p.billing !== "metered" && p.monthly_yi !== null),
+    )
+    .map((p) =>
+      view === "allowance"
+        ? p.monthly_yi
+        : view === "multiple"
+          ? p.api_cost_multiple
+          : p.real_usd_per_mtok,
+    )
+    .filter((v): v is number => v !== null && Number.isFinite(v) && v > 0);
+  if (!values.length) return { low: 1, high: 10 };
+  const low = Math.floor(Math.log10(Math.min(...values))),
+    high = Math.ceil(Math.log10(Math.max(...values)));
+  return { low: 10 ** low, high: 10 ** Math.max(high, low + 1) };
+}
+/** Bar length in percent on a log axis; values with no log position get 0. */
+export function barWidth(
+  value: number,
+  axis: { low: number; high: number },
+): number {
+  if (!(value > 0)) return 0;
+  const f =
+    (Math.log10(value) - Math.log10(axis.low)) /
+    (Math.log10(axis.high) - Math.log10(axis.low));
+  return 100 * Math.min(1, Math.max(0, f));
+}
 export function rowsFor(data: SiteData, s: State): Row[] {
   const byPoint = new Map<string, typeof data.mappings>();
   for (const m of data.mappings)
@@ -111,7 +144,8 @@ export function rowsFor(data: SiteData, s: State): Row[] {
     let mappings = byPoint.get(p.id) || [];
     if (s.configuration === "summary" && mappings.length)
       mappings = [mappings.reduce((a, b) => (a.score >= b.score ? a : b))];
-    if (s.view !== "pareto") {
+    // The full table shares the chart's per-configuration score rows.
+    if (s.view !== "pareto" && s.view !== "table") {
       const m = mappings.length
         ? mappings.reduce((a, b) => (a.score >= b.score ? a : b))
         : null;
@@ -227,10 +261,284 @@ export function frontierPath(
     ],
   };
 }
-export function serialize(s: State): string {
-  return (
-    "#" + new URLSearchParams({ s: JSON.stringify({ v: 1, ...s }) }).toString()
+export type LockKind = "point" | "model" | "plan";
+export interface Lock {
+  kind: LockKind;
+  value: string;
+}
+/** URL form "kind:value"; a point id itself contains "::", so split on the first colon only. */
+export function serializeLock(l: Lock): string {
+  return `${l.kind}:${l.value}`;
+}
+export function parseLock(raw: string): Lock | null {
+  const i = raw.indexOf(":");
+  if (i < 0) return null;
+  const kind = raw.slice(0, i);
+  const value = raw.slice(i + 1);
+  if (kind !== "point" && kind !== "model" && kind !== "plan") return null;
+  return value ? { kind, value } : null;
+}
+/** Marked hits are capped so a loose query cannot bury the chart in labels. */
+export const SEARCH_MARK_CAP = 8;
+/** Model name without the plan-generation tag: a model lock spans generations. */
+export function modelFamilyLabel(p: Point): string {
+  const tag = p.plan_gen ? ` (${p.plan_gen})` : "";
+  return tag && p.model_display.endsWith(tag)
+    ? p.model_display.slice(0, -tag.length)
+    : p.model_display;
+}
+export function searchTokens(query: string): string[] {
+  return query.toLocaleLowerCase().split(/\s+/).filter(Boolean);
+}
+export function rowMatches(r: Row, tokens: string[], lang: string): boolean {
+  if (!tokens.length) return false;
+  const haystack = [
+    r.point.model_display,
+    r.point.model,
+    r.point.label,
+    displayPlan(r.point.plan, lang),
+    r.point.plan,
+    r.point.plan_en ?? "",
+    r.point.channel,
+    manufacturer(r.point.vendor),
+    r.mapping?.variant ?? "",
+  ]
+    .join(" ")
+    .toLocaleLowerCase();
+  // AND semantics: "kimi 199" must hit the plan name and the model together.
+  return tokens.every((t) => haystack.includes(t));
+}
+/** Matching rows across the plotted groups, deduped by point id, in display order. */
+export function searchMatches(
+  gs: Group[],
+  query: string,
+  lang: string,
+): Row[] {
+  const tokens = searchTokens(query);
+  const seen = new Set<string>();
+  const out: Row[] = [];
+  for (const g of gs)
+    for (const r of g.rows)
+      if (!seen.has(r.point.id) && rowMatches(r, tokens, lang)) {
+        seen.add(r.point.id);
+        out.push(r);
+      }
+  const first = tokens[0] ?? "";
+  return out.sort(
+    (a, b) =>
+      Number(b.point.model_display.toLocaleLowerCase().startsWith(first)) -
+        Number(a.point.model_display.toLocaleLowerCase().startsWith(first)) ||
+      a.point.real_usd_per_mtok - b.point.real_usd_per_mtok ||
+      a.point.model_display.localeCompare(b.point.model_display),
   );
+}
+export interface SearchHits {
+  /** Group keys to annotate. */
+  keys: Set<string>;
+  /** Live mode: matching points before the cap. Locked: points the lock covers. */
+  total: number;
+  /** Resolved lock, for the chip and the status line. */
+  locked: { kind: LockKind; label: string; points: number } | null;
+  /** True when a lock is set but nothing it names is in the current selection. */
+  lockMissing: boolean;
+}
+export function searchHits(
+  gs: Group[],
+  query: string,
+  lock: Lock | null,
+  lang: string,
+  cap = SEARCH_MARK_CAP,
+): SearchHits {
+  // A lock ignores the live query and is uncapped: it marks exactly what the
+  // user chose — one point, a model across plans, or a plan across models.
+  if (lock) {
+    const hit =
+      lock.kind === "point"
+        ? (r: Row) => r.point.id === lock.value
+        : lock.kind === "model"
+          ? (r: Row) => r.point.model === lock.value
+          : (r: Row) => r.point.plan_id === lock.value;
+    const keys = new Set<string>();
+    const ids = new Set<string>();
+    let first: Row | null = null;
+    for (const g of gs)
+      for (const r of g.rows)
+        if (hit(r)) {
+          keys.add(g.key);
+          ids.add(r.point.id);
+          first ??= r;
+        }
+    if (!first)
+      return { keys: new Set(), total: 0, locked: null, lockMissing: true };
+    const label =
+      lock.kind === "point"
+        ? `${first.point.model_display} · ${displayPlan(first.point.plan, lang)}`
+        : lock.kind === "model"
+          ? modelFamilyLabel(first.point)
+          : displayPlan(first.point.plan, lang);
+    return {
+      keys,
+      total: ids.size,
+      locked: { kind: lock.kind, label, points: ids.size },
+      lockMissing: false,
+    };
+  }
+  const matches = searchMatches(gs, query, lang);
+  const rowGroup = new Map<Row, Group>();
+  for (const g of gs) for (const r of g.rows) rowGroup.set(r, g);
+  const keys = new Set<string>();
+  for (const r of matches) {
+    if (keys.size >= cap) break;
+    const g = rowGroup.get(r);
+    if (g) keys.add(g.key);
+  }
+  return { keys, total: matches.length, locked: null, lockMissing: false };
+}
+export interface SearchGroupCandidate {
+  kind: "model" | "plan";
+  /** point.model or point.plan_id. */
+  value: string;
+  /** modelFamilyLabel for models; displayPlan(plan, lang) for plans. */
+  label: string;
+  /** Distinct points this lock would mark. */
+  points: number;
+  /** Lowest real price among them. */
+  cheapest: number;
+  /** Representative row (the cheapest one) for logos and score. */
+  row: Row;
+  /** Best score among the points this lock covers. */
+  score: number | null;
+}
+export interface SearchCandidates {
+  models: SearchGroupCandidate[];
+  plans: SearchGroupCandidate[];
+  points: Row[];
+}
+export function searchCandidates(
+  gs: Group[],
+  query: string,
+  lang: string,
+): SearchCandidates {
+  const tokens = searchTokens(query);
+  // Scoped haystacks per candidate kind: matching "cursor" must list Cursor
+  // plans but not the Grok model — locking that model would mark Grok points
+  // served by other channels too.
+  const modelHay = (r: Row) =>
+    [r.point.model_display, r.point.model, manufacturer(r.point.vendor)]
+      .join(" ")
+      .toLocaleLowerCase();
+  const planHay = (r: Row) =>
+    [
+      r.point.plan,
+      displayPlan(r.point.plan, lang),
+      r.point.plan_en ?? "",
+      r.point.channel,
+    ]
+      .join(" ")
+      .toLocaleLowerCase();
+  const allIn = (hay: string) => tokens.every((t) => hay.includes(t));
+  // The haystack decides only which slugs are listed; every statistic is
+  // computed over all rows a lock would cover, so the subtitle never
+  // promises less than locking delivers.
+  const modelRows = new Map<string, Row[]>();
+  const planRows = new Map<string, Row[]>();
+  const modelHit = new Set<string>();
+  const planHit = new Set<string>();
+  for (const g of gs)
+    for (const r of g.rows) {
+      modelRows.set(r.point.model, [...(modelRows.get(r.point.model) || []), r]);
+      planRows.set(r.point.plan_id, [...(planRows.get(r.point.plan_id) || []), r]);
+      if (tokens.length && allIn(modelHay(r))) modelHit.add(r.point.model);
+      if (tokens.length && allIn(planHay(r))) planHit.add(r.point.plan_id);
+    }
+  const cheapestRow = (rows: Row[]) =>
+    rows.reduce((a, b) =>
+      a.point.real_usd_per_mtok <= b.point.real_usd_per_mtok ? a : b,
+    );
+  const first = tokens[0] ?? "";
+  const prefixed = (label: string) =>
+    Number(label.toLocaleLowerCase().startsWith(first));
+  const groupCandidate = (
+    kind: "model" | "plan",
+    value: string,
+    label: string,
+    rows: Row[],
+  ): SearchGroupCandidate => {
+    const row = cheapestRow(rows);
+    const scores = rows
+      .map((r) => r.score)
+      .filter((s): s is number => s !== null);
+    return {
+      kind,
+      value,
+      label,
+      points: new Set(rows.map((r) => r.point.id)).size,
+      cheapest: row.point.real_usd_per_mtok,
+      row,
+      score: scores.length ? Math.max(...scores) : null,
+    };
+  };
+  const models: SearchGroupCandidate[] = [...modelHit]
+    .map((value) => {
+      const rows = modelRows.get(value)!;
+      return groupCandidate(
+        "model",
+        value,
+        modelFamilyLabel(cheapestRow(rows).point),
+        rows,
+      );
+    })
+    .sort(
+      (a, b) =>
+        prefixed(b.label) - prefixed(a.label) ||
+        (b.score ?? -Infinity) - (a.score ?? -Infinity) ||
+        a.label.localeCompare(b.label),
+    );
+  const plans: SearchGroupCandidate[] = [...planHit]
+    .map((value) => {
+      const rows = planRows.get(value)!;
+      return groupCandidate(
+        "plan",
+        value,
+        displayPlan(cheapestRow(rows).point.plan, lang),
+        rows,
+      );
+    })
+    .sort(
+      (a, b) =>
+        prefixed(b.label) - prefixed(a.label) ||
+        (a.row.point.price_usd ?? Infinity) -
+          (b.row.point.price_usd ?? Infinity) ||
+        a.label.localeCompare(b.label),
+    );
+  return { models, plans, points: searchMatches(gs, query, lang) };
+}
+export function serialize(s: State): string {
+  const d = defaultState();
+  const p = new URLSearchParams();
+  // The URL language always wins over the stored preference, so it is written
+  // even when it matches the default.
+  p.set("lang", s.lang);
+  if (s.view !== d.view) p.set("view", s.view);
+  if (s.board !== d.board) p.set("board", s.board);
+  if (s.configuration !== d.configuration) p.set("config", s.configuration);
+  if (s.labels !== d.labels) p.set("labels", s.labels);
+  if (s.feeBand !== d.feeBand) p.set("fee", s.feeBand);
+  if (s.query) p.set("q", s.query);
+  if (s.find) p.set("find", s.find);
+  if (s.lock) p.set("lock", serializeLock(s.lock));
+  if (s.sort !== d.sort) p.set("sort", s.sort);
+  if (s.direction !== d.direction) p.set("dir", s.direction);
+  if (!s.frontier) p.set("frontier", "0");
+  if (s.selected !== null) {
+    // An explicit empty selection serializes as a lone "sel=" so it stays
+    // distinct from an absent parameter (which means "select everything").
+    if (s.selected.length)
+      for (const id of s.selected) p.append("sel", id);
+    else p.set("sel", "");
+  }
+  for (const k of filterKeys) for (const v of s[k]) p.append(k, v);
+  return "#" + p.toString();
 }
 export function restore(
   hash: string,
@@ -240,10 +548,82 @@ export function restore(
   const state = defaultState();
   if (storedLang === "zh") state.lang = "zh";
   if (!hash || hash === "#") return { state, warning: false };
+  const params = new URLSearchParams(hash.slice(1));
+  const legacy = params.get("s");
+  if (legacy !== null) return restoreLegacy(legacy, state, data);
+  let warning = false;
+  const enums: Record<string, [keyof State, string[]]> = {
+    lang: ["lang", ["en", "zh"]],
+    view: ["view", ["pareto", "price", "allowance", "multiple", "compare", "table", "method"]],
+    config: ["configuration", ["all", "summary"]],
+    labels: ["labels", ["frontier", "all", "none"]],
+    fee: ["feeBand", ["all", ...feeBands.map((b) => b.id)]],
+    sort: ["sort", ["price", "model", "plan", "score", "allowance", "fee", "apiCost", "multiple"]],
+    dir: ["direction", ["asc", "desc"]],
+  };
+  for (const [key, [field, values]] of Object.entries(enums)) {
+    const value = params.get(key);
+    if (value === null) continue;
+    if (values.includes(value)) Object.assign(state, { [field]: value });
+    else warning = true;
+  }
+  const board = params.get("board");
+  if (board !== null) {
+    if (Object.hasOwn(data.boards, board)) state.board = board;
+    else warning = true;
+  }
+  const frontier = params.get("frontier");
+  if (frontier !== null) {
+    if (frontier === "0") state.frontier = false;
+    else if (frontier === "1") state.frontier = true;
+    else warning = true;
+  }
+  const query = params.get("q");
+  if (query !== null) state.query = query;
+  const find = params.get("find");
+  if (find !== null) state.find = find;
+  const lock = params.get("lock");
+  if (lock !== null) {
+    const parsed = parseLock(lock);
+    const known =
+      parsed &&
+      (parsed.kind === "point"
+        ? data.points.some((p) => p.id === parsed.value)
+        : parsed.kind === "model"
+          ? data.points.some((p) => p.model === parsed.value)
+          : data.points.some((p) => p.plan_id === parsed.value));
+    if (known) state.lock = parsed;
+    else warning = true;
+  }
+  if (params.has("sel")) {
+    const wanted = params.getAll("sel").filter((id) => id !== "");
+    if (!wanted.length) state.selected = [];
+    else {
+      const ids = new Set(data.points.map((p) => p.id));
+      state.selected = wanted.filter((id) => ids.has(id));
+      if (state.selected.length !== wanted.length) warning = true;
+    }
+  }
+  const opts = options(data);
+  for (const k of filterKeys) {
+    if (!params.has(k)) continue;
+    const wanted = params.getAll(k).map(renameEntity);
+    state[k] = wanted.filter((v) => opts[k].includes(v));
+    if (state[k].length !== wanted.length) warning = true;
+  }
+  return { state, warning };
+}
+/** Display names that were renamed after links were shared (xAI → SpaceXAI). */
+const RENAMED: Record<string, string> = { xAI: "SpaceXAI" };
+const renameEntity = (v: string) => RENAMED[v] ?? v;
+/** The original "#s=<json>" share format; kept so old links still resolve. */
+function restoreLegacy(
+  s: string,
+  state: State,
+  data: SiteData,
+): { state: State; warning: boolean } {
   try {
-    const raw = JSON.parse(
-      new URLSearchParams(hash.slice(1)).get("s") || "null",
-    );
+    const raw = JSON.parse(s);
     if (!raw || raw.v !== 1) return { state, warning: true };
     let warning = false;
     const enums = {
@@ -276,9 +656,10 @@ export function restore(
     const opts = options(data);
     for (const k of filterKeys) {
       if (Array.isArray(raw[k])) {
-        state[k] = raw[k].filter(
-          (v: unknown) => typeof v === "string" && opts[k].includes(v),
-        );
+        state[k] = raw[k]
+          .filter((v: unknown) => typeof v === "string")
+          .map(renameEntity)
+          .filter((v: string) => opts[k].includes(v));
         if (state[k].length !== raw[k].length) warning = true;
       } else if (raw[k] !== undefined) warning = true;
     }
@@ -293,13 +674,28 @@ export const number = (n: number | null, lang = "en", digits = 3) =>
     : new Intl.NumberFormat(lang === "zh" ? "zh-CN" : "en-US", {
         maximumFractionDigits: digits,
       }).format(n);
+/**
+ * Short price for charts, rankings, tables and cards: at most 5 decimals and
+ * 4 significant digits ("$0.0006", "$0.1157"). The data keeps 6 significant
+ * digits, so ordering and the frontier always use the exact value.
+ */
 export const price = (n: number | null) =>
   n === null
     ? "—"
     : n === 0
       ? "≈$0"
       : "$" +
-      new Intl.NumberFormat("en-US", { maximumSignificantDigits: 4 }).format(n);
+        new Intl.NumberFormat("en-US", { maximumSignificantDigits: 4 }).format(
+          Math.round(n * 1e5) / 1e5 || n,
+        );
+/** Full-precision price for the detail dialog ("$0.000595538"). */
+export const priceExact = (n: number | null) =>
+  n === null
+    ? "—"
+    : n === 0
+      ? "≈$0"
+      : "$" +
+        new Intl.NumberFormat("en-US", { maximumSignificantDigits: 6 }).format(n);
 export const allowance = (p: Point, lang: string) =>
   p.monthly_yi === null
     ? "—"
@@ -320,6 +716,94 @@ export const money = (n: number | null, lang = "en") =>
  *  break-even when the plan is in fact slightly ahead. */
 export const multiple = (n: number | null, lang = "en") =>
   n === null ? "" : "×" + number(n, lang, n < 2 ? 2 : n < 100 ? 1 : 0);
+/** Quota-basis line for the detail panel: which workload the capacity assumes. */
+export function workloadLine(
+  p: Point,
+  conventions: SiteData["conventions"],
+  lang: string,
+): string {
+  const zh = lang === "zh";
+  const pct = (n: number) => `${+(n * 100).toFixed(2)}%`;
+  if (p.workload === "lowCache") {
+    const m = conventions.lowCacheTokenMix;
+    return zh
+      ? `低缓存负载：缓存读 ${pct(m.cache)} / 输入 ${pct(m.input)} / 输出 ${pct(m.output)}`
+      : `Low-cache workload: ${pct(m.cache)} cache reads / ${pct(m.input)} input / ${pct(m.output)} output`;
+  }
+  if (p.workload === "anthropic") {
+    const m = conventions.anthropicTokenMix;
+    return zh
+      ? `Anthropic 统一负载：缓存读 ${pct(m.cache)} / 缓存写 ${pct(m.cacheWrite)} / 输出 ${pct(m.output)}`
+      : `Anthropic workload: ${pct(m.cache)} cache reads / ${pct(m.cacheWrite)} cache writes / ${pct(m.output)} output`;
+  }
+  if (p.workload === "standard") {
+    const m = conventions.standardTokenMix;
+    return zh
+      ? `标准负载：缓存读 ${pct(m.cache)} / 输入 ${pct(m.input)} / 输出 ${pct(m.output)}`
+      : `Standard workload: ${pct(m.cache)} cache reads / ${pct(m.input)} input / ${pct(m.output)} output`;
+  }
+  return zh
+    ? "未折算：样本缺 token 分项（或为官方绝对 token 表），直接采用 raw token"
+    : "Not workload-normalized: sample lacks a token breakdown (or is an official absolute token table); raw tokens used as-is";
+}
+
+/** Data-date line for the detail panel: when this quota data was sampled or published. */
+export function dataDateLine(p: Point, lang: Lang): string {
+  if (!p.data_date) return "";
+  const zh = lang === "zh";
+  const date = p.data_date.replace("~", zh ? " ~ " : " – ");
+  const kind =
+    p.data_date_kind === "sample"
+      ? zh
+        ? "实测采样"
+        : "sampled"
+      : p.data_date_kind === "official"
+        ? zh
+          ? "官方来源日期"
+          : "official source date"
+        : p.data_date_kind === "derived"
+          ? zh
+            ? `派生，沿用 ${p.data_date_from} 的数据日期`
+            : `derived; uses the data date of ${p.data_date_from}`
+          : null;
+  return kind ? `${date} · ${kind}` : date;
+}
+
+/** Official metered API list prices, shown next to the workload basis. */
+export function listPriceLine(p: Point, lang: string): string {
+  const lp = p.list_price;
+  if (!lp) return "";
+  const sym = lp.currency === "CNY" ? "¥" : "$";
+  const f = (n: number) =>
+    sym + new Intl.NumberFormat("en-US", { maximumSignificantDigits: 4 }).format(n);
+  const parts = `${f(lp.cached)} / ${f(lp.input)} / ${f(lp.output)}`;
+  return lang === "zh"
+    ? `官方 API 标价：缓存读 / 输入 / 输出 = ${parts}（每 MTok）`
+    : `Official API list (cached / in / out, per MTok): ${parts}`;
+}
+const METRIC_ZH: Record<string, string> = {
+  "Intelligence Index": "智力指数",
+  "Resolution Rate %": "解决率 %",
+  "Arena Score": "Arena 分数",
+  "Net Improvement %": "净提升 %",
+  "Coding Agent Index": "编程 Agent 指数",
+  "Average task score": "平均任务分",
+  "Pass@1 %": "Pass@1 %",
+};
+const EFFORT: Record<string, [string, string]> = {
+  none: ["None", "无推理"],
+  low: ["Low", "低"],
+  medium: ["Medium", "中"],
+  high: ["High", "高"],
+  xhigh: ["xhigh", "超高"],
+  max: ["Max", "最高"],
+};
+/** Reasoning-effort level in the reader's language; unknown levels stay as published. */
+export const effortLabel = (effort: string | null, lang: string) =>
+  effort === null ? null : (EFFORT[effort]?.[lang === "zh" ? 1 : 0] ?? effort);
+/** Leaderboard metric in the reader's language; unknown metrics stay as published. */
+export const metricLabel = (metric: string, lang: string) =>
+  lang === "zh" ? (METRIC_ZH[metric] ?? metric) : metric;
 export const safeUrl = (url: string) =>
   /^https?:\/\//i.test(url) || url.startsWith("/data/") ? url : undefined;
 export const manufacturer = (vendor: string) =>
@@ -354,6 +838,12 @@ export function displayPlan(plan: string, lang: string): string {
     plan = plan.replaceAll("老客", "v2").replaceAll("新客", "v3");
   if (lang === "zh") return plan;
   const words: Record<string, string> = {
+    // Same-name CN/global tiers are merged into one point priced at the
+    // international USD list; English shows the international tier name.
+    "Kimi 会员 199": "Kimi Allegretto",
+    "Kimi 会员 99": "Kimi Moderato",
+    "Kimi 会员 699": "Kimi Allegro",
+    "Kimi 会员 49": "Kimi Andante (CN)",
     "Kimi 会员 ": "Kimi CN CNY ",
     阿里云百炼: "Alibaba Cloud CN",
     新客: "New",

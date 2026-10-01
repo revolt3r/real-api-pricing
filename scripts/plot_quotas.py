@@ -10,6 +10,9 @@ import csv
 import json
 import math
 import os
+import re
+import sys
+import textwrap
 import unicodedata
 
 import matplotlib
@@ -19,12 +22,14 @@ import matplotlib.pyplot as plt
 from matplotlib import font_manager
 
 from compute import DISPLAY
+from palette import channel_of, palette
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ADOPTED = os.path.join(ROOT, "data", "adopted.csv")
 OUT_DIR = os.path.join(ROOT, "_build")
 with open(os.path.join(ROOT, "data", "conventions.json"), encoding="utf-8") as f:
     CONVENTIONS = json.load(f)
+STD_MIX = CONVENTIONS["standardTokenMix"]
 with open(os.path.join(ROOT, "config", "allowance-fee-bands.json"), encoding="utf-8") as f:
     FEE_BANDS = json.load(f)
 # API 标价成本列取自 compute.py 的产物；BUILD.md 要求 compute.py 先跑。
@@ -74,45 +79,24 @@ def fee_band_rows(rows: list[dict], band: dict) -> list[dict]:
 
 if os.path.isfile("C:/Windows/Fonts/msyh.ttc"):
     font_manager.fontManager.addfont("C:/Windows/Fonts/msyh.ttc")
-plt.rcParams["font.family"] = ["Microsoft YaHei", "Noto Sans CJK SC", "DejaVu Sans"]
+available = {f.name for f in font_manager.fontManager.ttflist}
+cjk_candidates = ["Microsoft YaHei", "Noto Sans CJK SC"]
+plt.rcParams["font.family"] = [n for n in cjk_candidates if n in available] + ["DejaVu Sans"]
+if not any(n in available for n in cjk_candidates) and os.environ.get("CHART_FONT_FALLBACK") != "1":
+    sys.exit("找不到中文字体（Microsoft YaHei 或 Noto Sans CJK SC），图表中文会渲染成方块；"
+             "请安装其一。CI 只跑检查不发布图片时可设 CHART_FONT_FALLBACK=1 跳过。"
+             " No CJK font found: Chinese chart text would render as boxes."
+             " Install Microsoft YaHei or Noto Sans CJK SC, or set CHART_FONT_FALLBACK=1"
+             " for CI-only runs whose images are not published.")
 plt.rcParams["axes.unicode_minus"] = False
+plt.rcParams["svg.hashsalt"] = "real-api-pricing"
 
-VENDOR_OF = {
-    "chatgpt": "OpenAI",
-    "openai": "OpenAI",
-    "claude": "Anthropic",
-    "anthropic": "Anthropic",
-    "supergrok": "xAI",
-    "xai": "xAI",
-    "cursor": "Cursor",
-    "kimi": "Kimi",
-    "glm": "GLM",
-    "minimax": "MiniMax",
-    "aliyun": "Alibaba",
-    "opencode": "OpenCode",
-    "command_code": "Command Code",
-    "ollama": "Ollama",
-    "deepseek": "DeepSeek",
-    "stepfun": "StepFun",
-    "devin": "Devin",
-}
-VENDOR_COLORS = {
-    "OpenAI": "#00A86B",
-    "Anthropic": "#F07826",
-    "xAI": "#B65CFF",
-    "Cursor": "#FFB81C",
-    "Kimi": "#2FA8FF",
-    "GLM": "#1E1E1E",
-    "MiniMax": "#D23A7D",
-    "Alibaba": "#FF6F61",
-    "OpenCode": "#00C0A8",
-    "Command Code": "#708090",
-    "Ollama": "#A0785C",
-    "DeepSeek": "#1F75FE",
-    "Gemini": "#7CC12A",
-    "StepFun": "#00F4E5",
-    "Devin": "#7C3AED",
-}
+# 色值与 id 前缀统一来自 config/channel-colors.json；此处只定图例顺序。
+VENDOR_COLORS = palette(["OpenAI", "Anthropic", "SpaceXAI", "Cursor", "Kimi", "Zhipu", "MiniMax", "Alibaba",
+                         "OpenCode", "Command Code", "Ollama", "DeepSeek", "Google", "StepFun",
+                         "Xiaomi", "Devin", "Factory"])
+# 图例沿用旧显示名（GLM/Gemini），内部键均为 canonical 渠道名。
+LABEL = {"Zhipu": "GLM", "Google": "Gemini"}
 VIEW_CN = {"quotas": "额度", "prices": "单价", "multiple": "倍数", "plan_value": "套餐性价比"}
 BOARD_CN = {
     "arena_code": "CodeArena榜",
@@ -121,6 +105,8 @@ BOARD_CN = {
     "aa_coding_agent_index": "AA编程Agent榜",
     "open_design_arena": "OpenDesign设计榜",
     "terminal_bench_4": "TB4终端榜",
+    "aa_terminal_bench_4": "TB4·AA榜",
+    "deepswe_1_1": "DeepSWE榜",
 }
 
 
@@ -137,17 +123,18 @@ def output_stem(view: str, board: dict | None, language: str, table: bool = Fals
 
 
 VENDOR_CODES = {
-    "OpenAI": "OA", "Anthropic": "AN", "xAI": "XA", "Cursor": "CU",
-    "Kimi": "KI", "GLM": "GL", "MiniMax": "MM", "Alibaba": "AL",
+    "OpenAI": "OA", "Anthropic": "AN", "SpaceXAI": "XA", "Cursor": "CU",
+    "Kimi": "KI", "Zhipu": "GL", "MiniMax": "MM", "Alibaba": "AL",
     "OpenCode": "OC", "Command Code": "CC", "Ollama": "OL",
-    "DeepSeek": "DS", "Gemini": "GE", "StepFun": "SF", "Devin": "DV",
+    "DeepSeek": "DS", "Google": "GE", "StepFun": "SF", "Devin": "DV",
+    "Xiaomi": "MI", "Factory": "FA",
 }
 TEXT = {
     "zh": {
         "quotas_title": "订阅额度总览 · 套餐 × 实际服务模型",
         "prices_title": "真实单价总览 · 订阅与 API 统一对比",
         "quotas_subtitle": "默认月 = 4 周，Kimi独立月池 = 周池×5；饱和使用；全口径 token；按量 API 无月额度",
-        "prices_subtitle": "美元/credits与API三段价统一按97.5%缓存 / 2.15%输入 / 0.35%输出折算；直接total-token实测不重算",
+        "prices_subtitle": f"美元/credits与API三段价统一按{STD_MIX['cache']:.0%}缓存 / {STD_MIX['input']:.1%}输入 / {STD_MIX['output']:.1%}输出折算；直接total-token实测不重算",
         "quotas_axis": "月可用 token（亿，对数轴）",
         "prices_axis": "真实单价（美元 / 百万 token，对数轴）",
         "multiple_title": "订阅性价比总览 · 额度按API标价值几倍月费",
@@ -176,7 +163,7 @@ TEXT = {
         "quotas_title": "Monthly token allowance | Subscription plan x served model",
         "prices_title": "Effective token price | Subscriptions and APIs compared",
         "quotas_subtitle": "Default month = 4 weeks; Kimi monthly pool = 5× weekly; full utilization, all token types; APIs have no allowance",
-        "prices_subtitle": "Dollar/credit and API rates use 97.5% cache / 2.15% input / 0.35% output; direct total-token measurements are not normalized",
+        "prices_subtitle": f"Dollar/credit and API rates use {STD_MIX['cache']:.0%} cache / {STD_MIX['input']:.1%} input / {STD_MIX['output']:.1%} output; direct total-token measurements are not normalized",
         "quotas_axis": "Monthly tokens (billions, log scale)",
         "prices_axis": "Effective price (USD per million tokens, log scale)",
         "multiple_title": "Subscription value | What the allowance is worth in monthly fees at API list price",
@@ -204,12 +191,21 @@ TEXT = {
 }
 
 
-def vendor_of(plan_id: str) -> str:
-    return next(name for prefix, name in VENDOR_OF.items() if plan_id.startswith(prefix))
-
-
 def plan_name(row: dict, language: str) -> str:
-    return display_plan_name(row["plan_name"], row["plan_id"], language)
+    if language == "en" and row.get("plan_name_en"):
+        # 国内外同名档并点：英文图用国际版名（如 Kimi Allegretto），差价在月费列注明
+        return row["plan_name_en"] + (" †" if row["plan_id"].startswith("kimi_") else "")
+    name = row["plan_name"]
+    if row.get("plan_gen") and not name.startswith("GLM "):
+        # GLM 老客/新客替换后套餐名已含 v2/v3 代际，不重复标注；Kimi 音乐名档补 (v1)
+        name += f" ({row['plan_gen']})"
+    return display_plan_name(name, row["plan_id"], language)
+
+
+def plan_label(plan: dict, language: str) -> str:
+    """plan-value.json 的套餐条目沿用逐行图的命名规则（含英文国际版名）。"""
+    return plan_name(dict(plan_name=plan["plan"], plan_name_en=plan.get("plan_en") or "",
+                          plan_gen=plan.get("plan_gen") or "", plan_id=plan["plan_id"]), language)
 
 
 def display_plan_name(name: str, plan_id: str, language: str) -> str:
@@ -219,6 +215,7 @@ def display_plan_name(name: str, plan_id: str, language: str) -> str:
         name += " †"
     if language == "en":
         for original, translated in {
+            "Kimi 会员 49": "Kimi Andante (CN)",
             "Kimi 会员 ": "Kimi CN ",
             "新客": "New",
             "老客": "Existing",
@@ -230,7 +227,18 @@ def display_plan_name(name: str, plan_id: str, language: str) -> str:
             name = name.replace(original, translated)
         if plan_id.startswith("kimi_"):
             name = name.replace("Kimi CN ", "Kimi CN CNY ")
+        name = re.sub(r"\(促销至 (\d+/\d+)\)", r"(promo until \1)", name)
     return name
+
+
+def fee_text(row: dict, language: str) -> str:
+    if not row["price"]:
+        return TEXT[language]["metered"]
+    if row.get("plan_name_en") and row["currency"] == "CNY":
+        # 并点行：¥ 为国内实付，$ 为国际版标价（price_usd）
+        usd = float(row["price_usd"])
+        return f"¥{row['price']}（国际 ${usd:g}）" if language == "zh" else f"${usd:g} · CN ¥{row['price']}"
+    return f"{row['currency']} {row['price']}"
 
 
 def text_width(s: str) -> int:
@@ -247,9 +255,11 @@ def monthly_value(row: dict, language: str) -> float:
 
 def sorted_rows(rows: list[dict], view: str) -> list[dict]:
     if view == "quotas":
+        # 不计额度（≈$0 促销）点没有月额度数值，排在最前（促销期额度无上限），其余按额度降序。
         return sorted(
-            (r for r in rows if r["billing"] == "subscription" and r["monthly_tokens"]),
-            key=lambda r: -float(r["monthly_yi"]),
+            (r for r in rows
+             if r["billing"] == "subscription" and (r["monthly_tokens"] or r.get("unmetered") == "true")),
+            key=lambda r: (r.get("unmetered") != "true", -float(r["monthly_yi"] or 0)),
         )
     if view == "multiple":
         # 只画有官方标价、且有月额度的订阅行；缺标价的模型不进图，也不补造倍数。
@@ -263,12 +273,13 @@ def frontier_rows(rows: list[dict], points: list[dict], board: str) -> list[dict
     candidates = []
     for row in rows:
         point = index.get(f"{row['plan_id']}::{row['served_model']}")
-        if point is None or point.get(f"{board}__score") is None or float(row["real_usd_per_mtok"]) <= 0:
+        if point is None or point.get(f"{board}__score") is None:
             continue
         if float(row["real_usd_per_mtok"]) != point["real_usd_per_mtok"]:
             raise ValueError("derived/points.json is stale; run scripts/compute.py first")
         candidates.append({**row, "board_score": point[f"{board}__score"],
                            "board_variant": point[f"{board}__variant"],
+                           "plan_gen": point.get("plan_gen") or "",
                            "board_harness": point[f"{board}__agent_harness"],
                            "board_effort": point[f"{board}__reasoning_effort"],
                            "board_mapping": point[f"{board}__mapping_kind"],
@@ -289,14 +300,14 @@ def frontier_caption(board: dict) -> str:
 
 def frontier_rule(language: str) -> str:
     if language == "zh":
-        return "前沿按全量订阅/API的单价与得分筛选，非额度排名；同价同分套餐均保留；缺分模型不参与，估算不确定性未纳入筛选。"
-    return "Selected by price and score across all subscriptions/APIs, not by allowance. Equivalent plans retained; unscored models excluded; uncertainty not modeled."
+        return "前沿按全量订阅/API（含不计额度的 ≈$0 促销点，与帕累托图一致）的单价与得分筛选，非额度排名；同价同分套餐均保留；缺分模型不参与，估算不确定性未纳入筛选。"
+    return "Selected by price and score across all subscriptions/APIs (including unmetered ≈$0 promo points, as in the Pareto charts), not by allowance. Equivalent plans retained; unscored models excluded; uncertainty not modeled."
 
 
 def evidence_note(language: str) -> str:
     if language == "zh":
-        return "† Kimi：¥199的K3点以K3-256K为主，约84%反推周池×5得14.51亿；K2.7纯样本11.9M/月0.76%得15.68亿；其余档按官方倍率推算。OpenCode Go按官方美元池和三段价套统一标准负载换算。"
-    return "† Kimi: CNY199 K3 uses a K3-256K-dominant / ~84% weekly sample ×5 = 1.451B; pure K2.7 uses 11.9M / 0.76% = 1.568B. Other tiers are scaled by official ratios. OpenCode Go uses official dollar pools and rates under the standard workload."
+        return "† Kimi：¥199的K3点以K3-256K为主，约84%反推周池×5得14.51亿；K2.7纯样本11.9M/月0.76%得15.68亿；其余档按官方倍率推算；同名档国内外并点，月费/单价按国际版美元标价（$19/$39/$99），¥价为国内实付。OpenCode Go按官方美元池和三段价套统一标准负载换算。"
+    return "† Kimi: CNY199 K3 uses a K3-256K-dominant / ~84% weekly sample ×5 = 1.451B; pure K2.7 uses 11.9M / 0.76% = 1.568B. Other tiers are scaled by official ratios. Same-name CN/global tiers are merged; fee and unit price use the international USD list ($19/$39/$99), ¥ is the domestic list price. OpenCode Go uses official dollar pools and rates under the standard workload."
 
 
 def api_cost_note(language: str) -> str:
@@ -322,8 +333,8 @@ def exchange_note(language: str) -> str:
     fx = CONVENTIONS["exchangeRate"]
     rate = CONVENTIONS["usdPerCny"]
     if language == "zh":
-        return f"汇率：1 USD = {rate:g} CNY（{fx['date']}，{fx['labelZh']}）；人民币月费 ÷ 汇率换算美元。"
-    return f"FX: 1 USD = {rate:g} CNY ({fx['date']}, {fx['labelEn']}); CNY monthly fees divided by this rate."
+        return f"汇率：1 USD = {rate:g} CNY（{fx['date']}，{fx['labelZh']}）；人民币月费 ÷ 汇率换算美元（Kimi 同名并点档除外，按国际版美元标价）。"
+    return f"FX: 1 USD = {rate:g} CNY ({fx['date']}, {fx['labelEn']}); CNY monthly fees divided by this rate (merged same-name Kimi tiers use the international USD list instead)."
 
 
 def write_text_table(rows: list[dict], view: str, language: str, board: dict | None = None, fee_band: dict | None = None) -> None:
@@ -334,11 +345,13 @@ def write_text_table(rows: list[dict], view: str, language: str, board: dict | N
     body = [
         [
             str(i), plan_name(r, language),
-            f"{r['currency']} {r['price']}" if r["price"] else text["metered"],
+            fee_text(r, language),
             DISPLAY.get(r["served_model"], r["served_model"]),
-            f"{monthly_value(r, language):g}" if r["monthly_tokens"] else "-",
-            r["real_usd_per_mtok"], api_cost_cell(r), r["confidence"],
-        ] + ([f"{r['board_score']:g}", r["board_variant"], r["board_harness"] or "—",
+            (("不计额度" if language == "zh" else "unmetered") if r.get("unmetered") == "true"
+             else f"{monthly_value(r, language):g}" if r["monthly_tokens"] else "-"),
+            (unmetered_label(r, language, with_dollar=False) if r.get("unmetered") == "true"
+             else price_text(float(r["real_usd_per_mtok"]))), api_cost_cell(r), r["confidence"],
+        ] + ([f"{r['board_score']:g}", localise_variant(r["board_variant"], language), r["board_harness"] or "—",
               r["board_effort"] or "—", r["board_mapping"]] if board else [])
         for i, r in enumerate(rows, 1)
     ]
@@ -393,7 +406,7 @@ def plot_plan_value(plans: list[dict], language: str) -> None:
         chunk = plans[col * half:col * half + half]
         start = col * half
         for i, plan in enumerate(chunk):
-            color = VENDOR_COLORS[vendor_of(plan["plan_id"])]
+            color = VENDOR_COLORS[channel_of(plan["plan_id"])]
             headline, best, worst = plan["headline_multiple"], plan["best_multiple"], plan["worst_multiple"]
             # 浅色段先画：最优模型能到哪里，深色主数字压在上面。
             if best > headline:
@@ -409,7 +422,7 @@ def plot_plan_value(plans: list[dict], language: str) -> None:
                     va="center", fontsize=9.5, color="#20252B",
                     bbox=dict(facecolor="white", alpha=0.72, edgecolor="none", pad=1.0))
         labels = [
-            f"{start + i:02d}. {display_plan_name(p['plan'], p['plan_id'], language)}"
+            f"{start + i:02d}. {plan_label(p, language)}"
             f"  ${p['fee_usd']:g} · {p['model_count']}"
             + ("个模型" if language == "zh" else " models")
             for i, p in enumerate(chunk, 1)
@@ -436,10 +449,10 @@ def plot_plan_value(plans: list[dict], language: str) -> None:
     fig.suptitle(text["plan_value_title"], fontsize=21, y=1 - 0.22 / figsize[1], fontweight="bold")
     fig.text(0.5, 1 - 0.72 / figsize[1], text["plan_value_subtitle"],
              ha="center", fontsize=11, color="#505A64")
-    providers = {vendor_of(p["plan_id"]) for p in plans}
+    providers = {channel_of(p["plan_id"]) for p in plans}
     legend = [(name, c) for name, c in VENDOR_COLORS.items() if name in providers]
     handles = [plt.Rectangle((0, 0), 1, 1, color=c) for _, c in legend]
-    fig.legend(handles, [f"{VENDOR_CODES[name]}  {name}" for name, _ in legend], loc="lower center",
+    fig.legend(handles, [f"{VENDOR_CODES[name]}  {LABEL.get(name, name)}" for name, _ in legend], loc="lower center",
                bbox_to_anchor=(0.5, 1 - 1.28 / figsize[1]), ncol=len(legend),
                fontsize=11, frameon=False, handlelength=1.6, columnspacing=1.8)
     notes = [text["plan_value_note"], text["plan_value_marks"], text["shared"], exchange_note(language)]
@@ -464,7 +477,7 @@ def write_plan_value_table(plans: list[dict], language: str) -> None:
             marks = ("*" if group["third_party_rate"] else "") + ("‡" if group["inherited"] else "")
             body.append([
                 f"{i}" if j == 0 else "",
-                display_plan_name(plan["plan"], plan["plan_id"], language) + plan_flags(plan) if j == 0 else "",
+                plan_label(plan, language) + plan_flags(plan) if j == 0 else "",
                 plan["channel"] if j == 0 else "",
                 f"USD {plan['fee_usd']:g}" if j == 0 else "",
                 text[kind],
@@ -485,9 +498,63 @@ def write_plan_value_table(plans: list[dict], language: str) -> None:
     print(f"wrote {len(plans)} plans / {len(body)} value groups -> {path}")
 
 
+SELF_REPORT_MARKER = " [vendor self-report]"
+SELF_REPORT_MARKER_ZH = " [厂商自报]"
+
+
+def localise_variant(variant: str, language: str) -> str:
+    # Static charts are published per language, so the provenance marker has to follow
+    # the chart's language; otherwise a Chinese chart carries an English tag. Wording
+    # matches plot_svg.py so the pareto and frontier families agree.
+    return variant.replace(SELF_REPORT_MARKER, SELF_REPORT_MARKER_ZH) if language == "zh" else variant
+
+
+def chart_variant(row: dict, language: str) -> str:
+    variant = localise_variant(row["board_variant"], language)
+    if len(variant) <= 60:
+        return variant
+    harness = row.get("board_harness")
+    marker = SELF_REPORT_MARKER_ZH if language == "zh" else SELF_REPORT_MARKER
+    if harness and variant.startswith(harness + " - "):
+        model = variant.removeprefix(harness + " - ")
+        source = ("" if not model.endswith(marker) else
+                  " · 厂商自报" if language == "zh" else " · vendor self-report")
+        return model.removesuffix(marker) + "\n" + harness + source
+    return textwrap.fill(variant, width=60, break_long_words=False, break_on_hyphens=False)
+
+
+def price_text(value: float) -> str:
+    """图表与文字表的短格式单价（5 位小数）；数据本身保留 6 位有效数字，排序用原值。"""
+    return f"{round(value, 5):g}"
+
+
+def promo_until_text(row: dict) -> str | None:
+    """促销截止 "YYYY-MM-DD" → "M/D"（不补零），与 plot_svg.promo_text 同一格式。"""
+    until = row.get("promo_until")
+    return f"{until[5:7].lstrip('0')}/{until[8:10].lstrip('0')}" if until else None
+
+
+def unmetered_label(row: dict, language: str, with_dollar: bool) -> str:
+    """不计额度点的价格文案，措辞同 plot_svg.promo_text；with_dollar=False 供无 $ 列使用。"""
+    price = "≈$0" if with_dollar else "≈0"
+    md = promo_until_text(row)
+    if md:
+        return (f"{price} · promo until {md}, unmetered" if language == "en"
+                else f"{price} · 促销至{md}，不计额度")
+    return f"{price} · unmetered" if language == "en" else f"{price} · 不计额度"
+
+
 def annotation_of(row: dict, value: float, view: str, language: str,
                   board: dict | None) -> str:
-    if view == "quotas":
+    if row.get("unmetered") == "true":
+        md = promo_until_text(row)
+        if view == "prices":
+            value_label = unmetered_label(row, language, with_dollar=True)
+        elif language == "zh":
+            value_label = f"不计额度 · 促销至{md}" if md else "不计额度"
+        else:
+            value_label = f"unmetered · promo until {md}" if md else "unmetered"
+    elif view == "quotas":
         value_label = f"{value:g}"
     elif view == "multiple":
         # 倍数图里同时给出美元金额，否则读者只看到倍数、不知道基数多大。
@@ -498,9 +565,9 @@ def annotation_of(row: dict, value: float, view: str, language: str,
         if point["api_cost_inherited"]:
             value_label += "‡"
     else:
-        value_label = f"${value:g}"
+        value_label = f"${price_text(value)}"
     confidence = row["confidence"][0].upper()
-    channel = VENDOR_CODES[vendor_of(row["plan_id"])]
+    channel = VENDOR_CODES[channel_of(row["plan_id"])]
     annotation = f"{value_label}  {channel} [{confidence}]"
     if board:
         score = f"{row['board_score']:+g}%" if "%" in board["metric"] else f"{row['board_score']:g}"
@@ -537,7 +604,7 @@ def draw_mixed_vs_third(fig, axes, mixed, baseline, view, language) -> None:
             facecolor=color, alpha=alpha, lw=0, clip_on=False, zorder=z))
 
     for j in (0, 1):
-        color = VENDOR_COLORS[vendor_of(rows[j]["plan_id"])]
+        color = VENDOR_COLORS[channel_of(rows[j]["plan_id"])]
         ratio = values[j] / ref
         y_fig, h_fig = _fig_box(bars[j].get_y(), bars[j].get_height(), tax, fig)
         target = ref_len * ratio
@@ -559,7 +626,9 @@ def draw_mixed_vs_third(fig, axes, mixed, baseline, view, language) -> None:
 def plot(rows: list[dict], view: str, language: str, board: dict | None = None,
          mixed_scale: bool = False, fee_band: dict | None = None) -> None:
     text = TEXT[language]
-    values = [monthly_value(r, language) if view == "quotas"
+    # 不计额度点没有可画的数值：占位 0，不进入 baseline/xhi，也不画条形。
+    values = [0.0 if r.get("unmetered") == "true"
+              else monthly_value(r, language) if view == "quotas"
               else multiple_value(r) if view == "multiple"
               else float(r["real_usd_per_mtok"]) for r in rows]
     ncols = 1 if board else 2
@@ -580,18 +649,21 @@ def plot(rows: list[dict], view: str, language: str, board: dict | None = None,
         fig.subplots_adjust(left=0.205, right=0.99, top=0.90, bottom=0.09, wspace=1.04)
     if fee_band:
         fig.subplots_adjust(top=1 - 1.65 / figsize[1], bottom=2.0 / figsize[1])
-    baseline = min(values) * 0.60
+    positive = [v for v in values if v > 0]
+    baseline = min(positive) * 0.60
     # 前沿额度图的最大条目仍需给右侧数值/置信度留出完整文本宽度。
-    xhi = max(values) * (2.20 if view == "quotas" and board else
-                         1.40 if view == "quotas" else
-                         8 if view == "multiple" else (8 if board else 12))
+    xhi = max(positive) * (2.20 if view == "quotas" and board else
+                           1.40 if view == "quotas" else
+                           8 if view == "multiple" else (8 if board else 12))
 
     for col, ax in enumerate(axes):
         start = col * half
         chunk = rows[start:start + half]
         chunk_values = values[start:start + half]
-        colors = [VENDOR_COLORS[vendor_of(r["plan_id"])] for r in chunk]
-        bars = ax.barh(range(len(chunk)), [v - baseline for v in chunk_values],
+        colors = [VENDOR_COLORS[channel_of(r["plan_id"])] for r in chunk]
+        bars = ax.barh(range(len(chunk)),
+                       [0 if r.get("unmetered") == "true" else v - baseline
+                        for v, r in zip(chunk_values, chunk)],
                        left=baseline, color=colors, height=0.67)
         if mixed_scale and col == 0:
             for j in (0, 1):
@@ -600,7 +672,7 @@ def plot(rows: list[dict], view: str, language: str, board: dict | None = None,
         separator = "\n" if board else " · "
         labels = [
             f"{start + i:02d}. " + (plan_name(r, language) if r["billing"] == "metered"
-                                   else f"{plan_name(r, language)}{separator}{r['board_variant'] if board else DISPLAY.get(r['served_model'], r['served_model'])}")
+                                   else f"{plan_name(r, language)}{separator}{chart_variant(r, language) if board else DISPLAY.get(r['served_model'], r['served_model'])}")
             for i, r in enumerate(chunk, 1)
         ]
         ax.set_yticks(range(len(chunk)), labels, fontsize=12 if board else 10)
@@ -625,7 +697,8 @@ def plot(rows: list[dict], view: str, language: str, board: dict | None = None,
         for j, (bar, value, row) in enumerate(zip(bars, chunk_values, chunk)):
             if mixed_scale and col == 0 and j < 2:
                 continue
-            ax.text(value * 1.03, bar.get_y() + bar.get_height() / 2,
+            ax.text((baseline if row.get("unmetered") == "true" else value) * 1.03,
+                    bar.get_y() + bar.get_height() / 2,
                     annotation_of(row, value, view, language, board),
                     va="center", fontsize=11 if board else 9.5, color="#20252B",
                     zorder=15 if mixed_scale else 3,
@@ -642,10 +715,10 @@ def plot(rows: list[dict], view: str, language: str, board: dict | None = None,
     fig.text(0.5, 1 - 0.65 / figsize[1] if fee_band else 0.925 if board else 0.952,
              frontier_caption(board) if board else text[f"{view}_subtitle"],
              ha="center", fontsize=10 if board else 11, color="#505A64")
-    providers = {vendor_of(r["plan_id"]) for r in rows}
+    providers = {channel_of(r["plan_id"]) for r in rows}
     legend = [(name, color) for name, color in VENDOR_COLORS.items() if name in providers]
     handles = [plt.Rectangle((0, 0), 1, 1, color=color) for _, color in legend]
-    fig.legend(handles, [f"{VENDOR_CODES[name]}  {name}" for name, _ in legend], loc="lower center",
+    fig.legend(handles, [f"{VENDOR_CODES[name]}  {LABEL.get(name, name)}" for name, _ in legend], loc="lower center",
                bbox_to_anchor=(0.5, 1 - 1.2 / figsize[1] if fee_band else 0.86 if board else 0.916), ncol=len(legend),
                fontsize=11, frameon=False, handlelength=1.6, columnspacing=1.8)
     if board:
@@ -669,15 +742,18 @@ def plot(rows: list[dict], view: str, language: str, board: dict | None = None,
         draw_mixed_vs_third(fig, axes, mixed, baseline, view, language)
     stem = output_stem(view, board, language, fee_band=fee_band) + ("_混合比例" if mixed_scale else "")
     for ext in ("png", "svg"):
-        fig.savefig(os.path.join(OUT_DIR, f"{stem}.{ext}"), dpi=160)
+        fig.savefig(os.path.join(OUT_DIR, f"{stem}.{ext}"), dpi=160,
+                    **({"metadata": {"Date": None}} if ext == "svg" else {}))
     plt.close(fig)
     print(f"wrote {len(rows)} rows -> {stem}.png/.svg")
 
 
 def main() -> None:
     with open(ADOPTED, encoding="utf-8-sig") as f:
-        # 不计额度（$0）点无 token 分母且无法上对数条形图，总览与前沿精简版不画；只在帕累托图上以专用刻度位呈现。
-        rows = [r for r in csv.DictReader(f) if r["real_usd_per_mtok"] and float(r["real_usd_per_mtok"]) > 0]
+        all_rows = list(csv.DictReader(f))
+    # 总览与月费分档仍排除 ≈$0 不计额度点（无 token 分母且无法上对数条形图）；
+    # 逐榜前沿输出与帕累托图口径一致，用 all_rows 把不计额度点计入支配筛选。
+    rows = [r for r in all_rows if r["real_usd_per_mtok"] and float(r["real_usd_per_mtok"]) > 0]
     os.makedirs(OUT_DIR, exist_ok=True)
     for band in FEE_BANDS:
         selected = sorted_rows(fee_band_rows(rows, band), "quotas")
@@ -685,7 +761,6 @@ def main() -> None:
             for language in ("zh", "en"):
                 write_text_table(selected, "quotas", language, fee_band=band)
                 plot(selected, "quotas", language, fee_band=band)
-    import sys
     if "--fee-bands-only" in sys.argv:
         return
     for view in ("quotas", "prices", "multiple"):
@@ -704,11 +779,13 @@ def main() -> None:
     selections = {}
     for board_id, meta in data["boards"].items():
         board = {**meta, "id": board_id}
-        selected = frontier_rows(rows, data["points"], board_id)
+        selected = frontier_rows(all_rows, data["points"], board_id)
         selections[board_id] = {
             **meta,
             "frontier": [{"id": f"{r['plan_id']}::{r['served_model']}", "model": r["served_model"],
                           "price_usd_per_mtok": float(r["real_usd_per_mtok"]),
+                          "unmetered": r.get("unmetered") == "true",
+                          "promo_until": r.get("promo_until") or None,
                           "score": r["board_score"], "variant": r["board_variant"],
                           "agent_harness": r["board_harness"], "reasoning_effort": r["board_effort"],
                           "mapping_kind": r["board_mapping"],

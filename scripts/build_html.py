@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from palette import FALLBACK, channel_of, palette
+
 ROOT = Path(__file__).resolve().parent.parent
 POINTS = ROOT / "derived" / "points.json"
 OUT = ROOT / "_build" / "帕累托交互图.html"
@@ -37,7 +39,7 @@ TEMPLATE = r"""<!doctype html>
 </style></head><body>
 <header>
   <h1><mark>帕累托前沿</mark> 真实单价 × 评测配置参考</h1>
-  <div class="sub">真实单价 = 订阅月费 ÷ 用户每月实际可用 token（饱和使用 · 全口径含缓存 · 默认月 = 4 周；Kimi独立月池=周池×5）。每个点 = (订阅套餐, 实际服务模型)；同一模型走不同渠道是不同的点。Claude Max (9/14+) 为2026-09-14起永久额度估算，非当前活动期上限；Pro保留Opus4.8历史实测。</div>
+  <div class="sub">真实单价 = 订阅月费 ÷ 用户每月实际可用 token（饱和使用 · 全口径含缓存 · 默认月 = 4 周；Kimi独立月池=周池×5）。每个点 = (订阅套餐, 实际服务模型)；同一模型走不同渠道是不同的点。Claude Max (9/14+) 为2026-09-14起永久额度估算，非当前活动期上限；Pro为Opus 5周池面板反推（shownotover，round8）。</div>
   <div class="bar">
     <label>Y 轴榜单 <select id="board"></select></label>
     <label>评测配置 <select id="configuration"><option value="summary" selected>最高分汇总（默认）</option><option value="all">全部配置（参考映射）</option></select></label>
@@ -55,9 +57,9 @@ TEMPLATE = r"""<!doctype html>
 <div class="foot">数据：<code>data/adopted.csv</code>（取舍与出处见 <code>scripts/build_adopted.py</code>）· 四张榜单各自独立绘制，快照与来源见标题及项目记录 · AA Coding Agent 分数属于官网标明的 harness×模型配置 · 美元/credits额度与按量 API 三段价统一按项目标准负载（<span id="mix"></span>）折算；直接 total-token 实测不重复归一</div>
 <script>
 const DATA = __DATA__;
-const VENDOR_COLOR = {OpenAI:"#00A86B",Anthropic:"#F07826",xAI:"#B65CFF",Kimi:"#2FA8FF",Zhipu:"#1E1E1E",MiniMax:"#D23A7D",Alibaba:"#FF6F61",DeepSeek:"#1F75FE",Google:"#7CC12A",Xiaomi:"#FFA000",Tencent:"#26C6DA",Cursor:"#FFB81C",OpenCode:"#00C0A8","Command Code":"#708090",Ollama:"#A0785C",StepFun:"#00F4E5",Devin:"#7C3AED",other:"#00C0A8"};
+const VENDOR_COLOR = __COLORS__;
 const FRONTIER_COLOR="#111111";
-const channel=p=>p.id.startsWith("cursor_")?"Cursor":p.id.startsWith("opencode_")?"OpenCode":p.id.startsWith("command_code_")?"Command Code":p.id.startsWith("ollama_")?"Ollama":p.id.startsWith("stepfun_")?"StepFun":p.id.startsWith("devin_")?"Devin":p.vendor;
+const channel=p=>p.channel;
 const color=p=>VENDOR_COLOR[channel(p)]||VENDOR_COLOR.other;
 // Devin 渠道用六边形近似官方标志（Plotly 无自定义路径标记）；静态 SVG 用完整标志。
 const symbolOf=(p,base)=>channel(p)==="Devin"?"hexagon":base;
@@ -80,7 +82,7 @@ function pareto(pts,yk){let best=-Infinity,f=[];for(const p of [...pts].sort((a,
 function fmt(v){return v==null?"—":v;}
 function hover(p,yk,vk){
   const board=yk.replace(/__score$/, ""),field=k=>p[board+"__"+k];
-  const price=p.unmetered?`$${p.price_usd} ÷ 无界（${promoText(p)}）→ ≈$0 促销价，非永久口径`:p.billing==="metered"?"按量 API（标价 × 项目标准负载）":`$${p.price_usd} ÷ ${p.monthly_yi} 亿 token`;
+  const price=p.unmetered?`$${p.price_usd} ÷ 无界（${promoText(p)}）→ ≈$0 促销价，非永久口径`:p.billing==="metered"?"按量 API（标价 × 项目标准负载）":p.local_price?`${p.local_price} / 国际 $${p.price_usd} ÷ ${p.monthly_yi} 亿 token`:`$${p.price_usd} ÷ ${p.monthly_yi} 亿 token`;
   return `<b>${p.label}</b><br>真实单价 <b>${priceLabel(p.real_usd_per_mtok)}/MTok</b><br>${price}`
    +(p.d!=null?`<br>标价混合 ${priceLabel(p.list_blended_usd_per_mtok)}/MTok → d = ${(p.d*100).toFixed(1)}%`:"")
    +(p.api_cost_usd_month!=null?`<br>API标价成本 <b>$${p.api_cost_usd_month.toLocaleString("en-US",{maximumFractionDigits:0})}/月</b>（×${p.api_cost_multiple} 月费）`
@@ -111,7 +113,7 @@ function frontAnnotations(front,pts,yk,xrange,yrange,width,height){
   for(let i=1;i<line.length;i++){const [x,y]=line[i-1],[xx,yy]=line[i];const n=Math.max(2,Math.ceil(Math.hypot(xx-x,yy-y)/10));for(let j=1;j<n;j++)obstacles.push([x+(xx-x)*j/n,y+(yy-y)*j/n]);}
   return [...front].reverse().map(p=>{
     const models=[...new Set(p.members.map(q=>locVariant(q[yk.replace(/__score$/, "__variant")]||q.model_display)))].join(" / ");
-    const plans=[...new Set(p.members.map(q=>q.plan.replace("Claude ","").replace("ChatGPT ","")))];
+    const plans=[...new Set(p.members.map(q=>q.plan.replace("Claude ","").replace("ChatGPT ","")+(q.local_price?`（${q.local_price} / 国际 $${q.price_usd}）`:"")))];
     const rows=[models,...plans,p.unmetered?"≈$0 · "+promoText(p):priceLabel(p.real_usd_per_mtok)+" / MTok"];
     const w=Math.min(width-12,Math.max(...rows.map(s=>[...s].reduce((n,c)=>n+(c.charCodeAt(0)>255?12:6.6),0)))+18),h=rows.length*17+12;
     const x=px(p),y=py(p);let best=null;
@@ -203,12 +205,18 @@ draw();
 def main() -> None:
     data = json.loads(POINTS.read_text(encoding="utf-8"))
     for point in data["points"]:
+        point["channel"] = channel_of(point["id"], point["vendor"])
         if point.get("plan", "").startswith("GLM "):
             for field in ("plan", "label"):
                 point[field] = point[field].replace("老客", "v2").replace("新客", "v3")
     data["configuration_points"] = json.loads((ROOT / "derived/benchmark-points.json").read_text(encoding="utf-8"))
     OUT.parent.mkdir(exist_ok=True)
-    OUT.write_text(TEMPLATE.replace("__DATA__", json.dumps(data, ensure_ascii=False)), encoding="utf-8")
+    # 色值统一来自 config/channel-colors.json；键顺序决定图例顺序，other 为未知渠道兜底。
+    colors = palette(["OpenAI", "Anthropic", "SpaceXAI", "Kimi", "Zhipu", "MiniMax", "Alibaba", "DeepSeek",
+                      "Google", "Xiaomi", "Tencent", "Cursor", "OpenCode", "Command Code", "Ollama",
+                      "StepFun", "Devin", "Factory"]) | {"other": FALLBACK}
+    OUT.write_text(TEMPLATE.replace("__DATA__", json.dumps(data, ensure_ascii=False))
+                   .replace("__COLORS__", json.dumps(colors, ensure_ascii=False)), encoding="utf-8")
     print(f"-> {OUT} ({OUT.stat().st_size // 1024} KB)")
 
 

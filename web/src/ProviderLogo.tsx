@@ -1,21 +1,23 @@
 import type { Point } from "./types";
 import { isThirdParty, manufacturer } from "./domain";
-const files = {
-  ...import.meta.glob<string>("./assets/provider-logos/*.svg", {
-    eager: true,
-    query: "?url",
-    import: "default",
-  }),
-  ...import.meta.glob<string>("./assets/provider-logos/*.png", {
-    eager: true,
-    query: "?inline",
-    import: "default",
-  }),
-};
+import { useTheme, type Theme } from "./theme";
+
+export type LogoTone = Theme;
+
+const svgSources = import.meta.glob<string>("./assets/provider-logos/*.svg", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+});
+const rasters = import.meta.glob<string>("./assets/provider-logos/*.webp", {
+  eager: true,
+  query: "?inline",
+  import: "default",
+});
 const slugs: Record<string, string> = {
   OpenAI: "openai",
   Anthropic: "anthropic",
-  xAI: "xai",
+  SpaceXAI: "xai",
   Cursor: "cursor",
   Kimi: "kimi",
   Zhipu: "zhipu",
@@ -37,76 +39,98 @@ const slugs: Record<string, string> = {
   Step: "stepfun",
   Devin: "devin",
 };
-/** Local provider logo URL from the bundled asset glob (no external fetch). */
-export function providerLogoUrl(provider: string): string | undefined {
-  const slug =
-    slugs[provider] ?? provider.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+/**
+ * Marks drawn in near-black ink. On a dark surface they would vanish, so the
+ * dark variant swaps that ink for a light one (and any white knock-out for the
+ * surface). Tile logos (Zhipu, StepFun, Cursor, Factory) keep their own
+ * background.
+ * Brands that ship an official dark variant use `<slug>-dark.svg` or
+ * `<slug>-dark.webp` instead.
+ */
+const MONO = new Set([
+  "openai",
+  "anthropic",
+  "ollama",
+  "meituan",
+]);
+const DARK_INK = /#(?:111111|111|191919|0e0e0e)\b/gi;
+const svgUrl = (text: string) =>
+  `data:image/svg+xml;charset=utf-8,${encodeURIComponent(text)}`;
+const cache = new Map<string, string | undefined>();
+
+const slugOf = (provider: string) =>
+  slugs[provider] ?? provider.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+/**
+ * Bundled logo as a self-contained data URL (no network), so the same source
+ * works in the page, in SVG `<image>` and inside exported files.
+ */
+export function providerLogoUrl(
+  provider: string,
+  tone: LogoTone = "light",
+): string | undefined {
+  const slug = slugOf(provider);
+  const key = `${slug}|${tone}`;
+  if (cache.has(key)) return cache.get(key);
+  const base = `./assets/provider-logos/${slug}`;
+  const toUrl = (raw: string, dark: boolean) =>
+    svgUrl(
+      dark
+        ? raw
+            .replace(DARK_INK, "#ECEEF1")
+            .replace(/currentColor/g, "#ECEEF1")
+            .replace(/fill="#fff(?:fff)?"/gi, 'fill="#171A1E"')
+        : raw.replace(/currentColor/g, "#111111"),
+    );
+  let url: string | undefined;
+  if (tone === "dark") {
+    const darkSvg = svgSources[`${base}-dark.svg`];
+    url = rasters[`${base}-dark.webp`] ?? (darkSvg && toUrl(darkSvg, false));
+  }
+  url ??= rasters[`${base}.webp`];
+  const svg = svgSources[`${base}.svg`];
+  url ??= svg && toUrl(svg, tone === "dark" && MONO.has(slug));
+  cache.set(key, url);
+  return url;
+}
+
+export default function ProviderLogo({
+  provider,
+  size = 28,
+}: {
+  provider: string;
+  size?: number;
+}) {
+  const src = providerLogoUrl(provider, useTheme());
   return (
-    files[`./assets/provider-logos/${slug}.png`] ??
-    files[`./assets/provider-logos/${slug}.svg`]
-  );
-}
-
-const logoDataCache = new Map<string, Promise<string>>();
-
-async function toDataUrl(url: string): Promise<string> {
-  if (url.startsWith("data:")) return url;
-  const hit = logoDataCache.get(url);
-  if (hit) return hit;
-  const job = fetch(url)
-    .then(async (res) => {
-      if (!res.ok) return url;
-      const ctype = res.headers.get("content-type") ?? "";
-      if (ctype.includes("svg") || url.includes(".svg")) {
-        const text = await res.text();
-        return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(text)}`;
-      }
-      const blob = await res.blob();
-      return await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result));
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(blob);
-      });
-    })
-    .catch(() => url);
-  logoDataCache.set(url, job);
-  return job;
-}
-
-/** Inlined logo sources, so chart exports carry their artwork. */
-export async function logoUrlMap(
-  providers: string[],
-): Promise<Map<string, string>> {
-  const map = new Map<string, string>();
-  await Promise.all(
-    [...new Set(providers)].map(async (provider) => {
-      const url = providerLogoUrl(provider);
-      if (url) map.set(provider, await toDataUrl(url));
-    }),
-  );
-  return map;
-}
-
-export default function ProviderLogo({ provider }: { provider: string }) {
-  const src = providerLogoUrl(provider);
-  return (
-    <span className="provider-logo" title={provider} aria-label={provider}>
+    <span
+      className="provider-logo"
+      title={provider}
+      role="img"
+      aria-label={provider}
+      style={size !== 28 ? { width: size, height: size, flexBasis: size } : undefined}
+    >
       {src ? (
-        <img src={src} alt="" />
+        <img src={src} alt="" width={size} height={size} decoding="async" />
       ) : (
         <span aria-hidden="true">{provider.slice(0, 2)}</span>
       )}
     </span>
   );
 }
-export function BrandMarks({ point }: { point: Point }) {
+export function BrandMarks({
+  point,
+  size,
+}: {
+  point: Point;
+  size?: number;
+}) {
   const maker = manufacturer(point.vendor);
-  if (!isThirdParty(point)) return <ProviderLogo provider={maker} />;
+  if (!isThirdParty(point)) return <ProviderLogo provider={maker} size={size} />;
   return (
     <span className="brand-pair">
-      <ProviderLogo provider={point.channel} />
-      <ProviderLogo provider={maker} />
+      <ProviderLogo provider={point.channel} size={size} />
+      <ProviderLogo provider={maker} size={size} />
     </span>
   );
 }

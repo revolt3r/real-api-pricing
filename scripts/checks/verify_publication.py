@@ -20,7 +20,7 @@ for p in ROOT.joinpath('data').rglob('*.json'):
     json.loads(p.read_text(encoding='utf-8-sig'))
 
 exported = list(exports())
-assert len(exported) == 143
+assert len(exported) == 175
 assert len({d for _,d in exported}) == len(exported)
 for source,destination in exported:
     assert destination.is_file(), destination
@@ -40,12 +40,27 @@ for doc in [ROOT/'README.md',ROOT/'README.zh.md',ROOT/'BUILD.md',ROOT/'SOURCES.m
     for target in re.findall(r'\]\(([^)]+)\)', doc.read_text(encoding='utf-8')):
         if not target.startswith(('http:', 'https:', '#')):
             assert (doc.parent/target).exists(), (doc,target)
-for doc,lang in [('README.md','en'),('README.zh.md','zh')]:
-    s=(ROOT/doc).read_text(encoding='utf-8')
+readmes={'en':(ROOT/'README.md').read_text(encoding='utf-8'),
+         'zh':(ROOT/'README.zh.md').read_text(encoding='utf-8')}
+for lang,s in readmes.items():
     pictures=re.findall(r'!\[[^\]]*\]\(([^)]+)\)',s)
-    assert len(pictures)==10 and all(p.startswith(f'charts/{lang}/') for p in pictures)
-    assert s.count('[English SVG]')==10 and s.count('[中文 SVG]')==10
-    assert s.count('[English PNG]')==10 and s.count('[中文 PNG]')==10
+    assert len(pictures)==14 and len(set(pictures))==14, (lang,pictures)
+    assert all(p.startswith(f'charts/{lang}/') for p in pictures), (lang,pictures)
+svgs=sorted(ROOT.joinpath('charts').glob('*/pareto/*.svg'))
+svgs+=sorted(ROOT.joinpath('charts/en/overview').glob('real-price-overview.svg'))
+svgs+=sorted(ROOT.joinpath('charts/zh/overview').glob('单价总览.svg'))
+svgs+=sorted(ROOT.joinpath('charts').glob('en/overview/*fee-*.svg'))
+svgs+=sorted(ROOT.joinpath('charts').glob('zh/overview/*月费*.svg'))
+assert len(svgs)==16+2+6
+for doc,s in readmes.items():
+    for svg in svgs:
+        rel=svg.relative_to(ROOT).as_posix()
+        assert f']({rel})' in s, (doc,rel)
+        assert f']({rel[:-4]}.png)' in s, (doc,rel)
+for f in ROOT.joinpath('charts/en').rglob('*'):
+    if f.suffix in ('.txt', '.svg', '.html'):
+        leaks = sorted(set(re.findall(r'[\u4e00-\u9fff]', f.read_text(encoding='utf-8'))))
+        assert not leaks, f'{f}: CJK characters in English output: {"".join(leaks)}'
 print(f'PASS: {len(adopted)} adopted rows, {len(exported)} exported files match build hashes, all JSON and bilingual links valid')
 for board in data['boards']:
     missing=sorted({p['model'] for p in data['points'] if p[board+'__score'] is None})

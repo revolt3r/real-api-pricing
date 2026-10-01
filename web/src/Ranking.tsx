@@ -1,11 +1,15 @@
 import { useEffect, useRef } from "react";
-import { ArrowRight, MagnifyingGlass } from "@phosphor-icons/react";
 import type { Row, State } from "./types";
 import type { ChartHandle } from "./Chart";
 import { BrandMarks } from "./ProviderLogo";
+import ResizeHandle from "./ResizeHandle";
+import { useIncremental } from "./useIncremental";
+import { useTheme } from "./theme";
+import { dotColors } from "./palette";
 import {
   accessLine,
   allowance,
+  barWidth,
   color,
   displayPlan,
   money,
@@ -32,12 +36,16 @@ const escape = (s: string) =>
 export default function Ranking({
   rows,
   state,
+  axis,
+  highlight,
   onSelect,
   handle,
   onQuery,
 }: {
   rows: Row[];
   state: State;
+  axis: { low: number; high: number };
+  highlight: string | null;
   onSelect: (rows: Row[]) => void;
   handle: React.RefObject<ChartHandle | null>;
   onQuery: (query: string) => void;
@@ -45,6 +53,7 @@ export default function Ranking({
   const zh = state.lang === "zh",
     isPrice = state.view === "price",
     isMultiple = state.view === "multiple";
+  const dark = useTheme() === "dark";
   const scrollRef = useRef<HTMLDivElement>(null);
   const sorted = tableRows(rows, {
     ...state,
@@ -58,24 +67,16 @@ export default function Ranking({
     el.scrollTop = 0;
     el.scrollLeft = 0;
   }, [signature, state.view]);
+  const { limit, sentinel } = useIncremental(sorted.length, signature + state.view, scrollRef, 60);
   const value = (r: Row) =>
     isPrice
       ? r.point.real_usd_per_mtok
       : isMultiple
         ? r.point.api_cost_multiple!
         : r.point.monthly_yi!;
-  // Unmetered $0 rows have no log position: they get the shortest bar.
-  const values = sorted.map(value).filter((v) => v > 0),
-    low = values.length ? Math.min(...values) : 0,
-    high = values.length ? Math.max(...values) : 0;
-  const bar = (r: Row) =>
-    value(r) <= 0
-      ? 3
-      : high === low
-        ? 100
-        : 8 +
-          (92 * (Math.log10(value(r)) - Math.log10(low))) /
-            (Math.log10(high) - Math.log10(low));
+  const bar = (r: Row) => barWidth(value(r), axis);
+  const decades = Math.round(Math.log10(axis.high / axis.low));
+  const scaleNote = zh ? "对数刻度 · 每格 10 倍" : "log scale · 10× per tick";
   const formatted = (r: Row) =>
     isPrice
       ? price(value(r)) +
@@ -125,7 +126,12 @@ export default function Ranking({
   useEffect(() => {
     handle.current = {
       download: async (format) => {
-        // Dense rows keep a full ~188-row PNG under common canvas height limits.
+        // Dense rows keep a full ~260-row PNG under common canvas height limits.
+        const bg = dark ? "#15181c" : "#ffffff";
+        const ink = dark ? "#eceef1" : "#16191d";
+        const muted = dark ? "#a0a8b3" : "#5b636e";
+        const rule = dark ? "#262b31" : "#edf0f3";
+        const track = dark ? "#23282e" : "#f0f2f5";
         const width = 1100,
           rowH = sorted.length > 40 ? 54 : 86,
           height = 130 + Math.max(sorted.length, 1) * rowH;
@@ -133,13 +139,14 @@ export default function Ranking({
           format === "png"
             ? Math.max(1, Math.min(2, Math.floor(16384 / Math.max(height, 1))))
             : 1;
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><rect width="100%" height="100%" fill="white"/><g font-family="Arial, Microsoft YaHei, sans-serif" fill="#20262e"><text x="32" y="40" font-size="23">${escape(title)}</text><text x="32" y="68" font-size="12" fill="#687382">${escape(`${sorted.length} ${zh ? "条筛选结果" : "filtered rows"} · ${unit} · ${zh ? "条形为对数刻度" : "Bars use a logarithmic scale"}`)}</text>${sorted
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><rect width="100%" height="100%" fill="${bg}"/><g font-family="DM Sans, Segoe UI, PingFang SC, Microsoft YaHei, sans-serif" fill="${ink}"><text x="32" y="44" font-size="23" font-weight="600">${escape(title)}</text><text x="32" y="72" font-size="12" fill="${muted}">${escape(`${sorted.length} ${zh ? "条筛选结果" : "filtered rows"} · ${unit} · ${zh ? "条形为对数刻度，每格 10 倍" : "Bars use a logarithmic scale, 10× per tick"} · Real API Pricing`)}</text>${sorted
           .map((r, i) => {
-            const y = 110 + i * rowH;
+            const y = 112 + i * rowH;
             const titleSize = rowH < 70 ? 14 : 16,
               metaSize = rowH < 70 ? 11 : 12,
               valueSize = rowH < 70 ? 16 : 18;
-            return `<text x="32" y="${y}" fill="#7a8490" font-size="14">${i + 1}</text><text x="75" y="${y}" font-size="${titleSize}">${escape(r.point.model_display)}</text><text x="75" y="${y + 22}" font-size="${metaSize}" fill="#687382">${escape(displayPlan(r.point.plan, state.lang) + " · " + accessLine(r.point))}</text><rect x="580" y="${y - 9}" width="${bar(r) * 2.8}" height="7" rx="3" fill="${color(r.point)}"/><text x="1068" y="${y}" text-anchor="end" font-size="${valueSize}">${escape(formatted(r))}</text><text x="1068" y="${y + 20}" text-anchor="end" font-size="${metaSize}" fill="#687382">${escape(apiCost(r))}</text><line x1="32" x2="1068" y1="${y + Math.min(44, rowH - 10)}" y2="${y + Math.min(44, rowH - 10)}" stroke="#edf0f3"/>`;
+            const fill = dotColors(color(r.point), dark).fill;
+            return `<text x="32" y="${y}" fill="${muted}" font-size="13">${i + 1}</text><text x="75" y="${y}" font-size="${titleSize}" font-weight="600">${escape(r.point.model_display)}</text><text x="75" y="${y + 20}" font-size="${metaSize}" fill="${muted}">${escape(displayPlan(r.point.plan, state.lang) + " · " + accessLine(r.point))}</text><rect x="580" y="${y - 9}" width="280" height="7" rx="3.5" fill="${track}"/><rect x="580" y="${y - 9}" width="${bar(r) * 2.8}" height="7" rx="3.5" fill="${fill}"/>${Array.from({ length: decades - 1 }, (_, k) => `<line x1="${580 + (280 * (k + 1)) / decades}" x2="${580 + (280 * (k + 1)) / decades}" y1="${y - 11}" y2="${y}" stroke="${muted}" stroke-opacity="0.35"/>`).join("")}<text x="1068" y="${y}" text-anchor="end" font-size="${valueSize}" font-weight="600">${escape(formatted(r))}</text><text x="1068" y="${y + 20}" text-anchor="end" font-size="${metaSize}" fill="${muted}">${escape(apiCost(r))}</text><line x1="32" x2="1068" y1="${y + Math.min(40, rowH - 12)}" y2="${y + Math.min(40, rowH - 12)}" stroke="${rule}"/>`;
           })
           .join("")}</g></svg>`;
         const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
@@ -180,38 +187,6 @@ export default function Ranking({
   });
   return (
     <section className="web-ranking" aria-label={title}>
-      <div className="ranking-toolbar">
-        <div>
-          <strong>
-            {zh ? "逐项比较，一目了然" : "Compare the numbers, row by row."}
-          </strong>
-          <p>
-            {isPrice
-              ? zh
-                ? "单价由低到高，越低越便宜。"
-                : "Lowest price first. Lower is less expensive."
-              : isMultiple
-                ? zh
-                  ? "倍数由高到低。1× 为盈亏线：低于 1× 表示订阅比直接按量买同样的 token 更贵。缺公开标价的行不参与此排名。"
-                  : "Highest multiple first. 1× is break-even: below 1× the subscription costs more than buying the same tokens on the API. Rows with no published rate are excluded."
-                : zh
-                  ? "额度由高到低，越高可用量越多。"
-                  : "Largest allowance first. Higher means more tokens."}{" "}
-            {zh ? "条形使用对数刻度。" : "Bars use a logarithmic scale."}
-          </p>
-        </div>
-        <label className="ranking-search">
-          <MagnifyingGlass size={18} />
-          <input
-            aria-label={zh ? "搜索排名" : "Search ranking"}
-            placeholder={
-              zh ? "搜索模型、套餐或渠道…" : "Search model, plan or channel…"
-            }
-            value={state.query}
-            onChange={(e) => onQuery(e.target.value)}
-          />
-        </label>
-      </div>
       <div
         className="ranking-scroll"
         ref={scrollRef}
@@ -221,63 +196,94 @@ export default function Ranking({
       >
         <div className="ranking-columns" aria-hidden={sorted.length === 0}>
           <span>#</span>
-          <span>{zh ? "模型 / 套餐与渠道" : "Model / plan & channel"}</span>
+          <span>{zh ? "模型 · 套餐与渠道" : "Model · plan & channel"}</span>
           <span>
-            {zh ? "数值对比 · 对数刻度" : "Comparison · logarithmic scale"}
+            {(isPrice
+              ? zh
+                ? "由低到高"
+                : "Cheapest first"
+              : isMultiple
+                ? zh
+                  ? "倍数由高到低"
+                  : "Highest multiple first"
+                : zh
+                  ? "由多到少"
+                  : "Largest first") +
+              " · " +
+              scaleNote}
           </span>
           <span>
             {unit}
             <br />
             {zh ? "及 API 标价成本" : "and API list cost"}
           </span>
-          <span />
         </div>
         {sorted.length ? (
-          sorted.map((r, i) => (
-            <button
-              className="ranking-row"
-              key={r.key}
-              onClick={() => onSelect([r])}
-            >
-              <span className="rank-number">{i + 1}</span>
-              <span className="rank-identity">
-                <strong className="model-with-logo">
-                  <BrandMarks point={r.point} />
-                  {r.point.model_display}
-                </strong>
-                <span>{displayPlan(r.point.plan, state.lang)}</span>
-                <small>
-                  <i style={{ background: color(r.point) }} />
-                  {accessLine(r.point)} ·{" "}
-                  {r.point.billing === "metered"
-                    ? "API"
-                    : zh
-                      ? "订阅"
-                      : "Subscription"}
-                </small>
-              </span>
-              <span className="rank-bar" aria-hidden="true">
-                <span
-                  style={{ width: `${bar(r)}%`, background: color(r.point) }}
-                />
-              </span>
-              <span className="rank-value">
-                <strong>{formatted(r)}</strong>
-                <small>
-                  {isPrice
-                    ? r.point.monthly_yi === null
-                      ? zh
-                        ? "按量计费"
-                        : "Pay as you go"
-                      : allowance(r.point, state.lang) +
-                        (zh ? " token / 月" : " tokens / mo")
-                    : price(r.point.price_usd) + (zh ? " / 月" : " / mo")}
-                </small>
-                {apiCost(r) && <small className="rank-api-cost">{apiCost(r)}</small>}
-              </span>
-              <ArrowRight className="rank-arrow" size={17} />
-            </button>
-          ))
+          <>
+            {sorted.slice(0, limit).map((r, i) => {
+              const fill = dotColors(color(r.point), dark).fill;
+              const faded = highlight !== null && r.point.channel !== highlight;
+              return (
+                <button
+                  className={`ranking-row${faded ? " is-faded" : ""}`}
+                  key={r.key}
+                  onClick={() => onSelect([r])}
+                >
+                  <span className="rank-number">{i + 1}</span>
+                  <span className="rank-identity">
+                    <strong className="model-with-logo">
+                      <BrandMarks point={r.point} size={24} />
+                      <span className="model-name">
+                        {r.point.model_display}
+                        <span className="rank-plan">
+                          {displayPlan(r.point.plan, state.lang)}
+                        </span>
+                      </span>
+                    </strong>
+                    <small>
+                      <i style={{ background: fill }} />
+                      {accessLine(r.point)}
+                    </small>
+                  </span>
+                  <span
+                    className="rank-bar"
+                    aria-hidden="true"
+                    style={{ "--decade": `${100 / decades}%` } as React.CSSProperties}
+                  >
+                    <span style={{ width: `${bar(r)}%`, background: fill }} />
+                  </span>
+                  <span className="rank-value">
+                    <strong>
+                      {isPrice ? price(value(r)) : formatted(r)}
+                    </strong>
+                    <small>
+                      {isPrice
+                        ? r.point.billing === "metered"
+                          ? zh
+                            ? "按量计费"
+                            : "Pay as you go"
+                          : r.point.monthly_yi === null
+                            ? unmeteredNote(r.point, state.lang) +
+                              " · " +
+                              price(r.point.price_usd) +
+                              (zh ? " / 月" : " / mo")
+                            : allowance(r.point, state.lang) +
+                              (zh ? " token / 月" : " tokens / mo")
+                        : price(r.point.price_usd) + (zh ? " / 月" : " / mo")}
+                    </small>
+                    {apiCost(r) && <small className="rank-api-cost">{apiCost(r)}</small>}
+                  </span>
+                </button>
+              );
+            })}
+            {limit < sorted.length && (
+              <div className="sentinel-row" aria-hidden="true">
+                <span ref={(el) => void (sentinel.current = el)}>
+                  {zh ? "正在加载更多…" : "Loading more…"}
+                </span>
+              </div>
+            )}
+          </>
         ) : (
           <div className="empty">
             <h3>{zh ? "没有匹配的结果" : "No matching results"}</h3>
@@ -287,12 +293,17 @@ export default function Ranking({
           </div>
         )}
       </div>
-      <div className="ranking-status">
-        {sorted.length}{" "}
-        {zh
-          ? "条筛选结果 · 列表内滚动浏览 · 图片导出全部筛选行"
-          : "filtered rows · scroll inside the list · image export includes all filtered rows"}
-      </div>
+      <ResizeHandle
+        target={scrollRef}
+        label={
+          zh
+            ? "拖动调整列表高度，双击恢复"
+            : "Drag to resize the list · double-click to reset"
+        }
+      />
+      <small className="ranking-scale-note" aria-hidden="true">
+        {scaleNote}
+      </small>
     </section>
   );
 }

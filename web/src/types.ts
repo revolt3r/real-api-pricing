@@ -1,9 +1,15 @@
+import type { Lock } from "./domain";
+
 export type Lang = "en" | "zh";
-export type View = "pareto" | "price" | "allowance" | "multiple" | "compare" | "method";
+export type View = "pareto" | "price" | "allowance" | "multiple" | "compare" | "table" | "method";
 export interface Point {
   id: string;
   plan_id: string;
   plan: string;
+  /** International plan name for merged CN/global tiers, e.g. "Kimi Allegretto". */
+  plan_en?: string | null;
+  /** Domestic list price shown alongside the international USD fee, e.g. "¥199". */
+  local_price?: string | null;
   model: string;
   model_display: string;
   vendor: string;
@@ -35,6 +41,18 @@ export interface Point {
   api_price_archive: string | null;
   /** Real price ÷ list blended price: the reciprocal of api_cost_multiple. */
   d: number | null;
+  /** Quota basis: which workload the capacity assumes — "standard" | "anthropic" | "lowCache" | "measured". */
+  workload?: string;
+  /** Plan generation tag for legacy plans, e.g. "v2" on GLM existing-customer tiers. */
+  plan_gen?: string;
+  /** Date the quota data was sampled / the official source date, shown in the detail panel. */
+  data_date?: string | null;
+  /** Provenance of data_date: "sample" | "official" | "derived". */
+  data_date_kind?: string | null;
+  /** Anchor point a "derived" data_date is inherited from. */
+  data_date_from?: string | null;
+  /** Official metered API list prices per MTok in the vendor's own currency. */
+  list_price?: { cached: number; input: number; output: number; currency: string } | null;
   source: string;
   note: string;
   decision_note: string;
@@ -87,6 +105,8 @@ export interface SiteData {
       labelZh: string;
     };
     standardTokenMix: { cache: number; input: number; output: number };
+    lowCacheTokenMix: { cache: number; input: number; output: number };
+    anthropicTokenMix: { cache: number; cacheWrite: number; output: number };
   };
 }
 export type FilterKey =
@@ -115,6 +135,11 @@ export interface State {
   configuration: "all" | "summary";
   frontier: boolean;
   labels: "frontier" | "all" | "none";
+  /** Chart search query: live-marks every matching point. */
+  find: string;
+  /** Locked scope from the suggestions: one point, one model across plans, or
+      one plan across models; overrides the live match set. */
+  lock: Lock | null;
   query: string;
   sort: string;
   direction: "asc" | "desc";

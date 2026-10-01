@@ -1,0 +1,602 @@
+{
+ "collectedAt": "2026-10-01",
+ "supersedes": null,
+ "role": "Round 3 list-price refresh: first rates for newly served models and changes since the last round. Used for the api_cost_usd_month column.",
+ "roleZh": "第三轮标价刷新：新上线模型的首个标价与上轮以来的变动，用于 api_cost_usd_month 列。",
+ "usdPerCny": 6.7787,
+ "conventions": {
+  "unit": "USD per million tokens",
+  "inheritsFrom": "list-prices-round2-2026-09-09.json conventions (regionRule, promoRule, cacheFallback, blendRule)"
+ },
+ "recheckedNoChange": {
+  "models": [
+   "gpt-6-astra",
+   "gpt-5.6-sol",
+   "gpt-5.6-terra",
+   "gpt-5.6-luna",
+   "gpt-5.5",
+   "claude-fable-5",
+   "claude-opus-5.5",
+   "claude-opus-5",
+   "claude-opus-4.8",
+   "claude-sonnet-5",
+   "gemini-3.7-flash",
+   "gemini-3.8-flash",
+   "grok-4.5",
+   "grok-4.6",
+   "grok-4.7",
+   "deepseek-v4.1-flash",
+   "deepseek-v4-pro",
+   "glm-5.1",
+   "glm-5.2",
+   "glm-5.3",
+   "glm-5.3-flash",
+   "kimi-k3",
+   "kimi-k2.7-code",
+   "kimi-k2.6",
+   "minimax-m2.5",
+   "minimax-m2.7",
+   "minimax-m3",
+   "qwen3.6-plus",
+   "qwen3.7-plus",
+   "qwen3.7-max",
+   "qwen3.8-max",
+   "qwen3.8-max-0902",
+   "qwen3.8-flash",
+   "qwen3.8-27b",
+   "step-3.5-flash",
+   "step-3.7-flash",
+   "step-5-preview",
+   "mimo-v2.6-pro",
+   "mimo-v2.6-flash",
+   "nemotron-3-ultra"
+  ],
+  "sources": [
+   "https://developers.openai.com/api/docs/pricing",
+   "https://platform.claude.com/docs/en/about-claude/pricing",
+   "https://ai.google.dev/gemini-api/docs/pricing",
+   "https://docs.x.ai/developers/models",
+   "https://api-docs.deepseek.com/quick_start/pricing/",
+   "https://docs.z.ai/guides/overview/pricing",
+   "https://platform.kimi.ai/docs/pricing/chat",
+   "https://platform.minimax.io/docs/guides/pricing-paygo",
+   "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+   "https://platform.stepfun.com/docs/zh/guides/pricing/details",
+   "https://openrouter.ai/api/v1/models/<id>/endpoints"
+  ]
+ },
+ "notRechecked": {
+  "models": [
+   "composer-2.5",
+   "longcat-2.0",
+   "mimo-v2.5",
+   "mimo-v2.6-pro-ultraspeed",
+   "deepseek-v4-flash",
+   "deepseek-v4-flash-vision-exp"
+  ],
+  "reason": "Cursor's page omitted the standard-rate table this round; the rest are wrapper-routed or legacy names with no separate rate card to re-read. Earlier rates carry over."
+ },
+ "crossChecks": [
+  {
+   "model": "mimo-v2.5-pro",
+   "archive": {
+    "input": 1.0,
+    "cachedInput": 0.2,
+    "output": 3.0
+   },
+   "observed": {
+    "input": 0.435,
+    "cachedInput": 0.0036,
+    "output": 0.87,
+    "source": "OpenRouter, provider Xiaomi"
+   },
+   "decision": "not adopted",
+   "reason": "mimo.mi.com is JS-rendered and returned no table. The Xiaomi-hosted rate equals mimo-v2.6-pro and may be a re-route. Needs a first-party read."
+  },
+  {
+   "model": "hy4-preview",
+   "archive": {
+    "input": 0.834,
+    "cachedInput": 0.042,
+    "output": 2.501
+   },
+   "observed": {
+    "input": 0.7506,
+    "cachedInput": 0.0378,
+    "output": 2.2509,
+    "source": "OpenRouter, provider Tencent"
+   },
+   "decision": "not adopted",
+   "reason": "Tencent-hosted rate is 10% under the archived card, which other hosts still match. Could be a discount. hy.tencent.ai is JS-rendered."
+  },
+  {
+   "model": "hy3",
+   "archive": {
+    "input": 0.08,
+    "cachedInput": null,
+    "output": 0.33
+   },
+   "observed": {
+    "input": 0.0825,
+    "cachedInput": 0.0206,
+    "output": 0.33,
+    "source": "OpenRouter, provider Tencent"
+   },
+   "decision": "not adopted",
+   "reason": "Cache read 0.0206 is visible on the Tencent endpoint only; the archive's 0.1x fallback (0.008) stays until a first-party read."
+  }
+ ],
+ "unpricedModels": [
+  "minimax-m3.1-flash-preview"
+ ],
+ "unpricedRationale": "minimax-m3.1-flash-preview: MiniMax's pay-as-you-go page does not list it and it runs only inside the M Plan / MiniMax Code. OpenRouter has no endpoint. CometAPI shows one undifferentiated 'from $0.24 (was $0.30)' figure, which equals the M3 input price and has no output rate; not defensible. No entry written.",
+ "notFound": [
+  {
+   "model": "omen-alpha",
+   "reason": "Not a served model in data/adopted.csv on 2026-10-01 and absent from the OpenCode Go catalog (goat-opencode-catalogs-round3-2026-09-30). Not searched further."
+  }
+ ],
+ "layersOver": "All earlier archives in compute.py LIST_PRICE_FILES. This file adds or overrides only the models it lists; every other model keeps its earlier rate.",
+ "priceTiers": {
+  "official": "First-party vendor pricing page read this round. High confidence.",
+  "official_indirect": "First-party rate restated in vendor docs, announcement or console help because the pricing page itself is JS-rendered or gives no three-part split. Medium confidence.",
+  "third_party": "Open-weight or wrapper-only model with no first-party rate card; a named gateway or tracker rate is recorded instead. Low confidence.",
+  "unavailable": "No defensible public rate found. Prices stay null and the API cost column stays blank; no value is invented."
+ },
+ "models": [
+  {
+   "model": "gpt-6-sol",
+   "vendor": "OpenAI",
+   "input": 2.0,
+   "cachedInput": 0.2,
+   "output": 10.0,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {
+    "longContext": {
+     "input": 4.0,
+     "cachedInput": 0.4,
+     "output": 15.0,
+     "note": ">272K input"
+    }
+   },
+   "source": "https://developers.openai.com/api/docs/pricing",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. Matches the parity assumption used in earlier workload conversions."
+  },
+  {
+   "model": "gpt-6.1-sol",
+   "vendor": "OpenAI",
+   "input": 2.0,
+   "cachedInput": 0.1,
+   "output": 10.0,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {
+    "longContext": {
+     "input": 4.0,
+     "cachedInput": 0.2,
+     "output": 15.0,
+     "note": ">272K input"
+    }
+   },
+   "source": "https://developers.openai.com/api/docs/pricing",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. Cache read is 1:20 of input, not 1:10; matches chatgpt-gpt61sol-plus-round3 priceBasis."
+  },
+  {
+   "model": "gpt-6-luna",
+   "vendor": "OpenAI",
+   "input": 0.1,
+   "cachedInput": 0.01,
+   "output": 0.5,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {
+    "longContext": {
+     "input": 0.2,
+     "cachedInput": 0.02,
+     "output": 0.75,
+     "note": ">272K input"
+    }
+   },
+   "source": "https://developers.openai.com/api/docs/pricing",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry."
+  },
+  {
+   "model": "claude-fable-5.1",
+   "vendor": "Anthropic",
+   "input": 10.0,
+   "cachedInput": 0.25,
+   "output": 50.0,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {
+    "cacheWrite5m": 12.5,
+    "cacheWrite1h": 20.0,
+    "batch": {
+     "input": 5.0,
+     "output": 25.0
+    }
+   },
+   "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. Cache hits are 0.025x input, not the usual 0.1x."
+  },
+  {
+   "model": "claude-sonnet-5.5",
+   "vendor": "Anthropic",
+   "input": 2.0,
+   "cachedInput": 0.2,
+   "output": 10.0,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {
+    "cacheWrite5m": 2.5,
+    "cacheWrite1h": 4.0,
+    "batch": {
+     "input": 1.0,
+     "output": 5.0
+    }
+   },
+   "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. Same card as Sonnet 5."
+  },
+  {
+   "model": "gemini-3.6-flash",
+   "vendor": "Google",
+   "input": 0.75,
+   "cachedInput": 0.075,
+   "output": 3.75,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {
+    "standardFrom2027-01-01": {
+     "input": 1.5,
+     "cachedInput": 0.15,
+     "output": 7.5
+    }
+   },
+   "source": "https://ai.google.dev/gemini-api/docs/pricing",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. Introductory Flash pricing through 2026-12-31, same as 3.7/3.8 Flash; the base follows the gemini-3.7-flash precedent."
+  },
+  {
+   "model": "glm-5",
+   "vendor": "Z.AI / Zhipu",
+   "input": 1.0,
+   "cachedInput": 0.2,
+   "output": 3.2,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {},
+   "source": "https://docs.z.ai/guides/overview/pricing",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. International Z.ai USD rate."
+  },
+  {
+   "model": "glm-5.3-flashx",
+   "vendor": "Z.AI / Zhipu",
+   "input": 0.37,
+   "cachedInput": 0.075,
+   "output": 1.25,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {},
+   "source": "https://docs.z.ai/guides/overview/pricing",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. International Z.ai USD rate."
+  },
+  {
+   "model": "kimi-k2.7-code-highspeed",
+   "vendor": "Moonshot / Kimi",
+   "input": 1.9,
+   "cachedInput": 0.38,
+   "output": 8.0,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {},
+   "source": "https://platform.kimi.ai/docs/pricing/chat",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "newly published",
+   "note": "Was unpriced on 2026-09-09; the platform card now lists HighSpeed at 2x K2.7 Code."
+  },
+  {
+   "model": "kimi-k2.5",
+   "vendor": "Moonshot / Kimi",
+   "input": 0.6,
+   "cachedInput": 0.1,
+   "output": 3.0,
+   "currency": "USD",
+   "priceTier": "third_party",
+   "priceConfidence": "low",
+   "variants": {
+    "hostRange": {
+     "input": [
+      0.45,
+      0.6
+     ],
+     "output": [
+      2.25,
+      3.325
+     ],
+     "note": "OpenRouter hosts on 2026-10-01; Amazon Bedrock 0.60/3.00"
+    }
+   },
+   "source": "https://openrouter.ai/moonshotai/kimi-k2.5",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "Moonshot's current card no longer lists K2.5 and Moonshot is not an OpenRouter host. 0.60/3.00 is the Bedrock rate and the commonly restated launch card; the 0.10 cache read is tracker-restated only."
+  },
+  {
+   "model": "qwen3.6-max-preview",
+   "vendor": "Alibaba Cloud / Qwen",
+   "input": 1.3,
+   "cachedInput": null,
+   "output": 7.8,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {
+    "tier128to256K": {
+     "input": 2.0,
+     "output": 12.0
+    }
+   },
+   "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. Singapore/International, 0-128K tier. No cache-read rate published; compute.py falls back to 0.1x input."
+  },
+  {
+   "model": "qwen3.7-flash",
+   "vendor": "Alibaba Cloud / Qwen",
+   "input": 0.03,
+   "cachedInput": null,
+   "output": 0.13,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {
+    "tier32to256K": {
+     "input": 0.1,
+     "output": 0.4
+    },
+    "tier256Kto1M": {
+     "input": 0.2,
+     "output": 0.8
+    }
+   },
+   "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. Singapore/International, 0-32K tier. Agent sessions often exceed 32K, so this base understates long-context use. No cache-read rate published; 0.1x fallback."
+  },
+  {
+   "model": "qwen3.8-omni-flash",
+   "vendor": "Alibaba Cloud / Qwen",
+   "input": 0.15,
+   "cachedInput": 0.016,
+   "output": 0.47,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {},
+   "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. Singapore/International."
+  },
+  {
+   "model": "mistral-medium-3.5",
+   "vendor": "Mistral",
+   "input": 1.5,
+   "cachedInput": null,
+   "output": 7.5,
+   "currency": "USD",
+   "priceTier": "official",
+   "priceConfidence": "high",
+   "variants": {},
+   "source": "https://mistral.ai/pricing/api",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. No cache-read rate published; 0.1x fallback."
+  },
+  {
+   "model": "muse-spark-1.3",
+   "vendor": "Meta",
+   "input": 1.25,
+   "cachedInput": 0.15,
+   "output": 4.25,
+   "currency": "USD",
+   "priceTier": "third_party",
+   "priceConfidence": "medium",
+   "variants": {},
+   "source": "https://openrouter.ai/meta/muse-spark-1.3",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "conflict resolved",
+   "note": "Meta itself is the only OpenRouter host, at the 1.2 card. This settles the 2026-09-09 carry-over conflict. Still no Meta-hosted rate page, so not tier official."
+  },
+  {
+   "model": "muse-spark-1.3-contributor",
+   "vendor": "Meta",
+   "input": 0.1,
+   "cachedInput": 0.002,
+   "output": 0.2,
+   "currency": "USD",
+   "priceTier": "third_party",
+   "priceConfidence": "medium",
+   "variants": {},
+   "source": "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "conflict resolved",
+   "note": "Meta-hosted on OpenRouter. The contributor tier opts into training on prompts and responses."
+  },
+  {
+   "model": "swe-2",
+   "vendor": "Cognition / Devin",
+   "input": 0.75,
+   "cachedInput": 0.075,
+   "output": 3.75,
+   "currency": "USD",
+   "priceTier": "official_indirect",
+   "priceConfidence": "medium",
+   "variants": {
+    "cacheWrite": 0,
+    "trackerListBeforePromo": {
+     "input": 3.0,
+     "cachedInput": 0.3,
+     "output": 15.0,
+     "note": "trackers say docs rate is 75% off through 2026-12-31; not confirmed first-party"
+    }
+   },
+   "source": "https://docs.devin.ai/desktop/models",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "new this round",
+   "note": "First archive entry. Rate is from Devin's model docs, not a public API; SWE-2 is not sold standalone. The base follows the Gemini precedent of using the vendor's currently shown rate."
+  },
+  {
+   "model": "glm-5.2-fast",
+   "vendor": "Z.AI / Zhipu",
+   "input": 2.1,
+   "cachedInput": 0.21,
+   "output": 6.6,
+   "currency": "USD",
+   "priceTier": "third_party",
+   "priceConfidence": "medium",
+   "variants": {
+    "vercelAiGateway": {
+     "input": 2.1,
+     "output": 6.6,
+     "source": "https://vercel.com/ai-gateway/models/glm-5.2-fast",
+     "note": "Baseten and Alibaba hosts; no cache rate shown"
+    },
+    "commandCodeGoat": {
+     "input": 3.0,
+     "cachedInput": 0.5,
+     "output": 10.25,
+     "source": "https://commandcode.ai/docs/plans/goat"
+    }
+   },
+   "source": "https://www.baseten.co/library/glm-52-fast/",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "newly priced",
+   "note": "Was unpriced. docs.z.ai lists no Fast tier. Baseten says Z AI runs this endpoint on its platform; Vercel AI Gateway shows the same 2.10/6.60. Command Code GOAT charges more, kept as a variant."
+  },
+  {
+   "model": "inkling",
+   "vendor": "Thinking Machines",
+   "input": 1.0,
+   "cachedInput": 0.17,
+   "output": 4.05,
+   "currency": "USD",
+   "priceTier": "third_party",
+   "priceConfidence": "medium",
+   "variants": {
+    "deepinfra": {
+     "input": 0.95,
+     "cachedInput": 0.16,
+     "output": 4.05
+    },
+    "commandCodeGoat": {
+     "input": 1.0,
+     "cachedInput": 0.17,
+     "output": 4.05,
+     "source": "https://commandcode.ai/docs/plans/goat"
+    },
+    "trackerReportedFirstParty": {
+     "input": 1.87,
+     "cachedInput": 0.374,
+     "output": 4.68,
+     "note": "trackers restate Thinking Machines' own 64K-context rate and a limited-time 50% discount; no first-party page could be read",
+     "source": "https://superpenguin.ai/models/thinking-machines/inkling"
+    }
+   },
+   "source": "https://openrouter.ai/thinkingmachines/inkling",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "newly priced",
+   "note": "Was unpriced. Open-weight model. Together and Baseten list 1.00/4.05, and the Together endpoint on OpenRouter adds 0.17 cache read. Command Code GOAT bills the same card. Thinking Machines' own rate could not be read first-hand."
+  },
+  {
+   "model": "inkling-small",
+   "vendor": "Thinking Machines",
+   "input": 0.5,
+   "cachedInput": 0.1,
+   "output": 1.2,
+   "currency": "USD",
+   "priceTier": "third_party",
+   "priceConfidence": "medium",
+   "variants": {
+    "thinkingMachinesHost": {
+     "input": 0.3,
+     "output": 1.2,
+     "note": "Artificial Analysis lists Thinking Machines itself as the cheapest host; cache rate not itemised"
+    },
+    "deepinfra": {
+     "input": 0.45,
+     "cachedInput": 0.1,
+     "output": 1.2
+    },
+    "commandCodeGoat": {
+     "input": 0.5,
+     "cachedInput": 0.1,
+     "output": 1.2,
+     "source": "https://commandcode.ai/docs/plans/goat"
+    }
+   },
+   "source": "https://artificialanalysis.ai/models/inkling-small/providers",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "newly priced",
+   "note": "Was unpriced. Baseten, Together and Command Code GOAT agree on 0.50/0.10/1.20. Thinking Machines' own 0.30 input is tracker-reported without a cache rate, so it stays a variant."
+  },
+  {
+   "model": "deepseek-v4-flash-fast",
+   "vendor": "DeepSeek (via Command Code)",
+   "input": 0.28,
+   "cachedInput": 0.07,
+   "output": 0.56,
+   "currency": "USD",
+   "priceTier": "third_party",
+   "priceConfidence": "low",
+   "variants": {},
+   "source": "https://commandcode.ai/docs/plans/goat",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "newly priced",
+   "note": "Was unpriced. DeepSeek's own pricing page has no fast tier; the Fast endpoint exists only in Command Code GOAT, which is the only host and publishes this rate. Same basis as mimo-v2.6-pro-ultraspeed. Not a DeepSeek rate."
+  },
+  {
+   "model": "deepseek-v4.1-flash-fast",
+   "vendor": "DeepSeek (via Command Code)",
+   "input": 0.16,
+   "cachedInput": 0.016,
+   "output": 0.58,
+   "currency": "USD",
+   "priceTier": "third_party",
+   "priceConfidence": "low",
+   "variants": {},
+   "source": "https://commandcode.ai/docs/plans/goat",
+   "checkedAt": "2026-10-01",
+   "changeSincePreviousRound": "newly priced",
+   "note": "Was unpriced. DeepSeek publishes no fast tier; Command Code GOAT is the only host and publishes this rate (matches goat-opencode-catalogs-round3-2026-09-30). Not a DeepSeek rate."
+  }
+ ]
+}

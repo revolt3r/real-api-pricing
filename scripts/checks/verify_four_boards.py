@@ -14,12 +14,14 @@ BOARDS = {
     "aa_coding_agent_index": ("Artificial Analysis Coding Agent Index", "Coding Agent Index", "AA编程Agent榜"),
     "open_design_arena": ("OpenDesign Arena · Quality ranking", "Average task score", "OpenDesign设计榜"),
     "terminal_bench_4": ("Terminal-Bench 4.0", "Resolution Rate %", "TB4终端榜"),
+    "aa_terminal_bench_4": ("Terminal-Bench 4.0 (AA)", "Resolution Rate %", "TB4·AA榜"),
+    "deepswe_1_1": ("DeepSWE v1.1", "Pass@1 %", "DeepSWE榜"),
 }
 
 data = json.loads((ROOT / "derived/points.json").read_text(encoding="utf-8"))
 manifest = json.loads((OUT / "SVG坐标核对.json").read_text(encoding="utf-8"))
 assert set(data["boards"]) == set(BOARDS)
-assert len(manifest) == 24
+assert len(manifest) == len(BOARDS) * 4
 
 html = (OUT / "帕累托交互图.html").read_text(encoding="utf-8")
 for board_id in BOARDS:
@@ -65,6 +67,20 @@ for board_id, (display, metric, tag) in BOARDS.items():
             assert not re.search(r"[\u4e00-\u9fff]", (OUT / f"{stem}.svg").read_text(encoding="utf-8"))
         rows.append((display, tier, language, len(selected), len(point_groups), len(expected_front), len(missing)))
 
+# 前沿精简版必须与帕累托图同一支配口径：逐榜核对 _build/前沿筛选结果.json 的 id 集合
+# 等于 derived/points.json 中该榜全部有分点（含 real_usd_per_mtok == 0 的不计额度点）的非支配集。
+frontier_result = json.loads((OUT / "前沿筛选结果.json").read_text(encoding="utf-8"))
+for board_id in BOARDS:
+    key = f"{board_id}__score"
+    scored = [p for p in data["points"] if p[key] is not None]
+    expected_ids = {p["id"] for p in scored if not any(
+        q["real_usd_per_mtok"] <= p["real_usd_per_mtok"] and q[key] >= p[key]
+        and (q["real_usd_per_mtok"] < p["real_usd_per_mtok"] or q[key] > p[key])
+        for q in scored
+    )}
+    actual_ids = {e["id"] for e in frontier_result["boards"][board_id]["frontier"]}
+    assert actual_ids == expected_ids, f"{board_id}: frontier ids {sorted(actual_ids ^ expected_ids)} differ"
+
 research = json.loads((ROOT / "data/research/scores-aa-coding-agent-round1-2026-09-06.json").read_text(encoding="utf-8"))
 assert research["boards"][0]["boardId"] == "aa_coding_agent_index"
 assert all(item["source"].startswith("https://artificialanalysis.ai/") for item in research["scores"])
@@ -77,7 +93,7 @@ assert all("agentHarness" in item["secondary"] and "reasoningEffort" in item["se
 report = [
     "# 六榜帕累托数据核对",
     "",
-    "核对日期：2026-09-10。结果：**通过**。六榜独立计分，主图与全量图均与 `derived/points.json` 一致。",
+    f"核对日期：2026-09-10。结果：**通过**。{len(BOARDS)}榜独立计分，主图与全量图均与 `derived/points.json` 一致。",
     "",
     "| 榜单 | 范围 | 语言 | 有分数据行 | 合并后坐标 | 前沿坐标 | 未覆盖模型数 |",
     "|---|---:|---:|---:|---:|---:|---:|",
@@ -86,7 +102,7 @@ for display, tier, language, scored, positions, frontier, missing in rows:
     report.append(f"| {display} | {'精选' if tier == 'main' else '全量'} | {language} | {scored} | {positions} | {frontier} | {missing} |")
 report += [
     "",
-    "核验项：严格支配判定、X 轴对数坐标、前沿端点方向、SVG 无嵌入位图、PNG 同步渲染、交互图 JavaScript 语法、六个榜单选择项、AA Coding Agent、OpenDesign 与 Terminal-Bench 4.0 官方来源及 harness/effort 字段。",
+    f"核验项：严格支配判定、X 轴对数坐标、前沿端点方向、SVG 无嵌入位图、PNG 同步渲染、交互图 JavaScript 语法、{len(BOARDS)}个榜单选择项、AA Coding Agent、OpenDesign 与 Terminal-Bench 4.0 官方来源及 harness/effort 字段。",
     "",
     "AA Coding Agent 与 Terminal-Bench 4.0 只映射精确模型；同模型多个官网配置取存档最高分，配置名称保留在 `variant`。未覆盖型号不插值、不借用邻近型号。",
 ]
@@ -94,4 +110,4 @@ report += [
 
 for row in rows:
     print(f"{row[0]} {row[1]} {row[2]}: {row[3]} rows, {row[4]} positions, {row[5]} frontier")
-print("PASS: six boards, twenty-four SVG/PNG pairs, English text, HTML syntax and official benchmark provenance verified")
+print(f"PASS: {len(BOARDS)} boards, {len(manifest)} SVG/PNG pairs, English text, HTML syntax, frontier selections and official benchmark provenance verified")

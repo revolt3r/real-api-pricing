@@ -1,9 +1,13 @@
 """Lossless benchmark records and explicit reference mappings; never infer quota effort."""
+import ast
 import hashlib
 import json
 import re
 
-AGENT_BOARDS = {"arena_code", "arena_agent_mode", "aa_coding_agent_index", "open_design_arena", "terminal_bench_4"}
+# AA 自家 harness（agentHarness=Artificial Analysis）跑的 TB4 与 tbench.ai 官方榜分开计分：
+# 同一套题、不同 agent 配置，两边分数不可互换（实测对拍中位差 ~2.6 分，Grok 4.7 差 11.8）。
+AA_TB4_BOARD = "aa_terminal_bench_4"
+AGENT_BOARDS = {"arena_code", "arena_agent_mode", "aa_coding_agent_index", "open_design_arena", "terminal_bench_4", AA_TB4_BOARD, "deepswe_1_1"}
 OPEN_DESIGN_MODELS = {
     "GPT-6 Astra": "gpt-6-astra",
     "DeepSeek V4.1 Flash": "deepseek-v4.1-flash",
@@ -21,16 +25,36 @@ OPEN_DESIGN_MODELS = {
 }
 EFFORT = re.compile(r"(?<![a-z0-9])(xhigh|high|medium|low|max|none|thinking)(?![a-z0-9])", re.I)
 
+# 我们自己的 RSC 抽取器（extract_all.py，只在 gitignore 的 _build/ 下，未入库）把一个
+# Python dict repr 拼进了 round4 的三条 variantLabel；AA 站上的原文到 " (max)" 就结束。
+# 归档证据只追加不改写，所以在解析层剥掉，并把 dict 里的参数取出来当结构化字段用——
+# 裸剥会丢掉 effort（Opencode - GLM-5.3 的 max 只存在于这段 dict 里）。
+PARAMS = re.compile(r"\s*\((\{.*\})\)\s*$")
+
+
+def normalise_label(label: str) -> tuple[str, dict]:
+    match = PARAMS.search(label)
+    if not match:
+        return label, {}
+    try:
+        params = ast.literal_eval(match.group(1))
+    except (ValueError, SyntaxError):
+        return label, {}
+    return (label[:match.start()], params) if isinstance(params, dict) else (label, {})
+
 
 def configuration(record, archive):
     secondary = record.get("secondary", {})
-    label = record["variantLabel"]
+    label, params = normalise_label(record["variantLabel"])
+    board = (AA_TB4_BOARD if record["boardId"] == "terminal_bench_4"
+             and secondary.get("agentHarness") == "Artificial Analysis" else record["boardId"])
     estimated = secondary.get("intelligenceIndexIsEstimated", record.get("scoreIsEstimated"))
     self_reported = bool(secondary.get("selfReported"))
-    model = record.get("model") or (OPEN_DESIGN_MODELS.get(label) if record["boardId"].startswith("open_design_arena") else None)
-    identity = [record["boardId"], model, label, record.get("checkedAt"), archive]
-    cid = record["boardId"] + ":" + hashlib.sha256(json.dumps(identity).encode()).hexdigest()[:16]
+    model = record.get("model") or (OPEN_DESIGN_MODELS.get(label) if board.startswith("open_design_arena") else None)
+    identity = [board, model, label, record.get("checkedAt"), archive]
+    cid = board + ":" + hashlib.sha256(json.dumps(identity).encode()).hexdigest()[:16]
     effort = EFFORT.search(label)
+    declared = params.get("reasoning_effort")
     harness = secondary.get("agentHarness")
     if harness is None and "codex-harness" in label.lower():
         harness = "Codex"
@@ -38,10 +62,10 @@ def configuration(record, archive):
         harness = "OpenDesign"
     minus, plus = secondary.get("ciMinus"), secondary.get("ciPlus")
     return dict(
-        configuration_id=cid, board=record["boardId"], model=model,
+        configuration_id=cid, board=board, model=model,
         variant=label + (" [AA estimate]" if estimated else "") + (" [vendor self-report]" if self_reported else ""),
         score_is_estimated=estimated, score_is_self_reported=self_reported,
-        agent_harness=harness, reasoning_effort=effort.group(1).lower() if effort else None,
+        agent_harness=harness, reasoning_effort=str(declared).lower() if declared else (effort.group(1).lower() if effort else None),
         service_mode={"cursor cli - composer 2.5 fast": "fast", "cursor cli - composer 2.5": "standard"}.get(label.lower())
                      if record["model"] == "composer-2.5" else None,
         score=record["score"], score_low=record["score"] - minus if minus is not None else None,
