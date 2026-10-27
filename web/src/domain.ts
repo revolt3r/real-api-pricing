@@ -12,6 +12,12 @@ export function matchesFeeBand(fee: number | null, id: string): boolean {
     (band.maxInclusive ? fee <= band.max : fee < band.max)
   );
 }
+/** Most items the allowance comparison lays over one another. */
+export const COMPARE_MAX = 3;
+/** Prefix of a comparison slot that has a plan but no model yet. */
+export const PLAN_SLOT = "plan:";
+/** Shared by the pickers: plans with one name per plan_id stay apart. */
+export const planKey = (p: Point) => `${p.plan_id}|${p.plan}`;
 export const filterKeys: FilterKey[] = [
   "vendors",
   "channels",
@@ -25,6 +31,9 @@ export const filterKeys: FilterKey[] = [
 export const colors = channelColors;
 export const defaultState = (): State => ({
   feeBand: "all",
+  layout: "list",
+  compare: [],
+  cards: [],
   lang: "en",
   view: "pareto",
   board: "aa_intelligence_index",
@@ -183,7 +192,7 @@ export function tableRows(rows: Row[], s: State): Row[] {
     .filter(
       (r) =>
         !q ||
-        `${r.point.label} ${displayPlan(r.point.plan, s.lang)} ${r.point.channel} ${r.mapping?.variant ?? ""}`
+        `${r.point.label} ${r.point.model} ${displayPlan(r.point.plan, s.lang)} ${r.point.channel} ${r.mapping?.variant ?? ""}`
           .toLocaleLowerCase()
           .includes(q),
     )
@@ -524,6 +533,9 @@ export function serialize(s: State): string {
   if (s.configuration !== d.configuration) p.set("config", s.configuration);
   if (s.labels !== d.labels) p.set("labels", s.labels);
   if (s.feeBand !== d.feeBand) p.set("fee", s.feeBand);
+  if (s.layout !== d.layout) p.set("layout", s.layout);
+  for (const id of s.compare) p.append("cmp", id);
+  for (const id of s.cards) p.append("card", id);
   if (s.query) p.set("q", s.query);
   if (s.find) p.set("find", s.find);
   if (s.lock) p.set("lock", serializeLock(s.lock));
@@ -558,6 +570,7 @@ export function restore(
     config: ["configuration", ["all", "summary"]],
     labels: ["labels", ["frontier", "all", "none"]],
     fee: ["feeBand", ["all", ...feeBands.map((b) => b.id)]],
+    layout: ["layout", ["list", "cards", "compare"]],
     sort: ["sort", ["price", "model", "plan", "score", "allowance", "fee", "apiCost", "multiple"]],
     dir: ["direction", ["asc", "desc"]],
   };
@@ -594,6 +607,23 @@ export function restore(
           : data.points.some((p) => p.plan_id === parsed.value));
     if (known) state.lock = parsed;
     else warning = true;
+  }
+  const allowanceIds = new Set(
+    data.points.filter((p) => p.billing !== "metered" && p.monthly_yi !== null).map((p) => p.id),
+  );
+  if (params.has("cmp")) {
+    const wanted = params.getAll("cmp");
+    const planKeys = new Set(
+      data.points.filter((p) => allowanceIds.has(p.id)).map((p) => PLAN_SLOT + planKey(p)),
+    );
+    const slots = wanted.filter((v) => v === "" || allowanceIds.has(v) || planKeys.has(v));
+    if (slots.length !== wanted.length || slots.length > COMPARE_MAX) warning = true;
+    state.compare = slots.slice(0, COMPARE_MAX);
+  }
+  if (params.has("card")) {
+    const wanted = params.getAll("card");
+    state.cards = [...new Set(wanted.filter((id) => allowanceIds.has(id)))];
+    if (state.cards.length !== wanted.length) warning = true;
   }
   if (params.has("sel")) {
     const wanted = params.getAll("sel").filter((id) => id !== "");
@@ -797,6 +827,7 @@ const EFFORT: Record<string, [string, string]> = {
   high: ["High", "高"],
   xhigh: ["xhigh", "超高"],
   max: ["Max", "最高"],
+  thinking: ["Thinking", "思考"],
 };
 /** Reasoning-effort level in the reader's language; unknown levels stay as published. */
 export const effortLabel = (effort: string | null, lang: string) =>
@@ -804,8 +835,25 @@ export const effortLabel = (effort: string | null, lang: string) =>
 /** Leaderboard metric in the reader's language; unknown metrics stay as published. */
 export const metricLabel = (metric: string, lang: string) =>
   lang === "zh" ? (METRIC_ZH[metric] ?? metric) : metric;
+/** Mapping notes are published in English; Chinese shows the translation. */
+const MAPPING_NOTE_ZH: Record<string, string> = {
+  "Exact served-model reference; quota-measurement effort is unverified.":
+    "精确对应所服务的模型；额度实测的推理强度未经验证。",
+  "Exact served-model reference only; product harness and quota-measurement effort are unverified. Not a benchmark measurement of this subscription or API channel.":
+    "仅精确对应所服务的模型；产品框架和额度实测的推理强度未经验证。并非该订阅或 API 渠道的评测结果。",
+  "Exact served-model reference only; product harness and quota-measurement effort are unverified. Not a benchmark measurement of this subscription or API channel. Vendor self-reported score, not an official leaderboard run.":
+    "仅精确对应所服务的模型；产品框架和额度实测的推理强度未经验证。并非该订阅或 API 渠道的评测结果。厂商自报成绩，非官方榜单数据。",
+};
+export const mappingNoteLabel = (note: string, lang: string) =>
+  lang === "zh" ? (MAPPING_NOTE_ZH[note] ?? note) : note;
 export const safeUrl = (url: string) =>
   /^https?:\/\//i.test(url) || url.startsWith("/data/") ? url : undefined;
+/** First URL inside a source text (same match regex as build-data.mjs — the
+    character class already excludes CJK and fullwidth punctuation), with
+    trailing ASCII sentence punctuation trimmed so the href is clean. */
+export const firstUrl = (text: string) =>
+  text.match(/https?:\/\/[^\s<>"'\u3000-\u9fff\uff00-\uffef]+/)?.[0]?.replace(/[;,.]+$/, "");
+
 export const manufacturer = (vendor: string) =>
   vendor === "Muse" ? "Meta" : vendor === "Cognition" ? "Devin" : vendor;
 /** Short promo/unmetered qualifier for a $0 point, or "" for priced points. */
@@ -851,6 +899,8 @@ export function displayPlan(plan: string, lang: string): string {
     闲时: "Off-peak",
     中间值: "Midpoint",
     忙时: "Peak",
+    " 日间": " (Day)",
+    " 夜间0.8×": " (Night 0.8x)",
     "促销至 ": "promo until ",
   };
   return Object.entries(words).reduce(
@@ -951,8 +1001,8 @@ export function csv(rows: Row[], lang: string): string {
         r.mapping?.score_is_self_reported,
         r.mapping?.agent_harness,
         r.mapping?.reasoning_effort,
-        r.mapping?.source,
-        r.point.source,
+        lang === "zh" ? r.mapping?.source : (r.mapping?.source_en ?? r.mapping?.source),
+        lang === "zh" ? r.point.source : (r.point.source_en ?? r.point.source),
       ]),
     ]
       .map((row) => row.map(escape).join(","))

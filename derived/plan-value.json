@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-01",
+ "generatedAt": "2026-10-27",
  "role": "Per-subscription value: the API-list multiple the plan's models share, plus the models that differ.",
  "rule": "Allowances inside a plan are alternatives, never additive, so a plan has no total. headline_multiple is the value shared by the largest set of the plan's priced models; exceptions are the remaining distinct values, each with its own models. varies=true means the headline covers fewer than half the plan's models and must be read as the most common value, not a representative one.",
  "mix": {
@@ -16,7 +16,9 @@
   "list-prices-astra-round1-2026-09-13.json",
   "list-prices-stepfun-round2-2026-09-21.json",
   "list-prices-mimo-v26-grok47-round1-2026-09-22.json",
-  "list-prices-round3-2026-10-01.json"
+  "list-prices-round3-2026-10-01.json",
+  "list-prices-claude55-round1-2026-10-08.json",
+  "list-prices-round4-2026-10-27.json"
  ],
  "plans": [
   {
@@ -34,12 +36,12 @@
     "Claude Sonnet 5"
    ],
    "headline_inherited": false,
-   "model_count": 4,
-   "value_group_count": 2,
+   "model_count": 6,
+   "value_group_count": 3,
    "best_multiple": 95.15,
    "best_model": "Claude Opus 5",
-   "worst_multiple": 60.16,
-   "worst_model": "Claude Opus 5.5",
+   "worst_multiple": 43.84,
+   "worst_model": "Claude Haiku 5.5",
    "varies": false,
    "headline": {
     "multiple": 95.15,
@@ -62,87 +64,24 @@
      "multiple": 60.16,
      "cost": 1203.28,
      "models": [
-      "Claude Opus 5.5"
+      "Claude Opus 5.5",
+      "Claude Sonnet 5.5"
      ],
      "model_ids": [
-      "claude-opus-5.5"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    }
-   ]
-  },
-  {
-   "plan_id": "claude_max_20x",
-   "plan": "Claude Max 20x (9/14+)",
-   "plan_en": null,
-   "plan_gen": "",
-   "channel": "Anthropic",
-   "fee_usd": 200.0,
-   "headline_multiple": 57.7,
-   "headline_cost_usd_month": 11539.5,
-   "headline_models": [
-    "Claude Opus 4.8",
-    "Claude Opus 5",
-    "Claude Sonnet 5"
-   ],
-   "headline_inherited": false,
-   "model_count": 6,
-   "value_group_count": 4,
-   "best_multiple": 62.13,
-   "best_model": "Claude Opus 5.5",
-   "worst_multiple": 6.42,
-   "worst_model": "Claude Fable 5.1",
-   "varies": false,
-   "headline": {
-    "multiple": 57.7,
-    "cost": 11539.5,
-    "models": [
-     "Claude Opus 4.8",
-     "Claude Opus 5",
-     "Claude Sonnet 5"
-    ],
-    "model_ids": [
-     "claude-opus-4.8",
-     "claude-opus-5",
-     "claude-sonnet-5"
-    ],
-    "inherited": false,
-    "third_party_rate": false
-   },
-   "exceptions": [
-    {
-     "multiple": 62.13,
-     "cost": 12425.97,
-     "models": [
-      "Claude Opus 5.5"
-     ],
-     "model_ids": [
-      "claude-opus-5.5"
+      "claude-opus-5.5",
+      "claude-sonnet-5.5"
      ],
      "inherited": false,
      "third_party_rate": false
     },
     {
-     "multiple": 8.88,
-     "cost": 1775.32,
+     "multiple": 43.84,
+     "cost": 876.74,
      "models": [
-      "Claude Fable 5"
+      "Claude Haiku 5.5"
      ],
      "model_ids": [
-      "claude-fable-5"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 6.42,
-     "cost": 1283.04,
-     "models": [
-      "Claude Fable 5.1"
-     ],
-     "model_ids": [
-      "claude-fable-5.1"
+      "claude-haiku-5.5"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -156,43 +95,57 @@
    "plan_gen": "",
    "channel": "Anthropic",
    "fee_usd": 100.0,
-   "headline_multiple": 57.7,
-   "headline_cost_usd_month": 5769.75,
+   "headline_multiple": 72.24,
+   "headline_cost_usd_month": 7223.6,
    "headline_models": [
-    "Claude Opus 5",
-    "Claude Sonnet 5"
+    "Claude Opus 5.5",
+    "Claude Sonnet 5.5"
    ],
    "headline_inherited": false,
-   "model_count": 5,
-   "value_group_count": 4,
-   "best_multiple": 62.13,
+   "model_count": 7,
+   "value_group_count": 5,
+   "best_multiple": 72.24,
    "best_model": "Claude Opus 5.5",
    "worst_multiple": 6.41,
    "worst_model": "Claude Fable 5.1",
    "varies": true,
    "headline": {
-    "multiple": 57.7,
-    "cost": 5769.75,
+    "multiple": 72.24,
+    "cost": 7223.6,
     "models": [
-     "Claude Opus 5",
-     "Claude Sonnet 5"
+     "Claude Opus 5.5",
+     "Claude Sonnet 5.5"
     ],
     "model_ids": [
-     "claude-opus-5",
-     "claude-sonnet-5"
+     "claude-opus-5.5",
+     "claude-sonnet-5.5"
     ],
     "inherited": false,
     "third_party_rate": false
    },
    "exceptions": [
     {
-     "multiple": 62.13,
-     "cost": 6212.99,
+     "multiple": 57.7,
+     "cost": 5769.75,
      "models": [
-      "Claude Opus 5.5"
+      "Claude Opus 5",
+      "Claude Sonnet 5"
      ],
      "model_ids": [
-      "claude-opus-5.5"
+      "claude-opus-5",
+      "claude-sonnet-5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 52.63,
+     "cost": 5263.32,
+     "models": [
+      "Claude Haiku 5.5"
+     ],
+     "model_ids": [
+      "claude-haiku-5.5"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -224,6 +177,97 @@
    ]
   },
   {
+   "plan_id": "claude_max_20x",
+   "plan": "Claude Max 20x (9/14+)",
+   "plan_en": null,
+   "plan_gen": "",
+   "channel": "Anthropic",
+   "fee_usd": 200.0,
+   "headline_multiple": 57.7,
+   "headline_cost_usd_month": 11539.5,
+   "headline_models": [
+    "Claude Opus 4.8",
+    "Claude Opus 5",
+    "Claude Sonnet 5"
+   ],
+   "headline_inherited": false,
+   "model_count": 8,
+   "value_group_count": 5,
+   "best_multiple": 62.13,
+   "best_model": "Claude Opus 5.5",
+   "worst_multiple": 6.42,
+   "worst_model": "Claude Fable 5.1",
+   "varies": true,
+   "headline": {
+    "multiple": 57.7,
+    "cost": 11539.5,
+    "models": [
+     "Claude Opus 4.8",
+     "Claude Opus 5",
+     "Claude Sonnet 5"
+    ],
+    "model_ids": [
+     "claude-opus-4.8",
+     "claude-opus-5",
+     "claude-sonnet-5"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 62.13,
+     "cost": 12425.97,
+     "models": [
+      "Claude Opus 5.5",
+      "Claude Sonnet 5.5"
+     ],
+     "model_ids": [
+      "claude-opus-5.5",
+      "claude-sonnet-5.5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 45.27,
+     "cost": 9053.93,
+     "models": [
+      "Claude Haiku 5.5"
+     ],
+     "model_ids": [
+      "claude-haiku-5.5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 8.88,
+     "cost": 1775.32,
+     "models": [
+      "Claude Fable 5"
+     ],
+     "model_ids": [
+      "claude-fable-5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 6.42,
+     "cost": 1283.04,
+     "models": [
+      "Claude Fable 5.1"
+     ],
+     "model_ids": [
+      "claude-fable-5.1"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
    "plan_id": "stepfun_max_cn",
    "plan": "Step Plan Max (¥699)",
    "plan_en": null,
@@ -240,7 +284,7 @@
    "value_group_count": 3,
    "best_multiple": 41.3,
    "best_model": "Step 3.7 Flash",
-   "worst_multiple": 24.89,
+   "worst_multiple": 38.65,
    "worst_model": "Step 5 Preview",
    "varies": true,
    "headline": {
@@ -269,8 +313,8 @@
      "third_party_rate": false
     },
     {
-     "multiple": 24.89,
-     "cost": 2567.14,
+     "multiple": 38.65,
+     "cost": 3985.42,
      "models": [
       "Step 5 Preview"
      ],
@@ -281,6 +325,40 @@
      "third_party_rate": false
     }
    ]
+  },
+  {
+   "plan_id": "claude_team",
+   "plan": "Claude Team Premium",
+   "plan_en": null,
+   "plan_gen": "",
+   "channel": "Anthropic",
+   "fee_usd": 125.0,
+   "headline_multiple": 39.73,
+   "headline_cost_usd_month": 4966.37,
+   "headline_models": [
+    "Claude Opus 5.5"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 39.73,
+   "best_model": "Claude Opus 5.5",
+   "worst_multiple": 39.73,
+   "worst_model": "Claude Opus 5.5",
+   "varies": false,
+   "headline": {
+    "multiple": 39.73,
+    "cost": 4966.37,
+    "models": [
+     "Claude Opus 5.5"
+    ],
+    "model_ids": [
+     "claude-opus-5.5"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
   },
   {
    "plan_id": "chatgpt_pro_20x",
@@ -411,7 +489,7 @@
    "value_group_count": 3,
    "best_multiple": 29.01,
    "best_model": "Step 3.7 Flash",
-   "worst_multiple": 17.49,
+   "worst_multiple": 27.15,
    "worst_model": "Step 5 Preview",
    "varies": true,
    "headline": {
@@ -440,8 +518,8 @@
      "third_party_rate": false
     },
     {
-     "multiple": 17.49,
-     "cost": 513.43,
+     "multiple": 27.15,
+     "cost": 797.08,
      "models": [
       "Step 5 Preview"
      ],
@@ -535,6 +613,53 @@
    ]
   },
   {
+   "plan_id": "kimi_allegro_cn",
+   "plan": "Kimi 会员 699",
+   "plan_en": "Kimi Allegro",
+   "plan_gen": "v1",
+   "channel": "Kimi",
+   "fee_usd": 99.0,
+   "headline_multiple": 26.01,
+   "headline_cost_usd_month": 2574.56,
+   "headline_models": [
+    "Kimi K3 (v1)"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 26.01,
+   "best_model": "Kimi K3 (v1)",
+   "worst_multiple": 10.84,
+   "worst_model": "Kimi K2.7 Code (v1)",
+   "varies": false,
+   "headline": {
+    "multiple": 26.01,
+    "cost": 2574.56,
+    "models": [
+     "Kimi K3 (v1)"
+    ],
+    "model_ids": [
+     "kimi-k3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 10.84,
+     "cost": 1072.75,
+     "models": [
+      "Kimi K2.7 Code (v1)"
+     ],
+     "model_ids": [
+      "kimi-k2.7-code"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
    "plan_id": "glm_coding_max_cn_old_offpeak",
    "plan": "GLM Coding Max (老客 ¥469) 闲时",
    "plan_en": null,
@@ -582,6 +707,53 @@
    ]
   },
   {
+   "plan_id": "kimi_allegretto_cn",
+   "plan": "Kimi 会员 199",
+   "plan_en": "Kimi Allegretto",
+   "plan_gen": "v1",
+   "channel": "Kimi",
+   "fee_usd": 39.0,
+   "headline_multiple": 22.0,
+   "headline_cost_usd_month": 858.19,
+   "headline_models": [
+    "Kimi K3 (v1)"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 22.0,
+   "best_model": "Kimi K3 (v1)",
+   "worst_multiple": 9.17,
+   "worst_model": "Kimi K2.7 Code (v1)",
+   "varies": false,
+   "headline": {
+    "multiple": 22.0,
+    "cost": 858.19,
+    "models": [
+     "Kimi K3 (v1)"
+    ],
+    "model_ids": [
+     "kimi-k3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 9.17,
+     "cost": 357.58,
+     "models": [
+      "Kimi K2.7 Code (v1)"
+     ],
+     "model_ids": [
+      "kimi-k2.7-code"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
    "plan_id": "cursor_ultra",
    "plan": "Cursor Ultra",
    "plan_en": null,
@@ -595,12 +767,12 @@
     "Grok 4.6"
    ],
    "headline_inherited": false,
-   "model_count": 3,
-   "value_group_count": 2,
+   "model_count": 4,
+   "value_group_count": 3,
    "best_multiple": 21.86,
    "best_model": "Grok 4.6",
-   "worst_multiple": 14.35,
-   "worst_model": "Grok 4.5",
+   "worst_multiple": 1.77,
+   "worst_model": "Claude Opus 5.5",
    "varies": false,
    "headline": {
     "multiple": 21.86,
@@ -625,6 +797,18 @@
      ],
      "model_ids": [
       "grok-4.5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 1.77,
+     "cost": 353.02,
+     "models": [
+      "Claude Opus 5.5"
+     ],
+     "model_ids": [
+      "claude-opus-5.5"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -667,53 +851,6 @@
     "third_party_rate": false
    },
    "exceptions": []
-  },
-  {
-   "plan_id": "kimi_allegro_cn",
-   "plan": "Kimi 会员 699",
-   "plan_en": "Kimi Allegro",
-   "plan_gen": "v1",
-   "channel": "Kimi",
-   "fee_usd": 99.0,
-   "headline_multiple": 19.39,
-   "headline_cost_usd_month": 1919.67,
-   "headline_models": [
-    "Kimi K3 (v1)"
-   ],
-   "headline_inherited": false,
-   "model_count": 2,
-   "value_group_count": 2,
-   "best_multiple": 19.39,
-   "best_model": "Kimi K3 (v1)",
-   "worst_multiple": 10.84,
-   "worst_model": "Kimi K2.7 Code (v1)",
-   "varies": false,
-   "headline": {
-    "multiple": 19.39,
-    "cost": 1919.67,
-    "models": [
-     "Kimi K3 (v1)"
-    ],
-    "model_ids": [
-     "kimi-k3"
-    ],
-    "inherited": false,
-    "third_party_rate": false
-   },
-   "exceptions": [
-    {
-     "multiple": 10.84,
-     "cost": 1072.75,
-     "models": [
-      "Kimi K2.7 Code (v1)"
-     ],
-     "model_ids": [
-      "kimi-k2.7-code"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    }
-   ]
   },
   {
    "plan_id": "glm_coding_max_cn_old_mid",
@@ -796,8 +933,8 @@
    },
    "exceptions": [
     {
-     "multiple": 3.48,
-     "cost": 348.2,
+     "multiple": 18.39,
+     "cost": 1838.98,
      "models": [
       "MiMo V2.5"
      ],
@@ -1127,8 +1264,8 @@
    },
    "exceptions": [
     {
-     "multiple": 3.23,
-     "cost": 161.37,
+     "multiple": 17.04,
+     "cost": 852.24,
      "models": [
       "MiMo V2.5"
      ],
@@ -1158,53 +1295,6 @@
      ],
      "model_ids": [
       "mimo-v2.6-flash"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    }
-   ]
-  },
-  {
-   "plan_id": "kimi_allegretto_cn",
-   "plan": "Kimi 会员 199",
-   "plan_en": "Kimi Allegretto",
-   "plan_gen": "v1",
-   "channel": "Kimi",
-   "fee_usd": 39.0,
-   "headline_multiple": 16.41,
-   "headline_cost_usd_month": 639.89,
-   "headline_models": [
-    "Kimi K3 (v1)"
-   ],
-   "headline_inherited": false,
-   "model_count": 2,
-   "value_group_count": 2,
-   "best_multiple": 16.41,
-   "best_model": "Kimi K3 (v1)",
-   "worst_multiple": 9.17,
-   "worst_model": "Kimi K2.7 Code (v1)",
-   "varies": false,
-   "headline": {
-    "multiple": 16.41,
-    "cost": 639.89,
-    "models": [
-     "Kimi K3 (v1)"
-    ],
-    "model_ids": [
-     "kimi-k3"
-    ],
-    "inherited": false,
-    "third_party_rate": false
-   },
-   "exceptions": [
-    {
-     "multiple": 9.17,
-     "cost": 357.58,
-     "models": [
-      "Kimi K2.7 Code (v1)"
-     ],
-     "model_ids": [
-      "kimi-k2.7-code"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -1245,8 +1335,8 @@
    },
    "exceptions": [
     {
-     "multiple": 2.92,
-     "cost": 46.72,
+     "multiple": 15.42,
+     "cost": 246.73,
      "models": [
       "MiMo V2.5"
      ],
@@ -1316,8 +1406,8 @@
    },
    "exceptions": [
     {
-     "multiple": 2.9,
-     "cost": 17.41,
+     "multiple": 15.32,
+     "cost": 91.94,
      "models": [
       "MiMo V2.5"
      ],
@@ -1347,224 +1437,6 @@
      ],
      "model_ids": [
       "mimo-v2.6-flash"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    }
-   ]
-  },
-  {
-   "plan_id": "droid_max",
-   "plan": "Droid Max",
-   "plan_en": null,
-   "plan_gen": "",
-   "channel": "Factory",
-   "fee_usd": 200.0,
-   "headline_multiple": 14.85,
-   "headline_cost_usd_month": 2970.58,
-   "headline_models": [
-    "Claude Fable 5",
-    "Claude Opus 4.8",
-    "Claude Opus 5",
-    "Claude Sonnet 5.5",
-    "GPT 5.6 Sol",
-    "GPT-6 Astra",
-    "GPT-6 Luna",
-    "GPT-6 Sol",
-    "Gemini 3.7 Flash",
-    "Gemini 3.8 Flash",
-    "Kimi K3",
-    "Mistral Medium 3.5"
-   ],
-   "headline_inherited": false,
-   "model_count": 27,
-   "value_group_count": 13,
-   "best_multiple": 28.54,
-   "best_model": "Grok 4.7",
-   "worst_multiple": 6.51,
-   "worst_model": "DeepSeek V4.1 Flash",
-   "varies": true,
-   "headline": {
-    "multiple": 14.85,
-    "cost": 2970.58,
-    "models": [
-     "Claude Fable 5",
-     "Claude Opus 4.8",
-     "Claude Opus 5",
-     "Claude Sonnet 5.5",
-     "GPT 5.6 Sol",
-     "GPT-6 Astra",
-     "GPT-6 Luna",
-     "GPT-6 Sol",
-     "Gemini 3.7 Flash",
-     "Gemini 3.8 Flash",
-     "Kimi K3",
-     "Mistral Medium 3.5"
-    ],
-    "model_ids": [
-     "claude-fable-5",
-     "claude-opus-4.8",
-     "claude-opus-5",
-     "claude-sonnet-5.5",
-     "gemini-3.7-flash",
-     "gemini-3.8-flash",
-     "gpt-5.6-sol",
-     "gpt-6-astra",
-     "gpt-6-luna",
-     "gpt-6-sol",
-     "kimi-k3",
-     "mistral-medium-3.5"
-    ],
-    "inherited": false,
-    "third_party_rate": false
-   },
-   "exceptions": [
-    {
-     "multiple": 28.54,
-     "cost": 5708.76,
-     "models": [
-      "Grok 4.6",
-      "Grok 4.7"
-     ],
-     "model_ids": [
-      "grok-4.6",
-      "grok-4.7"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 24.15,
-     "cost": 4829.71,
-     "models": [
-      "MiniMax M3"
-     ],
-     "model_ids": [
-      "minimax-m3"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 23.81,
-     "cost": 4762.35,
-     "models": [
-      "GLM 5.3 Flash"
-     ],
-     "model_ids": [
-      "glm-5.3-flash"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 22.32,
-     "cost": 4463.09,
-     "models": [
-      "GLM 5.2",
-      "GLM 5.3"
-     ],
-     "model_ids": [
-      "glm-5.2",
-      "glm-5.3"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 21.23,
-     "cost": 4246.71,
-     "models": [
-      "Inkling"
-     ],
-     "model_ids": [
-      "inkling"
-     ],
-     "inherited": false,
-     "third_party_rate": true
-    },
-    {
-     "multiple": 20.29,
-     "cost": 4058.44,
-     "models": [
-      "Nemotron 3 Ultra"
-     ],
-     "model_ids": [
-      "nemotron-3-ultra"
-     ],
-     "inherited": false,
-     "third_party_rate": true
-    },
-    {
-     "multiple": 15.36,
-     "cost": 3071.62,
-     "models": [
-      "GPT 5.6 Luna",
-      "GPT 5.6 Terra"
-     ],
-     "model_ids": [
-      "gpt-5.6-luna",
-      "gpt-5.6-terra"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 13.91,
-     "cost": 2782.94,
-     "models": [
-      "GLM 5.2 Fast"
-     ],
-     "model_ids": [
-      "glm-5.2-fast"
-     ],
-     "inherited": false,
-     "third_party_rate": true
-    },
-    {
-     "multiple": 13.84,
-     "cost": 2768.5,
-     "models": [
-      "Qwen3.8 Max"
-     ],
-     "model_ids": [
-      "qwen3.8-max"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 9.95,
-     "cost": 1990.49,
-     "models": [
-      "Claude Opus 5.5"
-     ],
-     "model_ids": [
-      "claude-opus-5.5"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 7.5,
-     "cost": 1500.44,
-     "models": [
-      "Claude Fable 5.1"
-     ],
-     "model_ids": [
-      "claude-fable-5.1"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 6.51,
-     "cost": 1301.4,
-     "models": [
-      "DeepSeek V4.1 Flash"
-     ],
-     "model_ids": [
-      "deepseek-v4.1-flash"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -1605,8 +1477,8 @@
    },
    "exceptions": [
     {
-     "multiple": 2.79,
-     "cost": 278.57,
+     "multiple": 14.71,
+     "cost": 1471.22,
      "models": [
       "MiMo V2.5"
      ],
@@ -1655,13 +1527,13 @@
     "Gemini 3.8 Flash"
    ],
    "headline_inherited": false,
-   "model_count": 2,
-   "value_group_count": 2,
+   "model_count": 3,
+   "value_group_count": 3,
    "best_multiple": 14.24,
    "best_model": "Gemini 3.8 Flash",
-   "worst_multiple": 13.73,
-   "worst_model": "Gemini 3.6 Flash",
-   "varies": false,
+   "worst_multiple": 0.65,
+   "worst_model": "Gemini 4 Argon",
+   "varies": true,
    "headline": {
     "multiple": 14.24,
     "cost": 284.56,
@@ -1683,6 +1555,18 @@
      ],
      "model_ids": [
       "gemini-3.6-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 0.65,
+     "cost": 13.0,
+     "models": [
+      "Gemini 4 Argon"
+     ],
+     "model_ids": [
+      "gemini-4-argon"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -1757,8 +1641,8 @@
    },
    "exceptions": [
     {
-     "multiple": 2.58,
-     "cost": 129.08,
+     "multiple": 13.63,
+     "cost": 681.74,
      "models": [
       "MiMo V2.5"
      ],
@@ -1926,6 +1810,100 @@
    ]
   },
   {
+   "plan_id": "kimi_max_cn",
+   "plan": "Kimi Max 699",
+   "plan_en": "Kimi Max",
+   "plan_gen": "v2",
+   "channel": "Kimi",
+   "fee_usd": 99.0,
+   "headline_multiple": 13.0,
+   "headline_cost_usd_month": 1287.28,
+   "headline_models": [
+    "Kimi K3 (v2)"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 13.0,
+   "best_model": "Kimi K3 (v2)",
+   "worst_multiple": 5.42,
+   "worst_model": "Kimi K2.7 Code (v2)",
+   "varies": false,
+   "headline": {
+    "multiple": 13.0,
+    "cost": 1287.28,
+    "models": [
+     "Kimi K3 (v2)"
+    ],
+    "model_ids": [
+     "kimi-k3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 5.42,
+     "cost": 536.37,
+     "models": [
+      "Kimi K2.7 Code (v2)"
+     ],
+     "model_ids": [
+      "kimi-k2.7-code"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "kimi_ultra_cn",
+   "plan": "Kimi Ultra 1399",
+   "plan_en": "Kimi Ultra",
+   "plan_gen": "v2",
+   "channel": "Kimi",
+   "fee_usd": 199.0,
+   "headline_multiple": 12.94,
+   "headline_cost_usd_month": 2574.56,
+   "headline_models": [
+    "Kimi K3 (v2)"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 12.94,
+   "best_model": "Kimi K3 (v2)",
+   "worst_multiple": 5.39,
+   "worst_model": "Kimi K2.7 Code (v2)",
+   "varies": false,
+   "headline": {
+    "multiple": 12.94,
+    "cost": 2574.56,
+    "models": [
+     "Kimi K3 (v2)"
+    ],
+    "model_ids": [
+     "kimi-k3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 5.39,
+     "cost": 1072.75,
+     "models": [
+      "Kimi K2.7 Code (v2)"
+     ],
+     "model_ids": [
+      "kimi-k2.7-code"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
    "plan_id": "supergrok_plus",
    "plan": "SuperGrok Plus",
    "plan_en": null,
@@ -2053,8 +2031,8 @@
    },
    "exceptions": [
     {
-     "multiple": 2.34,
-     "cost": 37.37,
+     "multiple": 12.33,
+     "cost": 197.35,
      "models": [
       "MiMo V2.5"
      ],
@@ -2124,8 +2102,8 @@
    },
    "exceptions": [
     {
-     "multiple": 2.32,
-     "cost": 13.93,
+     "multiple": 12.27,
+     "cost": 73.59,
      "models": [
       "MiMo V2.5"
      ],
@@ -2178,7 +2156,7 @@
    "value_group_count": 3,
    "best_multiple": 11.67,
    "best_model": "Step 3.7 Flash",
-   "worst_multiple": 7.03,
+   "worst_multiple": 10.92,
    "worst_model": "Step 5 Preview",
    "varies": true,
    "headline": {
@@ -2207,8 +2185,8 @@
      "third_party_rate": false
     },
     {
-     "multiple": 7.03,
-     "cost": 102.68,
+     "multiple": 10.92,
+     "cost": 159.41,
      "models": [
       "Step 5 Preview"
      ],
@@ -2261,6 +2239,53 @@
      ],
      "model_ids": [
       "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "kimi_pro_cn",
+   "plan": "Kimi Pro 199",
+   "plan_en": "Kimi Pro",
+   "plan_gen": "v2",
+   "channel": "Kimi",
+   "fee_usd": 39.0,
+   "headline_multiple": 11.0,
+   "headline_cost_usd_month": 429.09,
+   "headline_models": [
+    "Kimi K3 (v2)"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 11.0,
+   "best_model": "Kimi K3 (v2)",
+   "worst_multiple": 4.58,
+   "worst_model": "Kimi K2.7 Code (v2)",
+   "varies": false,
+   "headline": {
+    "multiple": 11.0,
+    "cost": 429.09,
+    "models": [
+     "Kimi K3 (v2)"
+    ],
+    "model_ids": [
+     "kimi-k3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 4.58,
+     "cost": 178.79,
+     "models": [
+      "Kimi K2.7 Code (v2)"
+     ],
+     "model_ids": [
+      "kimi-k2.7-code"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -2426,6 +2451,53 @@
      ],
      "model_ids": [
       "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "kimi_moderato_cn",
+   "plan": "Kimi 会员 99",
+   "plan_en": "Kimi Moderato",
+   "plan_gen": "v1",
+   "channel": "Kimi",
+   "fee_usd": 19.0,
+   "headline_multiple": 9.03,
+   "headline_cost_usd_month": 171.55,
+   "headline_models": [
+    "Kimi K3 (v1)"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 9.03,
+   "best_model": "Kimi K3 (v1)",
+   "worst_multiple": 3.77,
+   "worst_model": "Kimi K2.7 Code (v1)",
+   "varies": false,
+   "headline": {
+    "multiple": 9.03,
+    "cost": 171.55,
+    "models": [
+     "Kimi K3 (v1)"
+    ],
+    "model_ids": [
+     "kimi-k3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 3.77,
+     "cost": 71.61,
+     "models": [
+      "Kimi K2.7 Code (v1)"
+     ],
+     "model_ids": [
+      "kimi-k2.7-code"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -2629,38 +2701,211 @@
    "exceptions": []
   },
   {
-   "plan_id": "droid_pro",
-   "plan": "Droid Pro",
+   "plan_id": "droid_max",
+   "plan": "Droid Max",
    "plan_en": null,
    "plan_gen": "",
    "channel": "Factory",
-   "fee_usd": 20.0,
-   "headline_multiple": 7.53,
-   "headline_cost_usd_month": 150.51,
+   "fee_usd": 200.0,
+   "headline_multiple": 7.43,
+   "headline_cost_usd_month": 1485.29,
    "headline_models": [
-    "Claude Opus 5.5"
+    "Claude Fable 5",
+    "Claude Opus 4.8",
+    "Claude Opus 5",
+    "GPT 5.6 Sol",
+    "GPT-6 Astra",
+    "GPT-6 Luna",
+    "GPT-6 Sol",
+    "Gemini 3.7 Flash",
+    "Gemini 3.8 Flash",
+    "Kimi K3",
+    "Mistral Medium 3.5"
    ],
    "headline_inherited": false,
-   "model_count": 1,
-   "value_group_count": 1,
-   "best_multiple": 7.53,
-   "best_model": "Claude Opus 5.5",
-   "worst_multiple": 7.53,
-   "worst_model": "Claude Opus 5.5",
-   "varies": false,
+   "model_count": 27,
+   "value_group_count": 12,
+   "best_multiple": 14.27,
+   "best_model": "Grok 4.7",
+   "worst_multiple": 3.25,
+   "worst_model": "DeepSeek V4.1 Flash",
+   "varies": true,
    "headline": {
-    "multiple": 7.53,
-    "cost": 150.51,
+    "multiple": 7.43,
+    "cost": 1485.29,
     "models": [
-     "Claude Opus 5.5"
+     "Claude Fable 5",
+     "Claude Opus 4.8",
+     "Claude Opus 5",
+     "GPT 5.6 Sol",
+     "GPT-6 Astra",
+     "GPT-6 Luna",
+     "GPT-6 Sol",
+     "Gemini 3.7 Flash",
+     "Gemini 3.8 Flash",
+     "Kimi K3",
+     "Mistral Medium 3.5"
     ],
     "model_ids": [
-     "claude-opus-5.5"
+     "claude-fable-5",
+     "claude-opus-4.8",
+     "claude-opus-5",
+     "gemini-3.7-flash",
+     "gemini-3.8-flash",
+     "gpt-5.6-sol",
+     "gpt-6-astra",
+     "gpt-6-luna",
+     "gpt-6-sol",
+     "kimi-k3",
+     "mistral-medium-3.5"
     ],
     "inherited": false,
     "third_party_rate": false
    },
-   "exceptions": []
+   "exceptions": [
+    {
+     "multiple": 14.27,
+     "cost": 2854.38,
+     "models": [
+      "Grok 4.6",
+      "Grok 4.7"
+     ],
+     "model_ids": [
+      "grok-4.6",
+      "grok-4.7"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 12.07,
+     "cost": 2414.86,
+     "models": [
+      "MiniMax M3",
+      "Nemotron 3 Ultra"
+     ],
+     "model_ids": [
+      "minimax-m3",
+      "nemotron-3-ultra"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 11.91,
+     "cost": 2381.18,
+     "models": [
+      "GLM 5.3 Flash"
+     ],
+     "model_ids": [
+      "glm-5.3-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 11.16,
+     "cost": 2231.53,
+     "models": [
+      "GLM 5.2",
+      "GLM 5.3"
+     ],
+     "model_ids": [
+      "glm-5.2",
+      "glm-5.3"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 10.62,
+     "cost": 2123.36,
+     "models": [
+      "Inkling"
+     ],
+     "model_ids": [
+      "inkling"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 7.68,
+     "cost": 1535.81,
+     "models": [
+      "GPT 5.6 Luna",
+      "GPT 5.6 Terra"
+     ],
+     "model_ids": [
+      "gpt-5.6-luna",
+      "gpt-5.6-terra"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 6.96,
+     "cost": 1391.46,
+     "models": [
+      "GLM 5.2 Fast"
+     ],
+     "model_ids": [
+      "glm-5.2-fast"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
+     "multiple": 6.92,
+     "cost": 1384.25,
+     "models": [
+      "Qwen3.8 Max"
+     ],
+     "model_ids": [
+      "qwen3.8-max"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 4.98,
+     "cost": 995.24,
+     "models": [
+      "Claude Opus 5.5",
+      "Claude Sonnet 5.5"
+     ],
+     "model_ids": [
+      "claude-opus-5.5",
+      "claude-sonnet-5.5"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 3.75,
+     "cost": 750.22,
+     "models": [
+      "Claude Fable 5.1"
+     ],
+     "model_ids": [
+      "claude-fable-5.1"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 3.25,
+     "cost": 650.7,
+     "models": [
+      "DeepSeek V4.1 Flash"
+     ],
+     "model_ids": [
+      "deepseek-v4.1-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
   },
   {
    "plan_id": "minimax_token_ultra_cn",
@@ -2825,53 +3070,6 @@
    ]
   },
   {
-   "plan_id": "kimi_moderato_cn",
-   "plan": "Kimi 会员 99",
-   "plan_en": "Kimi Moderato",
-   "plan_gen": "v1",
-   "channel": "Kimi",
-   "fee_usd": 19.0,
-   "headline_multiple": 6.73,
-   "headline_cost_usd_month": 127.89,
-   "headline_models": [
-    "Kimi K3 (v1)"
-   ],
-   "headline_inherited": false,
-   "model_count": 2,
-   "value_group_count": 2,
-   "best_multiple": 6.73,
-   "best_model": "Kimi K3 (v1)",
-   "worst_multiple": 3.77,
-   "worst_model": "Kimi K2.7 Code (v1)",
-   "varies": false,
-   "headline": {
-    "multiple": 6.73,
-    "cost": 127.89,
-    "models": [
-     "Kimi K3 (v1)"
-    ],
-    "model_ids": [
-     "kimi-k3"
-    ],
-    "inherited": false,
-    "third_party_rate": false
-   },
-   "exceptions": [
-    {
-     "multiple": 3.77,
-     "cost": 71.61,
-     "models": [
-      "Kimi K2.7 Code (v1)"
-     ],
-     "model_ids": [
-      "kimi-k2.7-code"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    }
-   ]
-  },
-  {
    "plan_id": "cursor_pro_plus_composer_fast",
    "plan": "Cursor Pro+ (Composer Fast)",
    "plan_en": null,
@@ -2951,21 +3149,20 @@
    "headline_models": [
     "GLM 5.2",
     "GLM 5.3 Flash",
-    "Kimi K2.6",
     "Kimi K2.7 Code",
+    "LongCat 2.0",
     "MiMo V2.6 Flash",
-    "MiniMax M2.7",
     "MiniMax M3",
     "Muse Spark 1.2 Contributor",
     "Muse Spark 1.3 Contributor"
    ],
    "headline_inherited": false,
-   "model_count": 28,
-   "value_group_count": 13,
-   "best_multiple": 18.73,
-   "best_model": "MiMo V2.5 Pro",
-   "worst_multiple": 1.27,
-   "worst_model": "Qwen3.8 Max",
+   "model_count": 26,
+   "value_group_count": 12,
+   "best_multiple": 76.89,
+   "best_model": "MiMo V2.5",
+   "worst_multiple": 0.75,
+   "worst_model": "Gemini 4 Argon Contributor",
    "varies": true,
    "headline": {
     "multiple": 6.0,
@@ -2973,10 +3170,9 @@
     "models": [
      "GLM 5.2",
      "GLM 5.3 Flash",
-     "Kimi K2.6",
      "Kimi K2.7 Code",
+     "LongCat 2.0",
      "MiMo V2.6 Flash",
-     "MiniMax M2.7",
      "MiniMax M3",
      "Muse Spark 1.2 Contributor",
      "Muse Spark 1.3 Contributor"
@@ -2984,10 +3180,9 @@
     "model_ids": [
      "glm-5.2",
      "glm-5.3-flash",
-     "kimi-k2.6",
      "kimi-k2.7-code",
+     "longcat-2.0",
      "mimo-v2.6-flash",
-     "minimax-m2.7",
      "minimax-m3",
      "muse-spark-1.2-contributor",
      "muse-spark-1.3-contributor"
@@ -2996,6 +3191,18 @@
     "third_party_rate": true
    },
    "exceptions": [
+    {
+     "multiple": 76.89,
+     "cost": 768.91,
+     "models": [
+      "MiMo V2.5"
+     ],
+     "model_ids": [
+      "mimo-v2.5"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
     {
      "multiple": 18.73,
      "cost": 187.29,
@@ -3009,32 +3216,8 @@
      "third_party_rate": true
     },
     {
-     "multiple": 14.92,
-     "cost": 149.22,
-     "models": [
-      "LongCat 2.0"
-     ],
-     "model_ids": [
-      "longcat-2.0"
-     ],
-     "inherited": false,
-     "third_party_rate": true
-    },
-    {
-     "multiple": 14.56,
-     "cost": 145.59,
-     "models": [
-      "MiMo V2.5"
-     ],
-     "model_ids": [
-      "mimo-v2.5"
-     ],
-     "inherited": false,
-     "third_party_rate": true
-    },
-    {
-     "multiple": 12.0,
-     "cost": 120.0,
+     "multiple": 16.0,
+     "cost": 160.0,
      "models": [
       "DeepSeek V4.1 Flash"
      ],
@@ -3052,30 +3235,6 @@
      ],
      "model_ids": [
       "qwen3.7-plus"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 9.68,
-     "cost": 96.83,
-     "models": [
-      "DeepSeek V4 Flash"
-     ],
-     "model_ids": [
-      "deepseek-v4-flash"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 4.84,
-     "cost": 48.42,
-     "models": [
-      "DeepSeek V4 Flash Vision Exp"
-     ],
-     "model_ids": [
-      "deepseek-v4-flash-vision-exp"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -3119,22 +3278,34 @@
      "third_party_rate": true
     },
     {
+     "multiple": 1.56,
+     "cost": 15.58,
+     "models": [
+      "Step 5 Preview"
+     ],
+     "model_ids": [
+      "step-5-preview"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
      "multiple": 1.5,
      "cost": 14.97,
      "models": [
+      "Claude Haiku 5.5",
       "GLM 5.3",
       "GPT 5.6 Luna",
       "GPT-6 Luna",
-      "Grok 4.6",
       "Grok 4.7",
       "Kimi K3",
       "MiMo V2.6 Pro"
      ],
      "model_ids": [
+      "claude-haiku-5.5",
       "glm-5.3",
       "gpt-5.6-luna",
       "gpt-6-luna",
-      "grok-4.6",
       "grok-4.7",
       "kimi-k3",
       "mimo-v2.6-pro"
@@ -3150,6 +3321,18 @@
      ],
      "model_ids": [
       "qwen3.8-max"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 0.75,
+     "cost": 7.5,
+     "models": [
+      "Gemini 4 Argon Contributor"
+     ],
+     "model_ids": [
+      "gemini-4-argon-contributor"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -3210,7 +3393,7 @@
    "value_group_count": 3,
    "best_multiple": 5.89,
    "best_model": "Step 3.7 Flash",
-   "worst_multiple": 3.55,
+   "worst_multiple": 5.51,
    "worst_model": "Step 5 Preview",
    "varies": true,
    "headline": {
@@ -3239,8 +3422,8 @@
      "third_party_rate": false
     },
     {
-     "multiple": 3.55,
-     "cost": 25.67,
+     "multiple": 5.51,
+     "cost": 39.86,
      "models": [
       "Step 5 Preview"
      ],
@@ -3499,6 +3682,87 @@
    "exceptions": []
   },
   {
+   "plan_id": "kimi_plus_cn",
+   "plan": "Kimi Plus 99",
+   "plan_en": "Kimi Plus",
+   "plan_gen": "v2",
+   "channel": "Kimi",
+   "fee_usd": 19.0,
+   "headline_multiple": 4.53,
+   "headline_cost_usd_month": 86.0,
+   "headline_models": [
+    "Kimi K3 (v2)"
+   ],
+   "headline_inherited": false,
+   "model_count": 2,
+   "value_group_count": 2,
+   "best_multiple": 4.53,
+   "best_model": "Kimi K3 (v2)",
+   "worst_multiple": 1.88,
+   "worst_model": "Kimi K2.7 Code (v2)",
+   "varies": false,
+   "headline": {
+    "multiple": 4.53,
+    "cost": 86.0,
+    "models": [
+     "Kimi K3 (v2)"
+    ],
+    "model_ids": [
+     "kimi-k3"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": [
+    {
+     "multiple": 1.88,
+     "cost": 35.8,
+     "models": [
+      "Kimi K2.7 Code (v2)"
+     ],
+     "model_ids": [
+      "kimi-k2.7-code"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    }
+   ]
+  },
+  {
+   "plan_id": "droid_pro",
+   "plan": "Droid Pro",
+   "plan_en": null,
+   "plan_gen": "",
+   "channel": "Factory",
+   "fee_usd": 20.0,
+   "headline_multiple": 4.24,
+   "headline_cost_usd_month": 84.71,
+   "headline_models": [
+    "Claude Opus 5.5"
+   ],
+   "headline_inherited": false,
+   "model_count": 1,
+   "value_group_count": 1,
+   "best_multiple": 4.24,
+   "best_model": "Claude Opus 5.5",
+   "worst_multiple": 4.24,
+   "worst_model": "Claude Opus 5.5",
+   "varies": false,
+   "headline": {
+    "multiple": 4.24,
+    "cost": 84.71,
+    "models": [
+     "Claude Opus 5.5"
+    ],
+    "model_ids": [
+     "claude-opus-5.5"
+    ],
+    "inherited": false,
+    "third_party_rate": false
+   },
+   "exceptions": []
+  },
+  {
    "plan_id": "glm_coding_lite_cn_new_peak",
    "plan": "GLM Coding Lite (新客 ¥118) 忙时",
    "plan_en": null,
@@ -3564,7 +3828,7 @@
    ],
    "headline_inherited": false,
    "model_count": 11,
-   "value_group_count": 4,
+   "value_group_count": 5,
    "best_multiple": 6.0,
    "best_model": "DeepSeek V4.1 Flash",
    "worst_multiple": 1.5,
@@ -3597,12 +3861,10 @@
      "multiple": 6.0,
      "cost": 600.0,
      "models": [
-      "DeepSeek V4 Flash",
       "DeepSeek V4 Pro",
       "DeepSeek V4.1 Flash"
      ],
      "model_ids": [
-      "deepseek-v4-flash",
       "deepseek-v4-pro",
       "deepseek-v4.1-flash"
      ],
@@ -3617,6 +3879,18 @@
      ],
      "model_ids": [
       "glm-5.1"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 3.72,
+     "cost": 371.78,
+     "models": [
+      "DeepSeek V4 Flash"
+     ],
+     "model_ids": [
+      "deepseek-v4-flash"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -3654,7 +3928,7 @@
    ],
    "headline_inherited": false,
    "model_count": 11,
-   "value_group_count": 4,
+   "value_group_count": 5,
    "best_multiple": 6.0,
    "best_model": "DeepSeek V4.1 Flash",
    "worst_multiple": 1.5,
@@ -3687,12 +3961,10 @@
      "multiple": 6.0,
      "cost": 120.0,
      "models": [
-      "DeepSeek V4 Flash",
       "DeepSeek V4 Pro",
       "DeepSeek V4.1 Flash"
      ],
      "model_ids": [
-      "deepseek-v4-flash",
       "deepseek-v4-pro",
       "deepseek-v4.1-flash"
      ],
@@ -3707,6 +3979,18 @@
      ],
      "model_ids": [
       "glm-5.1"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 3.72,
+     "cost": 74.35,
+     "models": [
+      "DeepSeek V4 Flash"
+     ],
+     "model_ids": [
+      "deepseek-v4-flash"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -3769,6 +4053,7 @@
    "headline_multiple": 2.0,
    "headline_cost_usd_month": 20.0,
    "headline_models": [
+    "Claude Haiku 5.5",
     "DeepSeek V4 Flash Fast",
     "GLM 5",
     "GLM 5.1",
@@ -3782,8 +4067,6 @@
     "Grok 4.7",
     "Hy4 Preview",
     "Inkling",
-    "Inkling Small",
-    "Kimi K2.5",
     "Kimi K2.6",
     "Kimi K2.7 Code HighSpeed",
     "Kimi K3",
@@ -3795,14 +4078,15 @@
     "Muse Spark 1.2 Contributor",
     "Muse Spark 1.3",
     "Muse Spark 1.3 Contributor",
+    "Nemotron 3 Ultra",
     "Qwen3.8 Omni Flash",
     "Step 3.7 Flash"
    ],
    "headline_inherited": false,
-   "model_count": 58,
+   "model_count": 60,
    "value_group_count": 27,
-   "best_multiple": 25.0,
-   "best_model": "MiMo V2.5 Pro",
+   "best_multiple": 38.45,
+   "best_model": "MiMo V2.5",
    "worst_multiple": 0.95,
    "worst_model": "GLM 5.2 Fast",
    "varies": true,
@@ -3810,6 +4094,7 @@
     "multiple": 2.0,
     "cost": 20.0,
     "models": [
+     "Claude Haiku 5.5",
      "DeepSeek V4 Flash Fast",
      "GLM 5",
      "GLM 5.1",
@@ -3823,8 +4108,6 @@
      "Grok 4.7",
      "Hy4 Preview",
      "Inkling",
-     "Inkling Small",
-     "Kimi K2.5",
      "Kimi K2.6",
      "Kimi K2.7 Code HighSpeed",
      "Kimi K3",
@@ -3836,10 +4119,12 @@
      "Muse Spark 1.2 Contributor",
      "Muse Spark 1.3",
      "Muse Spark 1.3 Contributor",
+     "Nemotron 3 Ultra",
      "Qwen3.8 Omni Flash",
      "Step 3.7 Flash"
     ],
     "model_ids": [
+     "claude-haiku-5.5",
      "deepseek-v4-flash-fast",
      "gemini-3.7-flash",
      "gemini-3.8-flash",
@@ -3853,8 +4138,6 @@
      "grok-4.7",
      "hy4-preview",
      "inkling",
-     "inkling-small",
-     "kimi-k2.5",
      "kimi-k2.6",
      "kimi-k2.7-code-highspeed",
      "kimi-k3",
@@ -3866,6 +4149,7 @@
      "muse-spark-1.2-contributor",
      "muse-spark-1.3",
      "muse-spark-1.3-contributor",
+     "nemotron-3-ultra",
      "qwen3.8-omni-flash",
      "step-3.7-flash"
     ],
@@ -3873,6 +4157,18 @@
     "third_party_rate": true
    },
    "exceptions": [
+    {
+     "multiple": 38.45,
+     "cost": 384.46,
+     "models": [
+      "MiMo V2.5"
+     ],
+     "model_ids": [
+      "mimo-v2.5"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
     {
      "multiple": 25.0,
      "cost": 250.03,
@@ -3886,37 +4182,25 @@
      "third_party_rate": true
     },
     {
-     "multiple": 19.37,
-     "cost": 193.67,
-     "models": [
-      "DeepSeek V4 Flash"
-     ],
-     "model_ids": [
-      "deepseek-v4-flash"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 12.43,
-     "cost": 124.35,
-     "models": [
-      "LongCat 2.0"
-     ],
-     "model_ids": [
-      "longcat-2.0"
-     ],
-     "inherited": false,
-     "third_party_rate": true
-    },
-    {
-     "multiple": 12.0,
-     "cost": 120.0,
+     "multiple": 14.0,
+     "cost": 140.0,
      "models": [
       "DeepSeek V4.1 Flash"
      ],
      "model_ids": [
       "deepseek-v4.1-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 12.0,
+     "cost": 120.0,
+     "models": [
+      "DeepSeek V4 Flash"
+     ],
+     "model_ids": [
+      "deepseek-v4-flash"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -3934,37 +4218,15 @@
      "third_party_rate": false
     },
     {
-     "multiple": 7.28,
-     "cost": 72.79,
-     "models": [
-      "MiMo V2.5"
-     ],
-     "model_ids": [
-      "mimo-v2.5"
-     ],
-     "inherited": false,
-     "third_party_rate": true
-    },
-    {
      "multiple": 7.0,
      "cost": 70.0,
      "models": [
-      "GLM 5.2"
+      "GLM 5.2",
+      "GLM 5.3 Flash"
      ],
      "model_ids": [
-      "glm-5.2"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 6.46,
-     "cost": 64.56,
-     "models": [
-      "DeepSeek V4 Flash Vision Exp"
-     ],
-     "model_ids": [
-      "deepseek-v4-flash-vision-exp"
+      "glm-5.2",
+      "glm-5.3-flash"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -3984,16 +4246,16 @@
      "third_party_rate": true
     },
     {
-     "multiple": 5.42,
-     "cost": 54.15,
+     "multiple": 5.0,
+     "cost": 50.0,
      "models": [
-      "GPT 5.6 Sol"
+      "LongCat 2.0"
      ],
      "model_ids": [
-      "gpt-5.6-sol"
+      "longcat-2.0"
      ],
      "inherited": false,
-     "third_party_rate": false
+     "third_party_rate": true
     },
     {
      "multiple": 4.7,
@@ -4011,12 +4273,12 @@
      "multiple": 4.0,
      "cost": 40.0,
      "models": [
-      "DeepSeek V4 Pro",
-      "GLM 5.3 Flash"
+      "DeepSeek V4 Flash Vision Exp",
+      "DeepSeek V4 Pro"
      ],
      "model_ids": [
-      "deepseek-v4-pro",
-      "glm-5.3-flash"
+      "deepseek-v4-flash-vision-exp",
+      "deepseek-v4-pro"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -4034,6 +4296,30 @@
      "third_party_rate": false
     },
     {
+     "multiple": 3.24,
+     "cost": 32.35,
+     "models": [
+      "Step 5 Preview"
+     ],
+     "model_ids": [
+      "step-5-preview"
+     ],
+     "inherited": false,
+     "third_party_rate": false
+    },
+    {
+     "multiple": 2.69,
+     "cost": 26.85,
+     "models": [
+      "Kimi K2.5"
+     ],
+     "model_ids": [
+      "kimi-k2.5"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
      "multiple": 2.09,
      "cost": 20.88,
      "models": [
@@ -4041,18 +4327,6 @@
      ],
      "model_ids": [
       "step-3.5-flash"
-     ],
-     "inherited": false,
-     "third_party_rate": false
-    },
-    {
-     "multiple": 2.08,
-     "cost": 20.84,
-     "models": [
-      "Step 5 Preview"
-     ],
-     "model_ids": [
-      "step-5-preview"
      ],
      "inherited": false,
      "third_party_rate": false
@@ -4073,10 +4347,12 @@
      "multiple": 1.98,
      "cost": 19.79,
      "models": [
-      "Hy3"
+      "Hy3",
+      "Inkling Small"
      ],
      "model_ids": [
-      "hy3"
+      "hy3",
+      "inkling-small"
      ],
      "inherited": false,
      "third_party_rate": true
@@ -4106,6 +4382,18 @@
      "third_party_rate": false
     },
     {
+     "multiple": 1.75,
+     "cost": 17.5,
+     "models": [
+      "Ling 3.1 Flash"
+     ],
+     "model_ids": [
+      "ling-3.1-flash"
+     ],
+     "inherited": false,
+     "third_party_rate": true
+    },
+    {
      "multiple": 1.7,
      "cost": 16.99,
      "models": [
@@ -4120,16 +4408,16 @@
      "third_party_rate": false
     },
     {
-     "multiple": 1.68,
-     "cost": 16.81,
+     "multiple": 1.55,
+     "cost": 15.46,
      "models": [
-      "Nemotron 3 Ultra"
+      "GPT 5.6 Sol"
      ],
      "model_ids": [
-      "nemotron-3-ultra"
+      "gpt-5.6-sol"
      ],
      "inherited": false,
-     "third_party_rate": true
+     "third_party_rate": false
     },
     {
      "multiple": 1.31,

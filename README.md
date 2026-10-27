@@ -17,7 +17,30 @@ AI coding subscriptions sell a monthly fee, not a per-token price. This project 
 - The black line is the Pareto frontier: for every point on it, no other point is both cheaper and higher-scoring.
 - Subscription prices assume you use the whole allowance. Use half of it and your real price doubles.
 
-Snapshot: <!-- stat:snapshot -->2026-10-01<!-- /stat --> · <!-- stat:points_total -->318<!-- /stat --> plan × model points · [all charts, SVG / PNG, both languages](charts/README.md)
+Snapshot: <!-- stat:snapshot -->2026-10-27<!-- /stat --> · <!-- stat:points_total -->336<!-- /stat --> plan × model points · [all charts, SVG / PNG, both languages](charts/README.md)
+
+## Query from the terminal
+
+The TypeScript CLI queries the website's current dataset and separates model,
+company, channel and plan. It automatically falls back to cached or bundled
+data when offline. Requires Node.js 22.12+. Build from this repository:
+
+```sh
+npm --prefix cli ci
+npm --prefix cli run build
+node cli/dist/main.js price --company Anthropic
+node cli/dist/main.js allowance --company Anthropic --fee-band 0-30
+```
+
+JSON/CSV exports, filtering, evidence and comparisons are available. See the
+[CLI README](cli/README.md) for installation and the
+[command reference](docs/cli-command-reference.md) for output examples.
+Version 0.1.0 is available from this checkout. After the maintainer publishes
+the npm package, install it with `npm install -g real-api-pricing`.
+
+For coding agents, the [Real Model Price skill](.agents/skills/real-model-price/SKILL.md)
+guides price, allowance and plan comparisons with this CLI. In Codex, invoke
+`$real-model-price` from a session that loads the repository's skills.
 
 ## How the numbers are made
 
@@ -28,7 +51,7 @@ Snapshot: <!-- stat:snapshot -->2026-10-01<!-- /stat --> · <!-- stat:points_tot
 - **Confidence.** Every row is rated high, medium or low. High means a dashboard back-calculation, a controlled test or an official table. Medium means an official multiplier applied to a high-confidence anchor, or several consistent independent sources. Low means a single report or a cross-plan assumption. Derived values are never presented as measurements.
 - **One plan, several models.** Each model on a plan gets its own point. Those allowances are alternatives and do not add up.
 - **Scores** are copied from each leaderboard and never mixed across boards. Static charts use each model's highest archived configuration.
-- **Free during a promotion.** A model that a plan temporarily doesn't meter is drawn at ≈$0 on a dedicated slot at the right edge. There are <!-- stat:points_unmetered -->1<!-- /stat --> such points at the moment: SWE-2 on Devin Pro, until 2026-10-31.
+- **Free during a promotion.** A model that a plan temporarily doesn't meter is drawn at ≈$0 on a dedicated slot at the right edge. There are <!-- stat:points_unmetered -->0<!-- /stat --> such points at the moment: SWE-2 on Devin Pro, until 2026-10-31.
 
 Every adopted value, its evidence and the reason for the choice: [DECISIONS.md](DECISIONS.md) and the `decision_note` column of [adopted.csv](data/adopted.csv).
 
@@ -70,7 +93,7 @@ The WebDev Overall Arena Score. It measures web-app building, not general coding
 
 ![OpenDesign Arena](charts/en/pareto/pareto-open-design-arena.svg)
 
-The 0–100 average task score: requirements 30 + design quality 70. OpenDesign's cost- and speed-weighted recommendation score is not used. All <!-- stat:configs_mapped_open_design_arena -->13<!-- /stat --> archived models map to adopted points.
+The 0–100 average task score: requirements 30 + design quality 70. OpenDesign's cost- and speed-weighted recommendation score is not used. All <!-- stat:configs_mapped_open_design_arena -->16<!-- /stat --> archived models map to adopted points.
 
 ### Terminal-Bench 4.0
 
@@ -78,7 +101,7 @@ The 0–100 average task score: requirements 30 + design quality 70. OpenDesign'
 
 ![Terminal-Bench 4.0](charts/en/pareto/pareto-terminal-bench-4.svg)
 
-The official 66-task leaderboard hosted by Stanford, Harbor and the Laude Institute (snapshot 2026-09-03), with all <!-- stat:configs_terminal_bench_4 -->22<!-- /stat --> published configurations. Vendor-reported scores for models the official board doesn't list are added and labelled [self-reported], for example SWE-2 · Devin Pro at 27.3% from Cognition's launch post.
+The official 66-task leaderboard hosted by Stanford, Harbor and the Laude Institute (snapshot 2026-09-03), with all <!-- stat:configs_terminal_bench_4 -->38<!-- /stat --> published configurations. Vendor-reported scores for models the official board doesn't list are added and labelled [self-reported], for example SWE-2 · Devin Pro at 27.3% from Cognition's launch post.
 
 ### Terminal-Bench 4.0 (AA)
 
@@ -100,7 +123,7 @@ Pass@1 on 113 tasks, official rows run on mini-swe-agent (snapshot 2026-09-03). 
 
 ### Real price
 
-All <!-- stat:points_priced -->317<!-- /stat --> priced subscription and API points on one $/MTok scale.
+All <!-- stat:points_priced -->336<!-- /stat --> priced subscription and API points on one $/MTok scale.
 
 [SVG](charts/en/overview/real-price-overview.svg) · [PNG](charts/en/overview/real-price-overview.png) · [Table](charts/en/overview/real-price-overview-table.txt) · [中文 SVG](charts/zh/overview/单价总览.svg) · [中文 PNG](charts/zh/overview/单价总览.png) · [中文表](charts/zh/overview/单价总览表.txt)
 
@@ -108,7 +131,7 @@ All <!-- stat:points_priced -->317<!-- /stat --> priced subscription and API poi
 
 ### Monthly allowance
 
-The <!-- stat:points_allowance -->298<!-- /stat --> subscription points with a monthly allowance, split into three bands by monthly fee in USD. Each band is ranked on its own. The undivided chart and a hybrid-scale view are in the [chart index](charts/README.md).
+The <!-- stat:points_allowance -->315<!-- /stat --> subscription points with a monthly allowance, split into three bands by monthly fee in USD. Each band is ranked on its own. The undivided chart and a hybrid-scale view are in the [chart index](charts/README.md).
 
 **$0–30** · [SVG](charts/en/overview/monthly-allowance-overview-fee-0-30-usd.svg) · [PNG](charts/en/overview/monthly-allowance-overview-fee-0-30-usd.png) · [Table](charts/en/overview/monthly-allowance-overview-fee-0-30-usd-table.txt) · [中文 SVG](charts/zh/overview/额度总览_月费0-30美元.svg) · [中文 PNG](charts/zh/overview/额度总览_月费0-30美元.png) · [中文表](charts/zh/overview/额度总览表_月费0-30美元.txt)
 
@@ -193,27 +216,27 @@ The shared value is shared for a reason worth knowing: on Claude Max, Sonnet 5's
 
 | Points | Count |
 |---|---:|
-| All plan × model points | <!-- stat:points_total -->318<!-- /stat --> |
-| Subscriptions with a monthly allowance | <!-- stat:points_allowance -->298<!-- /stat --> |
-| Free during a promotion (≈$0) | <!-- stat:points_unmetered -->1<!-- /stat --> |
-| Metered APIs at list price | <!-- stat:points_metered -->19<!-- /stat --> |
+| All plan × model points | <!-- stat:points_total -->336<!-- /stat --> |
+| Subscriptions with a monthly allowance | <!-- stat:points_allowance -->315<!-- /stat --> |
+| Free during a promotion (≈$0) | <!-- stat:points_unmetered -->0<!-- /stat --> |
+| Metered APIs at list price | <!-- stat:points_metered -->21<!-- /stat --> |
 
 | Leaderboard | Scored points |
 |---|---:|
-| AA Intelligence | <!-- stat:scored_aa_intelligence_index -->268<!-- /stat --> |
-| AA Coding Agent | <!-- stat:scored_aa_coding_agent_index -->97<!-- /stat --> |
-| Code Arena | <!-- stat:scored_arena_code -->178<!-- /stat --> |
-| Agent Arena | <!-- stat:scored_arena_agent_mode -->164<!-- /stat --> |
-| OpenDesign Arena | <!-- stat:scored_open_design_arena -->88<!-- /stat --> |
-| Terminal-Bench 4.0 | <!-- stat:scored_terminal_bench_4 -->111<!-- /stat --> |
-| Terminal-Bench 4.0 (AA) | <!-- stat:scored_aa_terminal_bench_4 -->36<!-- /stat --> |
-| DeepSWE v1.1 | <!-- stat:scored_deepswe_1_1 -->195<!-- /stat --> |
+| AA Intelligence | <!-- stat:scored_aa_intelligence_index -->303<!-- /stat --> |
+| AA Coding Agent | <!-- stat:scored_aa_coding_agent_index -->122<!-- /stat --> |
+| Code Arena | <!-- stat:scored_arena_code -->286<!-- /stat --> |
+| Agent Arena | <!-- stat:scored_arena_agent_mode -->242<!-- /stat --> |
+| OpenDesign Arena | <!-- stat:scored_open_design_arena -->77<!-- /stat --> |
+| Terminal-Bench 4.0 | <!-- stat:scored_terminal_bench_4 -->149<!-- /stat --> |
+| Terminal-Bench 4.0 (AA) | <!-- stat:scored_aa_terminal_bench_4 -->288<!-- /stat --> |
+| DeepSWE v1.1 | <!-- stat:scored_deepswe_1_1 -->201<!-- /stat --> |
 
-The largest plan families are Command Code GOAT (<!-- stat:plans_command_code_goat -->58<!-- /stat --> points), MiMo Token Plan (<!-- stat:plans_mimo_token -->32<!-- /stat -->), OpenCode Go (<!-- stat:plans_opencode_go -->28<!-- /stat -->), Droid Max (<!-- stat:plans_droid_max -->27<!-- /stat -->), Ollama (<!-- stat:plans_ollama -->22<!-- /stat -->) and Step Plan (<!-- stat:plans_step_plan -->12<!-- /stat -->).
+The largest plan families are Command Code GOAT (<!-- stat:plans_command_code_goat -->60<!-- /stat --> points), MiMo Token Plan (<!-- stat:plans_mimo_token -->32<!-- /stat -->), OpenCode Go (<!-- stat:plans_opencode_go -->26<!-- /stat -->), Droid Max (<!-- stat:plans_droid_max -->27<!-- /stat -->), Ollama (<!-- stat:plans_ollama -->22<!-- /stat -->) and Step Plan (<!-- stat:plans_step_plan -->12<!-- /stat -->).
 
 **Downloads:** [adopted values (CSV)](data/adopted.csv) · [computed points (CSV)](derived/points.csv) / [JSON](derived/points.json) · [data notes](data/README.md) · [dated evidence](data/research/)
 
-**Every benchmark configuration**, not just the highest per model: the [configuration archive](derived/benchmark-configurations.json) ([CSV](derived/benchmark-configurations.csv)) keeps all <!-- stat:configs_total -->330<!-- /stat --> records with their original labels, harness, effort, score intervals and task costs. The [plan-to-configuration mappings](derived/benchmark-points.json) ([CSV](derived/benchmark-points.csv)) hold <!-- stat:refs_total -->1854<!-- /stat --> explicit references. Unknown harnesses, efforts and intervals stay empty instead of being guessed. The [all-configuration interactive chart](charts/zh/pareto/帕累托交互图.html) (Chinese; download and open locally, needs network access for Plotly) lets you switch between configurations and effort levels.
+**Every benchmark configuration**, not just the highest per model: the [configuration archive](derived/benchmark-configurations.json) ([CSV](derived/benchmark-configurations.csv)) keeps all <!-- stat:configs_total -->556<!-- /stat --> records with their original labels, harness, effort, score intervals and task costs. The [plan-to-configuration mappings](derived/benchmark-points.json) ([CSV](derived/benchmark-points.csv)) hold <!-- stat:refs_total -->2919<!-- /stat --> explicit references. Unknown harnesses, efforts and intervals stay empty instead of being guessed. The [all-configuration interactive chart](charts/zh/pareto/帕累托交互图.html) (Chinese; download and open locally, needs network access for Plotly) lets you switch between configurations and effort levels.
 
 ## Known limitations
 
@@ -227,5 +250,5 @@ The largest plan families are Command Code GOAT (<!-- stat:plans_command_code_go
 ## Reproduce, contribute, credit
 
 - Rebuild everything: [BUILD.md](BUILD.md). Rules and conversions: [CONVENTIONS.md](CONVENTIONS.md). Why each value was chosen: [DECISIONS.md](DECISIONS.md).
-- Have a usage measurement of your own (tokens used vs. quota percentage)? [Open a data issue](https://github.com/FeiZhuLulu/real-api-pricing/issues/new?template=contribute-data.md).
+- Have a usage measurement of your own (tokens used vs. quota percentage)? [Open a data issue](https://github.com/Fei2411/real-api-pricing/issues/new?template=contribute-data.md).
 - Original software is [MIT](LICENSE). Data references include [Awesome Coding Plan](https://github.com/mahonzhan/awesome-coding-plan) (CC BY 4.0) and the Caijing article 《Token经济，中国账本》. Attribution, changes and third-party terms: [SOURCES.md](SOURCES.md). Redaction scope of this public edition: [PUBLICATION.md](PUBLICATION.md).

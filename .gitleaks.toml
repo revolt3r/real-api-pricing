@@ -1,0 +1,53 @@
+# Exact false positives in public pricing evidence. All default detectors stay on.
+# Every exception includes its field context; no file or path is excluded.
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+[[rules.allowlists]]
+description = "Verified public leaderboard IDs and pricing schema text"
+regexTarget = "match"
+regexes = [
+  # schema_fields
+  '''^API channel\.",\s*"deepswe_1_1__mapping_note"$''',
+  '''^API channel\.",\s*"aa_coding_agent_index__quota_effort_matched"$''',
+  '''^API channel\.",\s*"aa_terminal_bench_4__quota_effort_matched"$''',
+  '''^API channel\.",\s*"arena_agent_mode__quota_effort_matched"$''',
+  '''^API channel\.",\s*"arena_code__quota_effort_matched"$''',
+  '''^API channel\.",\s*"deepswe_1_1__quota_effort_matched"$''',
+  '''^API channel\.",\s*"open_design_arena__quota_effort_matched"$''',
+  '''^API channel\.",\s*"quota_effort_matched"$''',
+  '''^API channel\.",\s*"terminal_bench_4__quota_effort_matched"$''',
+  # price_notes
+  '''^api_price_note": "Singapore/International $''',
+  # model_ids
+  '''^modelKey": "barium-bb-v2-4xts-webdev"$''',
+  '''^modelKey": "claude-fable-5\.1-max-webdev"$''',
+  '''^modelKey": "claude-haiku-4-5-20251001"$''',
+  '''^modelKey": "claude-opus-4-1-20250805"$''',
+  '''^modelKey": "claude-opus-4-5-20251101"$''',
+  '''^modelKey": "claude-opus-4-5-20251101-thinking-32k"$''',
+  '''^modelKey": "claude-opus-4-6-thinking-webdev"$''',
+  '''^modelKey": "claude-opus-4-7-thinking-webdev"$''',
+  '''^modelKey": "claude-opus-4-7-webdev"$''',
+  '''^modelKey": "claude-opus-4-8-thinking-webdev"$''',
+  '''^modelKey": "claude-opus-4-8-webdev"$''',
+  '''^modelKey": "claude-opus-5-max-webdev"$''',
+  '''^modelKey": "claude-opus-5\.5-max-vertex-webdev"$''',
+  '''^modelKey": "deepseek-v3\.2-thinking"$''',
+  '''^modelKey": "deepseek-v4-ch3-thinking-webdev"$''',
+  '''^modelKey": "devstral-medium-2507"$''',
+  '''^modelKey": "gpt-5\.1-medium"$''',
+  '''^modelKey": "granite-4\.1-8b"$''',
+  '''^modelKey": "grok-4\.3-webdev"$''',
+  '''^modelKey": "grok-4\.5-webdev"$''',
+  '''^modelKey": "kinsley-5jmg"$''',
+  '''^modelKey": "mistral-large-4-webdev"$''',
+  '''^modelKey": "mistral-medium-3\.5-webdev"$''',
+  '''^modelKey": "qwen3\.5-397b-a17b-webdev"$''',
+  '''^modelKey": "qwen3\.6-plus-v1-webdev"$''',
+  '''^modelKey": "solar-pro4-20260805"$''',
+  # token_field
+  '''^tokens, K3-256K-dominated $''',
+]

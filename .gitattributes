@@ -1,0 +1,3 @@
+# Python CSV writers emit CRLF. Matplotlib SVG paths have trailing spaces.
+*.csv whitespace=cr-at-eol
+charts/**/*.svg whitespace=-blank-at-eol

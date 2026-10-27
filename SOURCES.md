@@ -52,3 +52,28 @@ Where a model has no first-party rate card, a named third-party rate is recorded
 These pages are cited for provenance. Their rate tables remain the property of the respective providers and are not covered by this project's MIT license.
 
 See [PUBLICATION.md](PUBLICATION.md) for the redaction scope.
+
+
+### October 27 refresh
+
+The fork includes upstream commit `75920ca` from October 27, 2026.
+[`list-prices-round4-2026-10-27.json`](data/research/list-prices-round4-2026-10-27.json) records 56 checked model entries.
+It adds Gemini 4 Argon, its Contributor tier, and Ling 3.1 Flash rates.
+It records the Sonnet 5.5 cache cut and Step 5's new-customer cache rate.
+It also records the current DeepSeek legacy-name routing and scheduled prices.
+Gateway rates remain marked as third-party prices.
+
+Twenty-three legacy or console-only model rates retain their earlier dated evidence.
+The archive lists them under `notRechecked`.
+The website shows each rate's check date and marks older evidence.
+The project exchange rate remains a fixed comparison convention from September 4.
+It is not a current currency quote.
+
+MiniMax's public card now prices M3.1 Flash GA at $0.15 input, $0.015 cached input, and $0.60 output per MTok.
+The M Plan Preview model remains distinct and unpriced.
+The [GA guide](https://agent.minimax.io/tools/m3.1-flash) calls GA a successor to Preview.
+It does not confirm that old Preview measurements represent GA usage.
+
+The [Devin model docs](https://docs.devin.ai/desktop/models) end self-serve free SWE-2 access on October 15.
+The expired point is excluded from snapshots after that date.
+No replacement token allowance is inferred.

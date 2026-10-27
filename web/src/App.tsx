@@ -18,7 +18,11 @@ import {
   MagnifyingGlass,
   Moon,
   SlidersHorizontal,
+  Storefront,
   Sun,
+  Rows,
+  SquaresFour,
+  Stack,
   Table,
   X,
 } from "@phosphor-icons/react";
@@ -28,12 +32,21 @@ import Compare from "./Compare";
 import HeaderActions from "./HeaderActions";
 import { unpackData } from "./loadData";
 import Ranking from "./Ranking";
+import AllowanceCards from "./AllowanceCards";
+import AllowanceCompare from "./AllowanceCompare";
 import ResizeHandle from "./ResizeHandle";
 import { useIncremental } from "./useIncremental";
 import ProviderLogo, { BrandMarks } from "./ProviderLogo";
 import { feeBands } from "./domain";
 import type { ChartHandle } from "./Chart";
 import Modal from "./Modal";
+import CustomProvidersPanel from "./ProviderManager";
+import {
+  loadCustomProviders,
+  mergeCustomProviders,
+  saveCustomProviders,
+  type CustomProvider,
+} from "./customProviders";
 import type {
   FilterKey,
   Lang,
@@ -77,9 +90,11 @@ import {
   listPriceLine,
   metricLabel,
   effortLabel,
+  firstUrl,
+  mappingNoteLabel,
 } from "./domain";
 
-const REPO = "https://github.com/FeiZhuLulu/real-api-pricing";
+const REPO = "https://github.com/Fei2411/real-api-pricing";
 const boardLabels: Record<string, string> = {
   arena_code: "Code Arena",
   arena_agent_mode: "Agent Arena",
@@ -234,6 +249,14 @@ export default function App() {
   const [data, setData] = useState<SiteData | null>(null);
   const [loadError, setLoadError] = useState("");
   const [theme, setTheme] = useState<Theme>(localTheme);
+  const [customProviders, setCustomProviders] = useState<CustomProvider[]>(
+    loadCustomProviders,
+  );
+  const updateCustomProviders = (list: CustomProvider[]) => {
+    const persisted = saveCustomProviders(list);
+    setCustomProviders(list);
+    return persisted;
+  };
   useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme;
     document
@@ -266,6 +289,12 @@ export default function App() {
     };
   }, []);
   const zhBoot = localLanguage() === "zh" || /[#&]lang=zh/.test(location.hash);
+  // User-defined relay providers merge into the published data before any
+  // derivation runs, so every view, filter and export sees them natively.
+  const merged = useMemo(
+    () => (data ? mergeCustomProviders(data, customProviders) : null),
+    [data, customProviders],
+  );
   if (loadError)
     return (
       <main className="boot" role="alert">
@@ -280,12 +309,14 @@ export default function App() {
         </div>
       </main>
     );
-  if (!data) return <BootSkeleton />;
+  if (!merged) return <BootSkeleton />;
   return (
     <ThemeContext.Provider value={theme}>
       <Explorer
-        data={data}
+        data={merged}
         theme={theme}
+        customProviders={customProviders}
+        onCustomProvidersChange={updateCustomProviders}
         onThemeChange={(next) => {
           saveTheme(next);
           document.documentElement.dataset.theme = next;
@@ -313,10 +344,15 @@ function BootSkeleton() {
 function Explorer({
   data,
   theme,
+  customProviders,
+  onCustomProvidersChange,
   onThemeChange,
 }: {
   data: SiteData;
   theme: Theme;
+  customProviders: CustomProvider[];
+  /** Returns false when browser storage rejected the write. */
+  onCustomProvidersChange: (providers: CustomProvider[]) => boolean;
   onThemeChange: (theme: Theme) => void;
 }) {
   const initial = useMemo(
@@ -326,7 +362,7 @@ function Explorer({
   const [state, setState] = useState<State>(initial.state);
   const [warning, setWarning] = useState(initial.warning);
   const [panel, setPanel] = useState<
-    "models" | "filters" | "display" | "download" | "share" | null
+    "models" | "filters" | "display" | "download" | "share" | "providers" | null
   >(null);
   const [detail, setDetail] = useState<Row[] | null>(null);
   const [modelSearch, setModelSearch] = useState("");
@@ -390,6 +426,14 @@ function Explorer({
     [data, view, selected, vendors, channels, plans, billing, confidence, feeBand],
   );
   const axis = useMemo(() => barAxis(data, view), [data, view]);
+  const allowancePoints = useMemo(
+    () => data.points.filter((p) => p.billing !== "metered" && p.monthly_yi !== null),
+    [data],
+  );
+  // Only slots with both a plan and a model count as compared items.
+  const completeCompare = state.compare.filter((v) =>
+    allowancePoints.some((p) => p.id === v),
+  ).length;
   const gs = useMemo(() => groups(rows), [rows]);
   const front = useMemo(() => pareto(gs), [gs]);
   const frontRows = useMemo(
@@ -443,6 +487,9 @@ function Explorer({
       lang: state.lang,
       view: state.view,
       board: state.board,
+      layout: state.layout,
+      compare: state.compare,
+      cards: state.cards,
     });
     setWarning(false);
   };
@@ -620,6 +667,18 @@ function Explorer({
             </button>
           </nav>
           <div className="header-actions">
+            <button
+              className="header-contribute header-providers"
+              onClick={() => setPanel("providers")}
+              aria-label={t("My providers", "我的供应商")}
+              title={t(
+                "Manage your own providers (stored locally)",
+                "管理我的自定义供应商（本地存储）",
+              )}
+            >
+              <Storefront size={16} />
+              <span>{t("My providers", "我的供应商")}</span>
+            </button>
             <HeaderActions lang={state.lang} />
             <button
               className="icon-button theme-toggle"
@@ -912,6 +971,26 @@ function Explorer({
                     </span>
                   </div>
                 )}
+                {state.view === "allowance" && (
+                  <div className="layout-switch segmented" role="group" aria-label={t("Layout", "展示方式")}>
+                    {(
+                      [
+                        ["list", <Rows size={15} />, "Ranking", "排行"],
+                        ["cards", <SquaresFour size={15} />, "Cards", "卡片"],
+                        ["compare", <Stack size={15} />, "Compare", "对比"],
+                      ] as const
+                    ).map(([layout, icon, en, cn]) => (
+                      <button
+                        key={layout}
+                        aria-pressed={state.layout === layout}
+                        onClick={() => patch({ layout })}
+                      >
+                        {icon}
+                        <span>{t(en, cn)}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <span className="toolbar-space" />
                 <div className="chart-tools-slot" ref={setChartSlot} />
                 {state.view !== "pareto" && (
@@ -939,6 +1018,16 @@ function Explorer({
                   {state.view === "pareto" ? (
                     <>
                       <b>{pts.length}</b> {t("points", "个数据点")}
+                    </>
+                  ) : state.view === "allowance" && state.layout === "cards" ? (
+                    <>
+                      {t("Selected", "已选")} <b>{state.cards.length}</b>{" "}
+                      {t(state.cards.length === 1 ? "model" : "models", "个模型")}
+                    </>
+                  ) : state.view === "allowance" && state.layout === "compare" ? (
+                    <>
+                      {t("Selected", "已选")} <b>{completeCompare}</b>{" "}
+                      {t(completeCompare === 1 ? "item" : "items", "项")}
                     </>
                   ) : (
                     <>
@@ -1012,7 +1101,14 @@ function Explorer({
                   );
                 })}
               </OneLineLegend>
-              {!pts.length || (state.view === "pareto" && !gs.length) ? (
+              {(!pts.length || (state.view === "pareto" && !gs.length)) &&
+              // The allowance card/compare pickers have their own empty states
+              // and must stay reachable (and keep saved items) under filters
+              // that match nothing.
+              !(
+                state.view === "allowance" &&
+                (state.layout === "cards" || state.layout === "compare")
+              ) ? (
                 <div className="empty">
                   <ChartScatter size={35} />
                   <h3>{t("No points to plot", "没有可绘制的数据点")}</h3>
@@ -1040,7 +1136,26 @@ function Explorer({
                   onSelect={setDetail}
                   handle={chart}
                 />
-              ) : state.view === "table" ? null : state.view !== "pareto" ? (
+              ) : state.view === "table" ? null : state.view === "allowance" &&
+                state.layout === "cards" ? (
+                <AllowanceCards
+                  points={allowancePoints}
+                  rows={rows}
+                  state={state}
+                  axis={axis}
+                  highlight={highlight}
+                  onChange={(cards) => patch({ cards })}
+                  onSelect={setDetail}
+                />
+              ) : state.view === "allowance" && state.layout === "compare" ? (
+                <AllowanceCompare
+                  points={allowancePoints}
+                  rows={rows}
+                  state={state}
+                  onChange={(compare) => patch({ compare })}
+                  onSelect={setDetail}
+                />
+              ) : state.view !== "pareto" ? (
                 <Ranking
                   rows={rows}
                   state={state}
@@ -1221,8 +1336,8 @@ function Explorer({
               <Info size={16} />
               <p>
                 {t(
-                  "A price floor at saturated use. All tokens count; a month is 4 weeks, except Kimi’s independent 5-week pool. Model allowances within a plan are alternatives, not additive.",
-                  "这是饱和使用时的价格下限。所有 token 均计入；默认月为 4 周，Kimi 独立月池为周池的 5 倍。同套餐不同模型额度不能相加。",
+                  "A price floor at saturated use. All tokens count; a month is 4 weeks, except Kimi’s independent 5-week pool and Droid’s 2× weekly month. Model allowances within a plan are alternatives, not additive.",
+                  "这是饱和使用时的价格下限。所有 token 均计入；默认月为 4 周，Kimi 独立月池为周池的 5 倍，Droid 月额度为周额度的 2 倍。同套餐不同模型额度不能相加。",
                 )}{" "}
                 <button onClick={() => patch({ view: "method" })}>
                   {t("Read the methodology", "查看完整口径")}
@@ -1276,12 +1391,22 @@ function Explorer({
                   ? t("Chart settings", "图表设置")
                   : panel === "share"
                     ? t("Share this view", "分享当前视图")
-                    : t("Take the data with you", "下载图表与数据")
+                    : panel === "providers"
+                      ? t("My providers", "我的供应商")
+                      : t("Take the data with you", "下载图表与数据")
           }
           onClose={() => setPanel(null)}
-          wide={panel === "models" || panel === "filters"}
+          wide={panel === "models" || panel === "filters" || panel === "providers"}
           closeLabel={t("Close", "关闭")}
         >
+          {panel === "providers" && (
+            <CustomProvidersPanel
+              data={data}
+              providers={customProviders}
+              onChange={onCustomProvidersChange}
+              lang={state.lang}
+            />
+          )}
           {panel === "models" && (
             <>
               <p className="panel-description">
@@ -1743,16 +1868,22 @@ function Details({
           <details className="evidence-fold">
             <summary>
               {t(
-                "Adoption evidence · original source text",
+                "Adoption evidence · source and rationale (translated from the Chinese record)",
                 "采用依据 · 原始来源文字",
               )}
             </summary>
-            <p className="original-text">{p.source}</p>
+            <p className="original-text">
+              {zh ? p.source : (p.source_en ?? p.source)}
+            </p>
             {p.decision_note && (
-              <p className="original-text">{p.decision_note}</p>
+              <p className="original-text">
+                {zh ? p.decision_note : (p.decision_note_en ?? p.decision_note)}
+              </p>
             )}
             {p.note && p.note !== p.decision_note && (
-              <p className="original-text">{p.note}</p>
+              <p className="original-text">
+                {zh ? p.note : (p.note_en ?? p.note)}
+              </p>
             )}
             <div className="source-links">
               {p.evidence.map((e, i) => (
@@ -1779,9 +1910,17 @@ function Details({
                 <ArrowUpRight size={13} />
               </a>
             )}
+            {p.api_price_checked_at && (
+              <p>
+                {t("API rate checked", "API 标价核查日期")}: {p.api_price_checked_at}
+                {p.api_price_checked_at < data.generatedAt.slice(0, 10) &&
+                  t(" · Archived rate; not reverified in this snapshot.", " · 历史标价，本轮未重新核实。")}
+              </p>
+            )}
+            {p.api_price_note && <p>{p.api_price_note}</p>}
             {p.api_price_archive && (
               <a
-                href={`${REPO}/blob/main/data/research/${p.api_price_archive}`}
+                href={`/data/evidence/${p.api_price_archive}`}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -1796,6 +1935,12 @@ function Details({
             .filter((r) => r.point.id === p.id && r.mapping)
             .map((r) => {
               const m = r.mapping!;
+              const srcText = zh ? m.source : (m.source_en ?? m.source);
+              const srcUrl = firstUrl(srcText ?? "");
+              const srcAnnotation = srcUrl
+                ? (srcText ?? "").split(srcUrl).slice(1).join("").trim()
+                : srcText;
+              const recordNote = zh ? m.record_note_zh : m.record_note_en;
               return (
                 <section className="configuration-detail" key={r.key}>
                   <strong>{variantLabel(m.variant, lang)}</strong>
@@ -1842,11 +1987,45 @@ function Details({
                       "这是参考映射，并非该订阅/API 渠道的评测。产品框架和额度实测推理强度的对应关系未经验证。来源任务成本不等于订阅任务成本。",
                     )}
                   </p>
-                  <p className="original-text">{m.mapping_note}</p>
-                  <a href={safeUrl(m.source)} target="_blank" rel="noreferrer">
+                  <p className="original-text">{mappingNoteLabel(m.mapping_note, lang)}</p>
+                  <a href={safeUrl(firstUrl(m.source) ?? m.source)} target="_blank" rel="noreferrer">
                     {data.boards[m.board]?.name ?? m.board}
                     <ArrowUpRight size={14} />
                   </a>
+                  <details className="evidence-fold">
+                    <summary>
+                      {t("Score source · original record", "分数来源 · 原始记录")}
+                    </summary>
+                    <dl>
+                      <dt>{t("Source page", "来源页面")}</dt>
+                      <dd>
+                        {srcUrl ? (
+                          <a href={safeUrl(srcUrl)} target="_blank" rel="noreferrer">
+                            {srcUrl}
+                            <ArrowUpRight size={12} />
+                          </a>
+                        ) : null}
+                        {srcAnnotation ? ` ${srcAnnotation}` : null}
+                      </dd>
+                      <dt>{t("Checked", "核对日期")}</dt>
+                      <dd>{m.checked_at}</dd>
+                      <dt>{t("Board label", "榜单原名")}</dt>
+                      <dd>{m.board_label}</dd>
+                      <dt>{t("Archived snapshot", "存档快照")}</dt>
+                      <dd>
+                        <a href={m.archive_url} target="_blank" rel="noreferrer">
+                          {m.archive}
+                          <ArrowUpRight size={12} />
+                        </a>
+                      </dd>
+                      {recordNote ? (
+                        <>
+                          <dt>{t("Record note", "原始记录备注")}</dt>
+                          <dd className="original-text">{recordNote}</dd>
+                        </>
+                      ) : null}
+                    </dl>
+                  </details>
                 </section>
               );
             })}
@@ -1907,8 +2086,8 @@ function Method({
           </p>
           <p>
             {t(
-              `A month defaults to ${data.conventions.monthWeeks} weeks. Kimi has an independent monthly pool equal to five weekly pools. Model allowances within the same plan are alternatives and must not be summed.`,
-              `默认月为 ${data.conventions.monthWeeks} 周；Kimi 独立月池等于周池的 5 倍。同套餐不同模型额度为替代关系，不可相加。`,
+              `A month defaults to ${data.conventions.monthWeeks} weeks. Kimi has an independent monthly pool equal to five weekly pools; Droid's month is 2× its weekly allowance. Model allowances within the same plan are alternatives and must not be summed.`,
+              `默认月为 ${data.conventions.monthWeeks} 周；Kimi 独立月池等于周池的 5 倍；Droid 月额度为周额度的 2 倍。同套餐不同模型额度为替代关系，不可相加。`,
             )}
           </p>
         </article>

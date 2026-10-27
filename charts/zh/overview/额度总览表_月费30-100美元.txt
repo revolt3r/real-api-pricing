@@ -1,6 +1,6 @@
 订阅月费：>$30 且 ≤$100
 订阅额度总览 · 套餐 × 实际服务模型
-默认月 = 4 周，Kimi独立月池 = 周池×5；饱和使用；全口径 token；按量 API 无月额度
+默认月 = 4 周，Kimi独立月池 = 周池×5，Droid 月 = 周×2；饱和使用；全口径 token；按量 API 无月额度
 同套餐各模型额度不可相加。Claude Max (9/14+)：2026-09-14起永久额度估算，非当前活动期上限。数据：adopted.csv。
 颜色 = 套餐/API 提供方；置信度 [H] 高 / [M] 中 / [L] 低；编号为排序序号，同值依次列出，不代表模型能力排名。
 API标价成本/月 = 该行采用月额度 × 官方按量三段标价（按同一标准负载加权）；括号内为该金额 ÷ 订阅月费，即这份额度按标价值几倍月费；小于1×表示订阅比直接按量买同样的token更贵。* = 标价非厂商一手价目表（厂商页面JS渲染或仅开放权重，取具名网关/追踪站，置信度低）；‡ = 该行额度本身由同套餐基准模型按标价比推导，成本数字与基准行相同，不是该模型的独立证据。- = 未找到可辩护的公开标价，留空不补造。不含缓存写入费，故为下限。
@@ -9,67 +9,73 @@ API标价成本/月 = 该行采用月额度 × 官方按量三段标价（按同
 汇率来源：https://www.xinhuanet.com/20260904/4c1ce1cbf39d416997cb9c237d6f5024/c.html
 序号  套餐                              价格/月                服务模型                    月额度(亿)  $/MTok   API标价成本/月   置信度
 ----  --------------------------------  ---------------------  --------------------------  ----------  -------  ---------------  ------
-1     ChatGPT Pro 5x                    USD 100                GPT 5.6 Luna                352.91      0.00283  1,073 (10.73×)   medium
-2     Ollama Max                        USD 100                DeepSeek V4.1 Flash         310.559     0.00322  600 (6×)         medium
-3     Claude Max 5x (9/14+)             USD 100                Claude Sonnet 5             196.25      0.0051   5,770 (57.7×)‡   low
-4     Ollama Max                        USD 100                DeepSeek V4 Flash           192.431     0.0052   600 (6×)         medium
-5     MiniMax M Plan Build (CN)         CNY 469.0              MiniMax M3.1 Flash Preview  191.764     0.00361  -                low
-6     MiniMax M Plan Build (CN Annual)  CNY 390.8333333333333  MiniMax M3.1 Flash Preview  191.764     0.00301  -                low
-7     MiMo Token Plan Max 夜间0.8×      ¥659（国际 $100）      MiMo V2.6 Flash             188.42      0.00531  144 (1.44×)      medium
-8     MiMo Token Plan Max 夜间0.8×      ¥659（国际 $100）      MiMo V2.5                   188.42      0.00531  348 (3.48×)*     medium
-9     GLM Coding Max (v2 ¥469) 闲时     CNY 469                GLM 5.3 Flash               174.81      0.00396  618 (8.93×)      high
-10    Claude Max 5x (9/14+)             USD 100                Claude Opus 5.5             157.69      0.00634  6,213 (62.13×)   low
-11    MiMo Token Plan Max 日间          ¥659（国际 $100）      MiMo V2.6 Flash             150.74      0.00663  115 (1.15×)      medium
-12    MiMo Token Plan Max 日间          ¥659（国际 $100）      MiMo V2.5                   150.74      0.00663  279 (2.79×)*     medium
-13    GLM Coding Max (v2 ¥469) 中间值   CNY 469                GLM 5.3 Flash               131.11      0.00528  463 (6.7×)       high
-14    Google AI Ultra 5x                USD 99.99              Gemini 3.8 Flash            129.05      0.00775  1,423 (14.23×)   low
-15    GLM Coding Max (v2 ¥469) 忙时     CNY 469                GLM 5.3 Flash               87.4        0.00792  309 (4.47×)      high
-16    MiMo Token Plan Pro 夜间0.8×      ¥329（国际 $50）       MiMo V2.6 Flash             87.32       0.00573  66 (1.33×)       medium
-17    MiMo Token Plan Pro 夜间0.8×      ¥329（国际 $50）       MiMo V2.5                   87.32       0.00573  161 (3.23×)*     medium
-18    Ollama Max                        USD 100                GLM 5.3 Flash               84.866      0.01178  300 (3×)         medium
-19    MiMo Token Plan Max 夜间0.8×      ¥659（国际 $100）      MiMo V2.6 Pro               79.3        0.01261  148 (1.48×)      medium
-20    MiMo Token Plan Max 夜间0.8×      ¥659（国际 $100）      MiMo V2.5 Pro               79.3        0.01261  1,856 (18.56×)*  medium
-21    Claude Max 5x (9/14+)             USD 100                Claude Opus 5               78.5        0.01274  5,770 (57.7×)    medium
-22    GLM Coding Pro (v3 ¥538) 闲时     CNY 538                GLM 5.3 Flash               74.92       0.01059  265 (3.34×)      high
-23    MiniMax Token Plan Ultra          CNY 469                MiniMax M3                  71          0.00974  509 (7.36×)      high
-24    MiMo Token Plan Pro 日间          ¥329（国际 $50）       MiMo V2.6 Flash             69.85       0.00716  53 (1.06×)       medium
-25    MiMo Token Plan Pro 日间          ¥329（国际 $50）       MiMo V2.5                   69.85       0.00716  129 (2.58×)*     medium
-26    MiMo Token Plan Max 日间          ¥659（国际 $100）      MiMo V2.6 Pro               63.44       0.01576  119 (1.19×)      medium
-27    MiMo Token Plan Max 日间          ¥659（国际 $100）      MiMo V2.5 Pro               63.44       0.01576  1,484 (14.85×)*  medium
-28    Ollama Max                        USD 100                DeepSeek V4 Pro             62.84       0.01591  600 (6×)         medium
-29    ChatGPT Pro 5x                    USD 100                GPT 5.6 Terra               59.574      0.01679  1,811 (18.11×)‡  medium
-30    GLM Coding Max (v2 ¥469) 闲时     CNY 469                GLM 5.3                     57.69       0.01199  1,784 (25.78×)   high
-31    GLM Coding Pro (v3 ¥538) 中间值   CNY 538                GLM 5.3 Flash               56.19       0.01412  199 (2.5×)       high
-32    Cursor Pro+ (Standard)            USD 60                 Composer 2.5                53.229      0.01127  1,166 (19.43×)‡  low
-33    MiniMax Token Plan Max (Global)   USD 55                 MiniMax M3                  51          0.01078  366 (6.65×)      high
-34    Kimi 会员 699 (v1) †              ¥699（国际 $99）       Kimi K2.7 Code              47.04       0.02105  1,073 (10.84×)   medium
-35    Kimi 会员 699 (v1) †              ¥699（国际 $99）       Kimi K3                     43.53       0.02274  1,920 (19.39×)   medium
-36    GLM Coding Max (v2 ¥469) 中间值   CNY 469                GLM 5.3                     43.27       0.01599  1,338 (19.34×)   high
-37    Ollama Max                        USD 100                MiniMax M2.7                41.841      0.0239   300 (3×)         medium
-38    GLM Coding Pro (v3 ¥538) 忙时     CNY 538                GLM 5.3 Flash               37.46       0.02119  132 (1.67×)      high
-39    MiMo Token Plan Pro 夜间0.8×      ¥329（国际 $50）       MiMo V2.6 Pro               36.75       0.01361  69 (1.38×)       medium
-40    MiMo Token Plan Pro 夜间0.8×      ¥329（国际 $50）       MiMo V2.5 Pro               36.75       0.01361  860 (17.2×)*     medium
-41    ChatGPT Pro 5x                    USD 100                GPT 5.6 Sol                 30.8        0.03247  1,811 (18.11×)   medium
-42    MiMo Token Plan Pro 日间          ¥329（国际 $50）       MiMo V2.6 Pro               29.4        0.01701  55 (1.1×)        medium
-43    MiMo Token Plan Pro 日间          ¥329（国际 $50）       MiMo V2.5 Pro               29.4        0.01701  688 (13.76×)*    medium
-44    GLM Coding Max (v2 ¥469) 忙时     CNY 469                GLM 5.3                     28.84       0.02399  892 (12.89×)     high
-45    GLM Coding Pro (v3 ¥538) 闲时     CNY 538                GLM 5.3                     24.72       0.03211  764 (9.63×)      high
-46    ChatGPT Pro 5x                    USD 100                GPT 5.5                     23.829      0.04197  1,811 (18.11×)‡  medium
-47    SuperGrok Plus                    USD 100                Grok 4.7                    22.9        0.04367  1,294 (12.94×)   medium
-48    Ollama Max                        USD 100                MiniMax M3                  20.921      0.0478   150 (1.5×)       medium
-49    Cursor Pro+                       USD 60                 Grok 4.6                    20.632      0.02908  1,166 (19.43×)   medium
-50    SuperGrok Plus                    USD 100                Grok 4.6                    20.6        0.04854  1,164 (11.64×)   medium
-51    GLM Coding Pro (v3 ¥538) 中间值   CNY 538                GLM 5.3                     18.54       0.04281  573 (7.22×)      high
-52    Cursor Pro+ (Composer Fast)       USD 60                 Composer 2.5                18.358      0.03268  402 (6.7×)       low
-53    Kimi 会员 199 (v1) †              ¥199（国际 $39）       Kimi K2.7 Code              15.68       0.02487  358 (9.17×)      medium
-54    Kimi 会员 199 (v1) †              ¥199（国际 $39）       Kimi K3                     14.51       0.02688  640 (16.41×)     medium
-55    Ollama Max                        USD 100                Kimi K2.7 Code              13.155      0.07602  300 (3×)         medium
-56    Ollama Max                        USD 100                GLM 5.1                     12.766      0.07833  395 (3.95×)      medium
-57    GLM Coding Pro (v3 ¥538) 忙时     CNY 538                GLM 5.3                     12.36       0.06421  382 (4.82×)      high
-58    Ollama Max                        USD 100                GLM 5.3                     9.702       0.10307  300 (3×)         medium
-59    Ollama Max                        USD 100                GLM 5.2                     9.702       0.10307  300 (3×)         medium
-60    Claude Max 5x (9/14+)             USD 100                Claude Fable 5              9.235       0.10828  1,358 (13.58×)   low
-61    ChatGPT Pro 5x                    USD 100                GPT-6 Astra                 9.1         0.10989  1,338 (13.38×)   low
-62    Claude Max 5x (9/14+)             USD 100                Claude Fable 5.1            8.639       0.11575  641 (6.41×)      low
-63    Ollama Max                        USD 100                Kimi K3                     6.803       0.14699  300 (3×)         medium
-64    Alibaba Cloud Coding Plan Pro     USD 50                 Qwen3.7 Plus                1.98        0.25253  19 (0.38×)       low
+1     Claude Max 5x (9/14+)             USD 100                Claude Haiku 5.5            3580.49     0.00028  5,263 (52.63×)   low
+2     Claude Max 5x (9/14+)             USD 100                Claude Sonnet 5.5           366.68      0.00273  7,224 (72.24×)‡  low
+3     ChatGPT Pro 5x                    USD 100                GPT 5.6 Luna                352.91      0.00283  1,073 (10.73×)   medium
+4     Ollama Max                        USD 100                DeepSeek V4.1 Flash         310.559     0.00322  600 (6×)         medium
+5     Claude Max 5x (9/14+)             USD 100                Claude Sonnet 5             196.25      0.0051   5,770 (57.7×)‡   low
+6     Ollama Max                        USD 100                DeepSeek V4 Flash           192.431     0.0052   372 (3.72×)      medium
+7     MiniMax M Plan Build (CN)         CNY 469.0              MiniMax M3.1 Flash Preview  191.764     0.00361  -                low
+8     MiniMax M Plan Build (CN Annual)  CNY 390.8333333333333  MiniMax M3.1 Flash Preview  191.764     0.00301  -                low
+9     MiMo Token Plan Max 夜间0.8×      ¥659（国际 $100）      MiMo V2.6 Flash             188.42      0.00531  144 (1.44×)      medium
+10    MiMo Token Plan Max 夜间0.8×      ¥659（国际 $100）      MiMo V2.5                   188.42      0.00531  1,839 (18.39×)*  medium
+11    Claude Max 5x (9/14+)             USD 100                Claude Opus 5.5             183.34      0.00545  7,224 (72.24×)   medium
+12    GLM Coding Max (v2 ¥469) 闲时     CNY 469                GLM 5.3 Flash               174.81      0.00396  618 (8.93×)      high
+13    MiMo Token Plan Max 日间          ¥659（国际 $100）      MiMo V2.6 Flash             150.74      0.00663  115 (1.15×)      medium
+14    MiMo Token Plan Max 日间          ¥659（国际 $100）      MiMo V2.5                   150.74      0.00663  1,471 (14.71×)*  medium
+15    GLM Coding Max (v2 ¥469) 中间值   CNY 469                GLM 5.3 Flash               131.11      0.00528  463 (6.7×)       high
+16    Google AI Ultra 5x                USD 99.99              Gemini 3.8 Flash            129.05      0.00775  1,423 (14.23×)   low
+17    GLM Coding Max (v2 ¥469) 忙时     CNY 469                GLM 5.3 Flash               87.4        0.00792  309 (4.47×)      high
+18    MiMo Token Plan Pro 夜间0.8×      ¥329（国际 $50）       MiMo V2.6 Flash             87.32       0.00573  66 (1.33×)       medium
+19    MiMo Token Plan Pro 夜间0.8×      ¥329（国际 $50）       MiMo V2.5                   87.32       0.00573  852 (17.04×)*    medium
+20    Ollama Max                        USD 100                GLM 5.3 Flash               84.866      0.01178  300 (3×)         medium
+21    MiMo Token Plan Max 夜间0.8×      ¥659（国际 $100）      MiMo V2.6 Pro               79.3        0.01261  148 (1.48×)      medium
+22    MiMo Token Plan Max 夜间0.8×      ¥659（国际 $100）      MiMo V2.5 Pro               79.3        0.01261  1,856 (18.56×)*  medium
+23    Claude Max 5x (9/14+)             USD 100                Claude Opus 5               78.5        0.01274  5,770 (57.7×)    medium
+24    GLM Coding Pro (v3 ¥538) 闲时     CNY 538                GLM 5.3 Flash               74.92       0.01059  265 (3.34×)      high
+25    MiniMax Token Plan Ultra          CNY 469                MiniMax M3                  71          0.00974  509 (7.36×)      high
+26    MiMo Token Plan Pro 日间          ¥329（国际 $50）       MiMo V2.6 Flash             69.85       0.00716  53 (1.06×)       medium
+27    MiMo Token Plan Pro 日间          ¥329（国际 $50）       MiMo V2.5                   69.85       0.00716  682 (13.63×)*    medium
+28    MiMo Token Plan Max 日间          ¥659（国际 $100）      MiMo V2.6 Pro               63.44       0.01576  119 (1.19×)      medium
+29    MiMo Token Plan Max 日间          ¥659（国际 $100）      MiMo V2.5 Pro               63.44       0.01576  1,484 (14.85×)*  medium
+30    Ollama Max                        USD 100                DeepSeek V4 Pro             62.84       0.01591  600 (6×)         medium
+31    ChatGPT Pro 5x                    USD 100                GPT 5.6 Terra               59.574      0.01679  1,811 (18.11×)‡  medium
+32    Kimi 会员 699 (v1) †              ¥699（国际 $99）       Kimi K3                     58.38       0.01696  2,575 (26.01×)   medium
+33    GLM Coding Max (v2 ¥469) 闲时     CNY 469                GLM 5.3                     57.69       0.01199  1,784 (25.78×)   high
+34    GLM Coding Pro (v3 ¥538) 中间值   CNY 538                GLM 5.3 Flash               56.19       0.01412  199 (2.5×)       high
+35    Cursor Pro+ (Standard)            USD 60                 Composer 2.5                53.229      0.01127  1,166 (19.43×)‡  low
+36    MiniMax Token Plan Max (Global)   USD 55                 MiniMax M3                  51          0.01078  366 (6.65×)      high
+37    Kimi 会员 699 (v1) †              ¥699（国际 $99）       Kimi K2.7 Code              47.04       0.02105  1,073 (10.84×)   medium
+38    GLM Coding Max (v2 ¥469) 中间值   CNY 469                GLM 5.3                     43.27       0.01599  1,338 (19.34×)   high
+39    Ollama Max                        USD 100                MiniMax M2.7                41.841      0.0239   300 (3×)         medium
+40    GLM Coding Pro (v3 ¥538) 忙时     CNY 538                GLM 5.3 Flash               37.46       0.02119  132 (1.67×)      high
+41    MiMo Token Plan Pro 夜间0.8×      ¥329（国际 $50）       MiMo V2.6 Pro               36.75       0.01361  69 (1.38×)       medium
+42    MiMo Token Plan Pro 夜间0.8×      ¥329（国际 $50）       MiMo V2.5 Pro               36.75       0.01361  860 (17.2×)*     medium
+43    ChatGPT Pro 5x                    USD 100                GPT 5.6 Sol                 30.8        0.03247  1,811 (18.11×)   medium
+44    MiMo Token Plan Pro 日间          ¥329（国际 $50）       MiMo V2.6 Pro               29.4        0.01701  55 (1.1×)        medium
+45    MiMo Token Plan Pro 日间          ¥329（国际 $50）       MiMo V2.5 Pro               29.4        0.01701  688 (13.76×)*    medium
+46    Kimi Max 699 (v2) †               ¥699（国际 $99）       Kimi K3                     29.19       0.03392  1,287 (13×)      medium
+47    GLM Coding Max (v2 ¥469) 忙时     CNY 469                GLM 5.3                     28.84       0.02399  892 (12.89×)     high
+48    GLM Coding Pro (v3 ¥538) 闲时     CNY 538                GLM 5.3                     24.72       0.03211  764 (9.63×)      high
+49    ChatGPT Pro 5x                    USD 100                GPT 5.5                     23.829      0.04197  1,811 (18.11×)‡  medium
+50    Kimi Max 699 (v2) †               ¥699（国际 $99）       Kimi K2.7 Code              23.52       0.04209  536 (5.42×)      medium
+51    SuperGrok Plus                    USD 100                Grok 4.7                    22.9        0.04367  1,294 (12.94×)   medium
+52    Ollama Max                        USD 100                MiniMax M3                  20.921      0.0478   150 (1.5×)       medium
+53    Cursor Pro+                       USD 60                 Grok 4.6                    20.632      0.02908  1,166 (19.43×)   medium
+54    SuperGrok Plus                    USD 100                Grok 4.6                    20.6        0.04854  1,164 (11.64×)   medium
+55    Kimi 会员 199 (v1) †              ¥199（国际 $39）       Kimi K3                     19.46       0.02004  858 (22×)        medium
+56    GLM Coding Pro (v3 ¥538) 中间值   CNY 538                GLM 5.3                     18.54       0.04281  573 (7.22×)      high
+57    Cursor Pro+ (Composer Fast)       USD 60                 Composer 2.5                18.358      0.03268  402 (6.7×)       low
+58    Kimi 会员 199 (v1) †              ¥199（国际 $39）       Kimi K2.7 Code              15.68       0.02487  358 (9.17×)      medium
+59    Ollama Max                        USD 100                Kimi K2.7 Code              13.155      0.07602  300 (3×)         medium
+60    Ollama Max                        USD 100                GLM 5.1                     12.766      0.07833  395 (3.95×)      medium
+61    GLM Coding Pro (v3 ¥538) 忙时     CNY 538                GLM 5.3                     12.36       0.06421  382 (4.82×)      high
+62    Kimi Pro 199 (v2) †               ¥199（国际 $39）       Kimi K3                     9.73        0.04008  429 (11×)        medium
+63    Ollama Max                        USD 100                GLM 5.3                     9.702       0.10307  300 (3×)         medium
+64    Ollama Max                        USD 100                GLM 5.2                     9.702       0.10307  300 (3×)         medium
+65    Claude Max 5x (9/14+)             USD 100                Claude Fable 5              9.235       0.10828  1,358 (13.58×)   low
+66    ChatGPT Pro 5x                    USD 100                GPT-6 Astra                 9.1         0.10989  1,338 (13.38×)   low
+67    Claude Max 5x (9/14+)             USD 100                Claude Fable 5.1            8.639       0.11575  641 (6.41×)      low
+68    Kimi Pro 199 (v2) †               ¥199（国际 $39）       Kimi K2.7 Code              7.84        0.04974  179 (4.58×)      medium
+69    Ollama Max                        USD 100                Kimi K3                     6.803       0.14699  300 (3×)         medium
+70    Alibaba Cloud Coding Plan Pro     USD 50                 Qwen3.7 Plus                1.98        0.25253  19 (0.38×)       low

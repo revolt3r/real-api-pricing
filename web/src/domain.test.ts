@@ -15,7 +15,7 @@ test("Wheel zoom preserves cursor anchor and reversed logarithmic axis direction
     restored.forEach((n, i) => assert.ok(Math.abs(n - range[i]) < 1e-9));
   }
 });
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { parse } from "csv-parse/sync";
 import {
   matchesFeeBand,
@@ -27,8 +27,10 @@ import {
   accessLine,
   displayPlan,
   effortLabel,
+  firstUrl,
   isThirdParty,
   manufacturer,
+  mappingNoteLabel,
   frontierPath,
   groups,
   money,
@@ -36,6 +38,8 @@ import {
   pareto,
   planComparisons,
   sortComparisons,
+  planKey,
+  PLAN_SLOT,
   price,
   priceExact,
   restore,
@@ -84,7 +88,23 @@ const data: SiteData = unpackData(JSON.parse(
 
 test("Packed website mappings restore every original field without data loss", () => {
   const raw = JSON.parse(readFileSync(new URL("../../derived/benchmark-points.json", import.meta.url), "utf8"));
-  assert.deepEqual(data.mappings, raw);
+  // Website-only display fields (translations, provenance inherited from the
+  // shared configuration) are added on top of the original mapping records.
+  assert.deepEqual(
+    data.mappings.map(
+      ({
+        source_en: _se,
+        archive: _a,
+        archive_url: _au,
+        checked_at: _c,
+        board_label: _b,
+        record_note_zh: _rz,
+        record_note_en: _re,
+        ...m
+      }) => m,
+    ),
+    raw,
+  );
 });
 test("Anthropic workload line prices the input share as cache writes", () => {
   const p = { workload: "anthropic" } as Point;
@@ -180,27 +200,10 @@ test("Step Plan CN uses official Credit pools and CNY list prices", () => {
   assert.equal(max37.monthly_yi, 858.83);
   assert.equal(accessLine(mini35), "StepFun");
 });
-test("Devin Pro SWE-2 is an unmetered $0 promo point that joins and leads the TB4 frontier on a dedicated slot", () => {
-  const p = data.points.find((p) => p.id === "devin_pro::swe-2")!;
-  assert.ok(p);
-  assert.equal(p.real_usd_per_mtok, 0);
-  assert.equal(p.unmetered, true);
-  assert.equal(p.promo_until, "2026-10-31");
-  assert.equal(p.monthly_yi, null);
-  assert.equal(p.channel, "Devin");
-  assert.equal(accessLine(p), "Devin");
-  const rows = rowsFor(data, { ...defaultState(), board: "terminal_bench_4" });
-  const gs = groups(rows);
-  const zero = gs.find((g) => g.price === 0)!;
-  assert.ok(zero, "unmetered group is plotted");
-  assert.ok(zero.plotPrice > 0 && zero.plotPrice < Math.min(...gs.filter((g) => g.price > 0).map((g) => g.price)));
-  assert.equal(zero.rows[0].mapping?.score_is_self_reported, true);
-  const front = pareto(gs);
-  assert.equal(front[0].key, zero.key);
-  assert.ok(front.every((g, i) => i === 0 || g.price > 0));
-  // Allowance ranking has no token denominator for it; price ranking keeps it.
-  assert.ok(!rowsFor(data, { ...defaultState(), view: "allowance" }).some((r) => r.point.id === p.id));
-  assert.ok(rowsFor(data, { ...defaultState(), view: "price" }).some((r) => r.point.id === p.id));
+test("Expired SWE-2 offer cannot lead the current frontier", () => {
+  assert.equal(data.points.some((p) => p.id === "devin_pro::swe-2"), false);
+  for (const point of data.points.filter((p) => p.unmetered && p.promo_until))
+    assert.ok(point.promo_until! >= data.generatedAt.slice(0, 10));
 });
 test("DeepSWE keeps effort levels and vendor provenance through the adapter", () => {
   const state = { ...defaultState(), board: "deepswe_1_1", configuration: "all" as const };
@@ -215,12 +218,12 @@ test("DeepSWE keeps effort levels and vendor provenance through the adapter", ()
   assert.equal(deepseek.mapping?.score_is_self_reported, true);
   assert.equal(deepseek.mapping?.agent_harness, "mini-SWE");
 });
-test("Command Code GOAT DeepSeek V4.1 Flash uses $60 monthly credits", () => {
+test("Command Code GOAT DeepSeek V4.1 Flash uses $80 credits capped by the $70 shared pool", () => {
   const p = data.points.find((p) => p.id === "command_code_goat::deepseek-v4.1-flash")!;
-  // $60 allowance ÷ off-peak (97/2.5/0.5 × $0.003/$0.15/$0.60 = $0.00966/MTok).
-  assert.equal(p.monthly_yi, 62.112);
-  assert.equal(p.real_usd_per_mtok, 0.0016099948);
-  assert.equal(price(p.real_usd_per_mtok), "$0.00161");
+  // min($70 pool, $80 allowance) ÷ off-peak (97/2.5/0.5 × $0.003/$0.15/$0.60 = $0.00966/MTok).
+  assert.equal(p.monthly_yi, 72.464);
+  assert.equal(p.real_usd_per_mtok, 0.0013799956);
+  assert.equal(price(p.real_usd_per_mtok), "$0.00138");
 });
 test("Default selection includes every adopted point, including unscored models", () => {
   const rows = rowsFor(data, defaultState());
@@ -382,6 +385,25 @@ test("Share links round-trip language, board, exact empty selection and all view
   const restored = restore(hash, data);
   assert.deepEqual(restored.state, s);
   assert.equal(restored.warning, false);
+});
+test("Compare slots round-trip through the hash, including a plan-only and an empty slot", () => {
+  const p = data.points.find(
+    (q) => q.billing !== "metered" && q.monthly_yi !== null,
+  )!;
+  const cmp = [p.id, PLAN_SLOT + planKey(p), ""];
+  const s = {
+    ...defaultState(),
+    view: "allowance" as const,
+    layout: "compare" as const,
+    compare: cmp,
+  };
+  const restored = restore(serialize(s), data);
+  assert.equal(restored.warning, false);
+  assert.deepEqual(restored.state.compare, cmp);
+  // An untouched added slot serializes as a lone cmp= and restores the same.
+  const empty = restore(serialize({ ...s, compare: ["", "", ""] }), data);
+  assert.equal(empty.warning, false);
+  assert.deepEqual(empty.state.compare, ["", "", ""]);
 });
 test("Default state serializes to a minimal hash and selection states stay distinct", () => {
   assert.equal(serialize(defaultState()), "#lang=en");
@@ -630,7 +652,12 @@ test("Chart search AND-matches plan, channel and model fields and dedupes points
   const backward = searchMatches(gs, "199 kimi", "en");
   assert.deepEqual(
     forward.map((r) => r.point.id).sort(),
-    ["kimi_allegretto_cn::kimi-k2.7-code", "kimi_allegretto_cn::kimi-k3"],
+    [
+      "kimi_allegretto_cn::kimi-k2.7-code",
+      "kimi_allegretto_cn::kimi-k3",
+      "kimi_pro_cn::kimi-k2.7-code",
+      "kimi_pro_cn::kimi-k3",
+    ],
   );
   assert.deepEqual(
     backward.map((r) => r.point.id).sort(),
@@ -1027,10 +1054,11 @@ test("Plan comparison finds the value a plan's models share and separates the ex
   assert.equal(claude.headline.rows.length, 3);
   assert.deepEqual(
     claude.exceptions.flatMap((g) => g.rows.map((r) => r.point.model_display)).sort(),
-    ["Claude Fable 5", "Claude Fable 5.1", "Claude Opus 5.5"],
+    ["Claude Fable 5", "Claude Fable 5.1", "Claude Haiku 5.5", "Claude Opus 5.5", "Claude Sonnet 5.5"],
   );
   assert.ok(claude.headline.multiple > chatgpt.headline.multiple);
-  assert.equal(claude.varies, false);
+  // New Haiku/Sonnet rows leave the largest value group below half the models.
+  assert.equal(claude.varies, true);
   // Wrapper plans reselling dozens of models must be flagged, not headlined.
   const wrapper = plans.find((p) => p.plan === "Command Code GOAT")!;
   assert.equal(wrapper.varies, true);
@@ -1306,4 +1334,100 @@ test("Every published point carries a data date of a known kind", () => {
     assert.equal(p.data_date_kind === "derived", Boolean(p.data_date_from), p.id);
     assert.ok(dataDateLine(p, "zh") !== "" && dataDateLine(p, "en") !== "", p.id);
   }
+});
+const i18n = JSON.parse(
+  readFileSync(new URL("../../data/i18n/adopted.en.json", import.meta.url), "utf8"),
+) as { keepCJK: string[] };
+const stripKeep = (s: string) =>
+  (i18n.keepCJK ?? []).reduce((t, k) => t.replaceAll(k, ""), s);
+const CJK_CHAR = /[㐀-鿿]/;
+const FULLWIDTH = /[　-︰＀-￯]/;
+test("Every point's English plan/adoption fields contain no untranslated Chinese", () => {
+  for (const p of data.points)
+    for (const v of [
+      displayPlan(p.plan, "en"),
+      p.source_en,
+      p.decision_note_en,
+      p.note_en,
+    ])
+      if (v)
+        assert.ok(
+          !CJK_CHAR.test(stripKeep(v)) && !FULLWIDTH.test(stripKeep(v)),
+          `${p.id}: ${v.slice(0, 80)}`,
+        );
+});
+test("Every mapping note has a Chinese label and every mapping source yields a clean URL", () => {
+  for (const m of data.mappings) {
+    if (m.mapping_note)
+      assert.notEqual(
+        mappingNoteLabel(m.mapping_note, "zh"),
+        m.mapping_note,
+        m.mapping_note,
+      );
+    const url = firstUrl(m.source);
+    assert.ok(url, `no URL in: ${m.source}`);
+    assert.ok(!CJK_CHAR.test(url) && !FULLWIDTH.test(url), url);
+  }
+});
+test("English CSV export has no Chinese in the Plan or source columns", () => {
+  const rs: Row[] = data.points.map((p) => ({
+    key: p.id,
+    point: p,
+    mapping: data.mappings.find((m) => m.point_id === p.id) ?? null,
+    score: null,
+  }));
+  const out = parse(csv(rs, "en"), { bom: true, columns: true }) as Record<
+    string,
+    string
+  >[];
+  for (const r of out)
+    for (const col of ["Plan", "Adoption source", "Score source"])
+      assert.ok(
+        !CJK_CHAR.test(stripKeep(r[col] ?? "")),
+        `${r["Point ID"]} ${col}: ${(r[col] ?? "").slice(0, 80)}`,
+      );
+});
+
+test("Every mapping exposes score provenance: checked date, archive file, board label, localized record note", () => {
+  const evidenceDir = new Set(
+    readdirSync(new URL("../public/data/evidence", import.meta.url)),
+  );
+  const researchDir = new Set(
+    readdirSync(new URL("../../data/research", import.meta.url)),
+  );
+  for (const m of data.mappings) {
+    assert.ok(m.checked_at, `${m.point_id}/${m.board}`);
+    assert.ok(m.board_label, `${m.point_id}/${m.board}`);
+    assert.ok(m.archive, `${m.point_id}/${m.board}`);
+    assert.equal(m.archive_url, `/data/evidence/${m.archive}`);
+    assert.ok(
+      evidenceDir.has(m.archive!) || researchDir.has(m.archive!),
+      `archive not shipped: ${m.archive}`,
+    );
+    if (m.record_note_en != null || m.record_note_zh != null) {
+      assert.ok(
+        m.record_note_en && !CJK_CHAR.test(m.record_note_en),
+        `record_note_en: ${m.record_note_en}`,
+      );
+      assert.ok(
+        m.record_note_zh && CJK_CHAR.test(m.record_note_zh),
+        `record_note_zh: ${m.record_note_zh}`,
+      );
+    }
+  }
+});
+
+
+test("Current API rates preserve source dates, currencies and Preview identity", () => {
+  const point = (model: string) => data.points.find((p) => p.model === model)!;
+  assert.equal(point("claude-sonnet-5.5").list_price?.cached, 0.1);
+  assert.equal(point("step-5-preview").list_price?.currency, "CNY");
+  assert.equal(point("step-5-preview").list_price?.cached, 0.7);
+  for (const model of ["gemini-4-argon", "gemini-4-argon-contributor", "ling-3.1-flash"])
+    assert.ok(point(model).list_blended_usd_per_mtok! > 0);
+  assert.equal(point("gemini-4-argon").api_price_checked_at, "2026-10-27");
+  assert.equal(point("minimax-m3.1-flash-preview").list_blended_usd_per_mtok, null);
+  assert.equal(point("minimax-m3.1-flash-preview").api_price_tier, "unavailable");
+  const missing = new Set(data.points.filter((p) => p.list_blended_usd_per_mtok === null).map((p) => p.model));
+  assert.deepEqual([...missing], ["minimax-m3.1-flash-preview"]);
 });

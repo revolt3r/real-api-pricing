@@ -39,6 +39,8 @@ export interface Point {
   api_price_confidence: "high" | "medium" | "low" | null;
   api_price_source: string | null;
   api_price_archive: string | null;
+  api_price_checked_at?: string | null;
+  api_price_note?: string | null;
   /** Real price ÷ list blended price: the reciprocal of api_cost_multiple. */
   d: number | null;
   /** Quota basis: which workload the capacity assumes — "standard" | "anthropic" | "lowCache" | "measured". */
@@ -56,6 +58,10 @@ export interface Point {
   source: string;
   note: string;
   decision_note: string;
+  /** English translations of the Chinese source/note fields (data/i18n). */
+  source_en?: string;
+  note_en?: string;
+  decision_note_en?: string;
   evidence: { label: string; url: string }[];
 }
 export interface Configuration {
@@ -72,8 +78,16 @@ export interface Configuration {
   score_low: number | null;
   score_high: number | null;
   source: string;
+  source_en?: string;
   archive?: string;
   checked_at?: string;
+  /** The board's own label for this configuration (raw_record.variantLabel). */
+  board_label?: string;
+  /** The archived record's note in zh and en (i18n-resolved, website-only). */
+  record_note_zh?: string;
+  record_note_en?: string;
+  /** Local URL of the copied score archive under /data/evidence/. */
+  archive_url?: string;
   mean_cost_usd_per_task?: number | null;
   median_cost_per_task_usd?: number | null;
   median_cost_usd_per_task?: number | null;
@@ -118,8 +132,18 @@ export type FilterKey =
   | "harness"
   | "effort"
   | "modes";
+export type AllowanceLayout = "list" | "cards" | "compare";
 export interface State {
   feeBand: string;
+  /** Presentation of the monthly-allowance view; other views ignore it. */
+  layout: AllowanceLayout;
+  /**
+   * Allowance comparison slots in order: a point id once complete,
+   * `plan:<planKey>` while only the plan is chosen, "" while empty.
+   */
+  compare: string[];
+  /** Point ids shown as allowance cards, grouped by plan; empty shows none. */
+  cards: string[];
   lang: Lang;
   view: View;
   board: string;

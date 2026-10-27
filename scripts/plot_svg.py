@@ -145,9 +145,30 @@ def label_lines(p, language, board=None):
     return name, " / ".join(plans), price
 
 
+# 完整档前沿标签的逐榜偏移 (dx, dy, anchor)：按 verify_label_overlap 搜索得到，优先于下方规则。
+FULL_TIER_LABEL_OFFSETS = {
+    ("deepseek-v4.1-flash", "aa_intelligence_index"): (40, 40, "middle"),
+    ("claude-haiku-5.5", "aa_intelligence_index"): (-8, -60, "middle"),
+    ("deepseek-v4.1-flash", "aa_terminal_bench_4"): (-32, -20, "end"),
+    ("claude-haiku-5.5", "aa_terminal_bench_4"): (-8, 40, "end"),
+    ("claude-sonnet-5.5", "arena_agent_mode"): (-8, 20, "end"),
+    ("deepseek-v4.1-flash", "arena_agent_mode"): (40, 60, "middle"),
+    ("claude-haiku-5.5", "arena_agent_mode"): (-8, -60, "middle"),
+    ("claude-sonnet-5.5", "arena_code"): (-8, 20, "end"),
+    ("deepseek-v4.1-flash", "arena_code"): (-8, -60, "start"),
+    ("claude-haiku-5.5", "arena_code"): (-8, 20, "end"),
+    ("claude-opus-5.5", "terminal_bench_4"): (16, 40, "end"),
+    ("claude-sonnet-5.5", "terminal_bench_4"): (40, -40, "middle"),
+    ("deepseek-v4.1-flash", "terminal_bench_4"): (-32, -20, "end"),
+    ("mimo-v2.6-flash", "open_design_arena"): (-8, -140, "end"),
+}
+
 def label_position(p, board, x, y, tier="main"):
     # 仅调标签；绝不移动数据点。按这组已核对前沿的邻近关系安排引线和对齐。
     model = p["model"]
+    if tier == "full" and (model, board) in FULL_TIER_LABEL_OFFSETS:
+        dx, dy, anchor = FULL_TIER_LABEL_OFFSETS[(model, board)]
+        return x + dx, y + dy, anchor
     if model == "claude-opus-5":
         if board == "aa_coding_agent_index":
             return x + 24, y - 72, "start"
@@ -164,7 +185,33 @@ def label_position(p, board, x, y, tier="main"):
             return x - 24, y + 47, "end"
         return x - 24, y + 13, "end"
     if model == "claude-sonnet-5":
+        if board == "arena_agent_mode" and tier == "full":
+            return x - 40, y - 11, "end"
         return x + 22, y - 54, "start"
+    if model == "claude-sonnet-5.5":
+        if tier == "full":
+            if board == "aa_terminal_bench_4":
+                return x - 28, y - 50, "end"
+            if board == "aa_coding_agent_index":
+                return x - 4, y - 60, "end"
+            if board == "aa_intelligence_index":
+                return x + 24, y - 40, "start"
+            if board == "arena_code":
+                return x - 90, y - 20, "end"
+            if board == "open_design_arena":
+                return x - 4, y - 70, "end"
+    if model == "claude-opus-5.5":
+        if tier == "full":
+            if board == "aa_terminal_bench_4":
+                return x + 12, y - 20, "start"
+            if board == "aa_coding_agent_index":
+                return x + 12, y - 34, "start"
+    if model == "gpt-6.1-sol":
+        if board == "open_design_arena" and tier == "full":
+            return x + 0, y - 50, "end"
+    if model == "gpt-6-sol":
+        if board == "open_design_arena" and tier == "full":
+            return x - 20, y + 80, "end"
     if model == "mimo-v2.6-pro":
         if board == "aa_intelligence_index":
             return x - 30, y + 20, "end"
@@ -173,17 +220,27 @@ def label_position(p, board, x, y, tier="main"):
     if model == "mimo-v2.6-flash":
         if board == "deepswe_1_1":
             return x + 112, y + 159, "end"
+        if board == "aa_intelligence_index" and tier == "full":
+            return x + 10, y + 0, "start"
+        if board == "aa_terminal_bench_4" and tier == "full":
+            return x - 168, y - 236, "end"
+        if board == "open_design_arena" and tier == "full":
+            return x - 40, y + 52, "end"
     if model == "mimo-v2.5":
         if board == "aa_intelligence_index":
-            return x + 22, y - 25, "start"
+            return x + 20, y - 8, "start"
+        if board == "arena_code" and tier == "full":
+            return x + 0, y + 20, "start"
     if model == "step-5-preview":
         if board == "aa_intelligence_index":
             return x + 45, y - 140, "start"
         if board == "aa_terminal_bench_4":
+            if tier == "full":
+                return x - 4, y - 156, "start"
             return x - 1, y + 41, "end"
     if model == "gemini-3.8-flash":
         if board == "aa_coding_agent_index":
-            return x - 20, y + 64, "end"
+            return x - 30, y - 30, "end"
     if model == "glm-5.3":
         if board == "aa_intelligence_index":
             return x + 24, y - 108, "start"
@@ -194,13 +251,17 @@ def label_position(p, board, x, y, tier="main"):
         return x + 24, y - 31, "start"
     if model == "glm-5.3-flash":
         if board == "aa_intelligence_index":
-            return x + 23, y - 95, "start"
+            return x + 95, y - 93, "start"
         if board == "open_design_arena":
             return x - 24, y + 45, "end"
         if board == "arena_agent_mode":
             return x + 14, y - 68, "start"
         if board == "arena_code":
+            if tier == "full":
+                return x - 120, y - 23, "end"
             return x + 16, y + 15, "start"
+        if board == "aa_terminal_bench_4" and tier == "full":
+            return x - 292, y + 20, "end"
         return x + 23, y - 40, "start"
     if model in {"deepseek-v4-flash", "deepseek-v4.1-flash"}:
         if model == "deepseek-v4.1-flash" and board == "aa_intelligence_index":
@@ -209,14 +270,30 @@ def label_position(p, board, x, y, tier="main"):
             return x - 24, y - 52, "end"
         if model == "deepseek-v4.1-flash" and board == "terminal_bench_4":
             return x - 141, y + 21, "end"
+        if model == "deepseek-v4.1-flash" and board == "arena_agent_mode" and tier == "full":
+            return x + 0, y - 100, "middle"
+        if model == "deepseek-v4.1-flash" and board == "arena_code" and tier == "full":
+            return x + 0, y - 160, "middle"
+        if model == "deepseek-v4.1-flash" and board == "aa_terminal_bench_4" and tier == "full":
+            return x - 4, y + 124, "end"
         return x - 24, y + 49, "end"
     if model == "gpt-6-luna":
         if board == "aa_terminal_bench_4":
+            if tier == "full":
+                return x - 8, y + 28, "end"
             return x - 150, y - 30, "end"
         if board == "aa_intelligence_index":
             return x + 20, y - 40, "start"
         if board == "aa_coding_agent_index":
+            if tier == "full":
+                return x + 0, y - 110, "middle"
             return x + 10, y - 78, "end"
+        if board == "arena_agent_mode" and tier == "full":
+            return x + 0, y - 140, "middle"
+        if board == "arena_code" and tier == "full":
+            return x + 0, y - 140, "middle"
+        if board == "open_design_arena" and tier == "full":
+            return x - 10, y + 118, "end"
         return x - 20, y - 52, "end"
     if model == "gpt-5.6-luna":
         # TB4 全量里 Luna 分数最低（官方 17.27% / AA 0%），标签整体下移会压过图框下缘。
@@ -224,6 +301,10 @@ def label_position(p, board, x, y, tier="main"):
             return x + 5, y + 25, "end"
         if board == "aa_intelligence_index":
             return x - 24, y + 58, "end"
+        if board == "aa_coding_agent_index" and tier == "full":
+            return x - 30, y - 20, "end"
+        if board == "arena_code" and tier == "full":
+            return x - 10, y + 110, "end"
         return x + 5, y + 57, "end"
     if model == "gpt-5.6-terra":
         if board == "aa_intelligence_index":
@@ -231,10 +312,10 @@ def label_position(p, board, x, y, tier="main"):
         return x + 24, y - 55, "start"
     if model == "step-3.7-flash":
         if board == "aa_intelligence_index":
-            return x - 53, y - 116, "end"
+            return x + 0, y - 70, "start"
     if model == "step-3.5-flash":
         if board == "aa_intelligence_index":
-            return x - 35, y - 51, "end"
+            return x + 0, y + 20, "end"
     if model == "swe-2":
         # 不计额度点贴右边界，标签只能往左上放，且要避开 TB4 里 Luna 的下方标签。
         if board == "terminal_bench_4":
@@ -407,7 +488,7 @@ def draw(board, meta, points, tier, language="zh"):
              "≈$0 为 SWE-2 促销价：Devin Pro/Max/Teams 至 2026-10-31 不计额度，非永久口径" +
              ("；TB4 分数为 Cognition 自报" if board == "terminal_bench_4" else "") + "。")
     y = legend_base + 40
-    s += [text(56, y, f"Default month = 4 weeks; Kimi pool = 5× weekly · Dollar/credit: {STD_MIX['cache']:.0%} cache / {STD_MIX['input']:.1%} input / {STD_MIX['output']:.1%} output · Direct totals unchanged" if language == "en" else f"默认月=4周；Kimi月池=周池×5 · 美元/credits换算：缓存{STD_MIX['cache']:.0%} / 输入{STD_MIX['input']:.1%} / 输出{STD_MIX['output']:.1%} · 直接total实测不重算", 12, "#727B72"),
+    s += [text(56, y, f"Default month = 4 weeks; Kimi pool = 5×, Droid = 2× weekly · Dollar/credit: {STD_MIX['cache']:.0%} cache / {STD_MIX['input']:.1%} input / {STD_MIX['output']:.1%} output · Direct totals unchanged" if language == "en" else f"默认月=4周；Kimi月池=周池×5，Droid月=周×2 · 美元/credits换算：缓存{STD_MIX['cache']:.0%} / 输入{STD_MIX['input']:.1%} / 输出{STD_MIX['output']:.1%} · 直接total实测不重算", 12, "#727B72"),
           text(1384, y, (f"{len(subs)} subscription positions / {len(api)} API positions / {len(frontier)} frontier positions" if language == "en" else f"{len(subs)} 个订阅位置 / {len(api)} 个 API 位置 / {len(frontier)} 个前沿位置"), 12, "#727B72", "end"),
           text(56, y + 24, note, 11, "#929A90")]
     y += 45

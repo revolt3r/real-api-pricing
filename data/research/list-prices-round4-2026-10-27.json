@@ -1,0 +1,1251 @@
+{
+  "collectedAt": "2026-10-27",
+  "upstreamCommit": "75920ca2ba842beb3e7ac1eee8cfa359c0f5ddd7",
+  "role": "Current provider price refresh after upstream synchronization. Historical quota measurements are not silently repriced.",
+  "conventions": {
+    "unit": "USD per million tokens unless currency=CNY",
+    "baseline": "Standard short-context, peak for scheduled APIs; discounts and future changes are variants.",
+    "exchangeRate": "Project comparison rate retained; not represented as a live FX quote.",
+    "previewPolicy": "Preview and GA identifiers are distinct unless a vendor confirms aliasing."
+  },
+  "models": [
+    {
+      "model": "claude-opus-5",
+      "vendor": "Anthropic",
+      "input": 5.0,
+      "cachedInput": 0.5,
+      "output": 25.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "fast": {
+          "input": 10.0,
+          "output": 50.0,
+          "note": "Fast mode research preview; cache multipliers stack"
+        },
+        "batch": {
+          "input": 2.5,
+          "output": 12.5
+        },
+        "cacheWrite5m": {
+          "input": 6.25
+        },
+        "cacheWrite1h": {
+          "input": 10.0
+        }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "1M context at standard rates. inference_geo us applies 1.1x, not modeled here."
+    },
+    {
+      "model": "claude-opus-5.5",
+      "vendor": "Anthropic",
+      "input": 4.0,
+      "cachedInput": 0.2,
+      "output": 20.0,
+      "currency": "USD",
+      "variants": {
+        "fast": {
+          "input": 8.0,
+          "output": 40.0,
+          "note": "Fast mode; cache multipliers stack on fast rates"
+        },
+        "batch": {
+          "input": 2.0,
+          "output": 10.0
+        },
+        "cacheWrite5m": {
+          "input": 5.0
+        },
+        "cacheWrite1h": {
+          "input": 8.0
+        }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "Launched 2026-09-22; cache read is 0.05x base input (0.1x for other models); >30% faster output than Opus 5. US inference_geo 1.1x.",
+      "priceTier": "official",
+      "priceConfidence": "high"
+    },
+    {
+      "model": "claude-fable-5",
+      "vendor": "Anthropic",
+      "input": 10.0,
+      "cachedInput": 1.0,
+      "output": 50.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "batch": {
+          "input": 5.0,
+          "output": 25.0
+        },
+        "cacheWrite5m": {
+          "input": 12.5
+        },
+        "cacheWrite1h": {
+          "input": 20.0
+        },
+        "fable51CacheHit": {
+          "cachedInput": 0.25,
+          "note": "Fable 5.1 cache hits are 0.025x input; Fable 5 stays at the 0.1x $1 rate"
+        }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "Cache-hit split between Fable 5 and Fable 5.1 re-confirmed this round; the adopted served model is Fable 5."
+    },
+    {
+      "model": "claude-sonnet-5",
+      "vendor": "Anthropic",
+      "input": 2.0,
+      "cachedInput": 0.2,
+      "output": 10.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "batch": {
+          "input": 1.0,
+          "output": 5.0
+        },
+        "cacheWrite5m": {
+          "input": 2.5
+        },
+        "cacheWrite1h": {
+          "input": 4.0
+        }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "Docs still state $2/$10 is the permanent standard; the scheduled $3/$15 increase remains cancelled."
+    },
+    {
+      "model": "claude-opus-4.8",
+      "vendor": "Anthropic",
+      "input": 5.0,
+      "cachedInput": 0.5,
+      "output": 25.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "fast": {
+          "input": 10.0,
+          "output": 50.0
+        },
+        "batch": {
+          "input": 2.5,
+          "output": 12.5
+        },
+        "cacheWrite5m": {
+          "input": 6.25
+        },
+        "cacheWrite1h": {
+          "input": 10.0
+        }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-10-27",
+      "note": ""
+    },
+    {
+      "model": "claude-fable-5.1",
+      "vendor": "Anthropic",
+      "input": 10.0,
+      "cachedInput": 0.25,
+      "output": 50.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "cacheWrite5m": 12.5,
+        "cacheWrite1h": 20.0,
+        "batch": {
+          "input": 5.0,
+          "output": 25.0
+        }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "First archive entry. Cache hits are 0.025x input, not the usual 0.1x."
+    },
+    {
+      "model": "claude-sonnet-5.5",
+      "vendor": "Anthropic",
+      "input": 2,
+      "cachedInput": 0.1,
+      "output": 10,
+      "currency": "USD",
+      "variants": {
+        "batch": {
+          "input": 1.0,
+          "output": 5.0
+        },
+        "cacheWrite5m": {
+          "input": 2.5
+        },
+        "cacheWrite1h": {
+          "input": 4.0
+        }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "Cache read is $0.10 after the October 8 cut; input and output unchanged.",
+      "priceTier": "official",
+      "priceConfidence": "high"
+    },
+    {
+      "model": "claude-haiku-5.5",
+      "vendor": "Anthropic",
+      "input": 0.1,
+      "cachedInput": 0.01,
+      "output": 0.5,
+      "currency": "USD",
+      "variants": {
+        "batch": {
+          "input": 0.05,
+          "output": 0.25
+        },
+        "cacheWrite5m": {
+          "input": 0.125
+        },
+        "cacheWrite1h": {
+          "input": 0.2
+        },
+        "gt100k": {
+          "input": 0.5,
+          "cachedInput": 0.05,
+          "output": 2.5,
+          "cacheWrite5m": 0.625,
+          "note": "5x tier for prompts over 100K tokens"
+        }
+      },
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "Launched 2026-10-08; Anthropic's cheapest/fastest mini model, billed ~75% cheaper than Haiku 4.5. Official table (checked 2026-10-08) lists base input $0.10, 5m write $0.125, 1h write $0.20, cache hits $0.01, output $0.50 for prompts up to 100,000 tokens, and $0.50 / $0.625 / $1 / $0.05 / $2.50 above 100,000; cached read = 0.1x base input. Project blends the two tiers 90/10 (2026-10-08 ruling).",
+      "priceTier": "official",
+      "priceConfidence": "high"
+    },
+    {
+      "model": "gpt-6-astra",
+      "vendor": "OpenAI",
+      "input": 10.0,
+      "cachedInput": 1.0,
+      "output": 50.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": {
+          "input": 20.0,
+          "cachedInput": 2.0,
+          "output": 75.0,
+          "note": ">272K input"
+        },
+        "fast": {
+          "input": 20.0,
+          "cachedInput": 2.0,
+          "output": 100.0,
+          "note": "long-context Fast: 40 / 4 / 150"
+        },
+        "batch": {
+          "input": 5.0,
+          "cachedInput": 0.5,
+          "output": 25.0,
+          "note": "long-context Batch: 10 / 1 / 37.5"
+        },
+        "flex": {
+          "input": 5.0,
+          "cachedInput": 0.5,
+          "output": 25.0,
+          "note": "long-context Flex: 10 / 1 / 37.5"
+        },
+        "cacheWrite": {
+          "input": 12.5,
+          "note": "Cache writes billed separately: standard short 12.5, long 25, batch/flex 6.25, fast 25/50. Not modeled in the API cost column, so computed API cost is a floor."
+        }
+      },
+      "source": "https://developers.openai.com/api/docs/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "New this round. First official rate card; short-context Standard rates used as base. Priority processing renamed Fast mode on 2026-07-30. Verified live against the pricing page today."
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "vendor": "OpenAI",
+      "input": 2.0,
+      "cachedInput": 0.1,
+      "output": 10.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": {
+          "input": 4.0,
+          "cachedInput": 0.2,
+          "output": 15.0,
+          "note": ">272K input"
+        }
+      },
+      "source": "https://developers.openai.com/api/docs/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "First archive entry. Cache read is 1:20 of input, not 1:10; matches chatgpt-gpt61sol-plus-round3 priceBasis."
+    },
+    {
+      "model": "gpt-6-luna",
+      "vendor": "OpenAI",
+      "input": 0.1,
+      "cachedInput": 0.01,
+      "output": 0.5,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": {
+          "input": 0.2,
+          "cachedInput": 0.02,
+          "output": 0.75,
+          "note": ">272K input"
+        }
+      },
+      "source": "https://developers.openai.com/api/docs/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "First archive entry."
+    },
+    {
+      "model": "gpt-5.6-sol",
+      "vendor": "OpenAI",
+      "input": 4.0,
+      "cachedInput": 0.4,
+      "output": 20.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": {
+          "input": 8.0,
+          "cachedInput": 0.8,
+          "output": 30.0,
+          "note": "context >= ~270K"
+        },
+        "fast": {
+          "input": 8.0,
+          "cachedInput": 0.8,
+          "output": 40.0,
+          "note": "long-context Fast: 16 / 1.6 / 60"
+        },
+        "batch": {
+          "input": 2.0,
+          "cachedInput": 0.2,
+          "output": 10.0
+        },
+        "flex": {
+          "input": 2.0,
+          "cachedInput": 0.2,
+          "output": 10.0
+        }
+      },
+      "source": "https://developers.openai.com/api/docs/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "Promotional pricing still stated as available through 2026-11-21. Short-context Standard rates used as base."
+    },
+    {
+      "model": "glm-5",
+      "vendor": "Z.AI / Zhipu",
+      "input": 1.0,
+      "cachedInput": 0.2,
+      "output": 3.2,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://docs.z.ai/guides/overview/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "First archive entry. International Z.ai USD rate."
+    },
+    {
+      "model": "glm-5.1",
+      "vendor": "Z.AI / Zhipu",
+      "input": 1.4,
+      "cachedInput": 0.26,
+      "output": 4.4,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://docs.z.ai/guides/overview/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "New this round. Listed under earlier text models at the same rate; rejected the aggregator's $1.38 input."
+    },
+    {
+      "model": "glm-5.2",
+      "vendor": "Z.AI / Zhipu",
+      "input": 1.4,
+      "cachedInput": 0.26,
+      "output": 4.4,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://docs.z.ai/guides/overview/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "New this round. Same rate card as GLM-5.3."
+    },
+    {
+      "model": "glm-5.3",
+      "vendor": "Z.AI / Zhipu",
+      "input": 1.4,
+      "cachedInput": 0.26,
+      "output": 4.4,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "cnyDomestic": {
+          "input": 8.0,
+          "cachedInput": 2.0,
+          "output": 28.0,
+          "currency": "CNY",
+          "source": "https://open.bigmodel.cn/pricing"
+        }
+      },
+      "source": "https://docs.z.ai/guides/overview/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "International Z.ai USD rates. Cached input storage still limited-time free."
+    },
+    {
+      "model": "glm-5.3-flash",
+      "vendor": "Z.AI / Zhipu",
+      "input": 0.15,
+      "cachedInput": 0.03,
+      "output": 0.5,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "promo50off": {
+          "input": 0.075,
+          "cachedInput": 0.015,
+          "output": 0.25,
+          "note": "50% off stated as ending 24:00 2026-09-09 UTC+8; list retained as base"
+        }
+      },
+      "source": "https://docs.z.ai/guides/overview/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "The 50% promotion is scheduled to end today (UTC+8); base stays the standing list price."
+    },
+    {
+      "model": "glm-5.3-flashx",
+      "vendor": "Z.AI / Zhipu",
+      "input": 0.37,
+      "cachedInput": 0.075,
+      "output": 1.25,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://docs.z.ai/guides/overview/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "First archive entry. International Z.ai USD rate."
+    },
+    {
+      "model": "grok-4.7",
+      "vendor": "xAI / SpaceXAI",
+      "input": 2,
+      "cachedInput": 0.5,
+      "output": 6,
+      "currency": "USD",
+      "variants": {
+        "longContext": {
+          "input": 4.0,
+          "cachedInput": 1.0,
+          "output": 12.0,
+          "note": "prompt >= 200k tokens; higher rate applies to all tokens in the request"
+        }
+      },
+      "source": "https://docs.x.ai/developers/models/grok-4.7",
+      "checkedAt": "2026-10-27",
+      "note": "2026-09-21 发布，与 Grok 4.6 同价同档；官方新闻 https://x.ai/news/grok-4-7",
+      "priceTier": "official",
+      "priceConfidence": "high"
+    },
+    {
+      "model": "composer-2.5",
+      "vendor": "Cursor",
+      "input": 0.5,
+      "cachedInput": 0.2,
+      "output": 2.5,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "fast": {
+          "input": 3.0,
+          "cachedInput": 0.5,
+          "output": 15.0,
+          "note": "default in the Cursor product"
+        }
+      },
+      "source": "https://cursor.com/docs/models/cursor-composer-2-5",
+      "checkedAt": "2026-10-27",
+      "note": "On-demand API-equivalent token rates inside Cursor, not a public third-party API."
+    },
+    {
+      "model": "kimi-k3",
+      "vendor": "Moonshot / Kimi",
+      "input": 3,
+      "cachedInput": 0.3,
+      "output": 15,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://platform.kimi.ai/",
+      "checkedAt": "2026-10-27",
+      "note": "K3 retained at $3/$0.30/$15; K3.1 Pro is a separate model, not a rename."
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "vendor": "Google",
+      "input": 0.75,
+      "cachedInput": 0.075,
+      "output": 3.75,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "standardFrom2027-01-01": {
+          "input": 1.5,
+          "cachedInput": 0.15,
+          "output": 7.5
+        }
+      },
+      "source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "Introductory rates through December 31, 2026; storage and tool charges excluded."
+    },
+    {
+      "model": "gemini-4-argon",
+      "input": 2,
+      "cachedInput": 0.1,
+      "output": 10,
+      "currency": "USD",
+      "source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "checkedAt": "2026-10-27",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "standardFrom2026-12-01": {
+          "input": 4,
+          "cachedInput": 0.2,
+          "output": 20
+        }
+      },
+      "note": "Introductory Standard API rate through November 30, 2026; implicit caching only."
+    },
+    {
+      "model": "gemini-4-argon-contributor",
+      "input": 1,
+      "cachedInput": 0.05,
+      "output": 5,
+      "currency": "USD",
+      "source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "checkedAt": "2026-10-27",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "standardFrom2026-12-01": {
+          "input": 2,
+          "cachedInput": 0.1,
+          "output": 10
+        }
+      },
+      "note": "Invite-only contributor tier; prompts may be used for training. Through November 30, 2026."
+    },
+    {
+      "model": "deepseek-v4.1-flash",
+      "officialApiName": "deepseek-flash",
+      "modelVersion": "DeepSeek-V4.1-Flash",
+      "vendor": "DeepSeek",
+      "input": 0.3,
+      "cachedInput": 0.006,
+      "output": 1.2,
+      "currency": "USD",
+      "variants": {
+        "offPeak": {
+          "input": 0.15,
+          "cachedInput": 0.003,
+          "output": 0.6
+        }
+      },
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "sourceZh": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "checkedAt": "2026-10-27",
+      "effectiveAt": "2026-09-10T12:00:00+08:00",
+      "confidence": "high",
+      "note": "Peak baseline; off-peak half price. Legacy V4 Flash/Vision names now route to V4.1 Flash 1017. Historical subscription measurements are retained under their original model names.",
+      "priceTier": "official",
+      "priceConfidence": "high"
+    },
+    {
+      "model": "deepseek-v4-flash",
+      "vendor": "DeepSeek",
+      "input": 0.3,
+      "cachedInput": 0.006,
+      "output": 1.2,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "offPeak": {
+          "input": 0.15,
+          "cachedInput": 0.003,
+          "output": 0.6
+        }
+      },
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "checkedAt": "2026-10-27",
+      "note": "Peak baseline; off-peak half price. Legacy V4 Flash/Vision names now route to V4.1 Flash 1017. Historical subscription measurements are retained under their original model names."
+    },
+    {
+      "model": "deepseek-v4-flash-vision-exp",
+      "vendor": "DeepSeek",
+      "input": 0.3,
+      "cachedInput": 0.006,
+      "output": 1.2,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "offPeak": {
+          "input": 0.15,
+          "cachedInput": 0.003,
+          "output": 0.6
+        }
+      },
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "checkedAt": "2026-10-27",
+      "note": "Peak baseline; off-peak half price. Legacy V4 Flash/Vision names now route to V4.1 Flash 1017. Historical subscription measurements are retained under their original model names."
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "vendor": "DeepSeek",
+      "input": 1.32,
+      "cachedInput": 0.044,
+      "output": 3.96,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "offPeak": {
+          "input": 0.66,
+          "cachedInput": 0.022,
+          "output": 1.98
+        }
+      },
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "checkedAt": "2026-10-27",
+      "note": "Peak baseline; off-peak half price. Peak UTC: weekdays 01:00-04:00 and 06:00-10:00, excluding Chinese public holidays."
+    },
+    {
+      "model": "step-3.5-flash",
+      "vendor": "StepFun",
+      "input": 0.7,
+      "cachedInput": 0.14,
+      "output": 2.1,
+      "currency": "CNY",
+      "source": "https://platform.stepfun.com/docs/zh/guides/pricing/details",
+      "checkedAt": "2026-10-27",
+      "note": "CNY per million tokens, converted using the project comparison exchange rate. Step 5 cache reads rose to CNY 0.70 on October 14; qualifying earlier API users retain CNY 0.35.",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {}
+    },
+    {
+      "model": "step-3.7-flash",
+      "vendor": "StepFun",
+      "input": 1.35,
+      "cachedInput": 0.27,
+      "output": 8.1,
+      "currency": "CNY",
+      "source": "https://platform.stepfun.com/docs/zh/guides/pricing/details",
+      "checkedAt": "2026-10-27",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "note": "CNY per million tokens, converted using the project comparison exchange rate. Step 5 cache reads rose to CNY 0.70 on October 14; qualifying earlier API users retain CNY 0.35.",
+      "variants": {}
+    },
+    {
+      "model": "step-5-preview",
+      "vendor": "StepFun",
+      "input": 7,
+      "cachedInput": 0.7,
+      "output": 20,
+      "currency": "CNY",
+      "source": "https://platform.stepfun.com/docs/zh/guides/pricing/details",
+      "checkedAt": "2026-10-27",
+      "note": "CNY per million tokens, converted using the project comparison exchange rate. Step 5 cache reads rose to CNY 0.70 on October 14; qualifying earlier API users retain CNY 0.35.",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "grandfatheredCacheRead": 0.35
+      }
+    },
+    {
+      "model": "minimax-m3",
+      "vendor": "MiniMax",
+      "input": 0.3,
+      "cachedInput": 0.06,
+      "output": 1.2,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": {
+          "input": 0.6,
+          "cachedInput": 0.12,
+          "output": 2.4,
+          "note": "> 512k input"
+        },
+        "priority": {
+          "input": 0.45,
+          "cachedInput": 0.09,
+          "output": 1.8
+        },
+        "priorityLongContext": {
+          "input": 0.9,
+          "cachedInput": 0.18,
+          "output": 3.6
+        }
+      },
+      "source": "https://platform.minimax.io/docs/pricing/overview",
+      "checkedAt": "2026-10-27",
+      "note": "Standard <=512k after the permanent 50% off."
+    },
+    {
+      "model": "minimax-m3.1-flash",
+      "input": 0.15,
+      "cachedInput": 0.015,
+      "output": 0.6,
+      "currency": "USD",
+      "source": "https://platform.minimax.io/docs/pricing/overview",
+      "checkedAt": "2026-10-27",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "vendor": "MiniMax",
+      "note": "GA successor. Not applied to M3.1 Flash Preview subscription measurements: model equivalence is unconfirmed."
+    },
+    {
+      "model": "minimax-m3.1-flash-preview",
+      "input": null,
+      "cachedInput": null,
+      "output": null,
+      "currency": "USD",
+      "source": "https://www.minimax.io/m-plan",
+      "checkedAt": "2026-10-27",
+      "priceTier": "unavailable",
+      "priceConfidence": null,
+      "note": "M Plan still names Preview; the public API card prices the distinct GA successor. No verified Preview rate or alias statement; do not substitute GA prices.",
+      "variants": {}
+    },
+    {
+      "model": "swe-2",
+      "vendor": "Cognition / Devin",
+      "input": 3,
+      "cachedInput": 0.3,
+      "output": 15,
+      "currency": "USD",
+      "priceTier": "official_indirect",
+      "priceConfidence": "medium",
+      "variants": {
+        "legacyEnterpriseThrough2026-12-31": {
+          "input": 0.75,
+          "cachedInput": 0.075,
+          "output": 3.75
+        }
+      },
+      "source": "https://docs.devin.ai/desktop/models",
+      "checkedAt": "2026-10-27",
+      "note": "Self-serve free period ended October 15. Enterprise credit plans have a separate 75% discount through December 31; no standalone public SWE-2 API."
+    },
+    {
+      "model": "qwen3.8-max",
+      "vendor": "Alibaba Cloud / Qwen",
+      "input": 2.0,
+      "cachedInput": 0.2,
+      "output": 6.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "cnyBeijingUsdConverted": {
+          "input": 1.65,
+          "output": 4.95,
+          "note": "China Beijing and other regional deployments"
+        },
+        "batch": {
+          "note": "50% batch inference discount available"
+        }
+      },
+      "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "checkedAt": "2026-10-27",
+      "note": "New this round. Singapore/International list, consistent with the existing qwen3.7-plus decision. Cache hit is the standard 10% of input."
+    },
+    {
+      "model": "qwen3.8-max-0902",
+      "vendor": "Alibaba Cloud / Qwen",
+      "input": 2.0,
+      "cachedInput": 0.2,
+      "output": 6.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "checkedAt": "2026-10-27",
+      "note": "New this round. Dated snapshot of qwen3.8-max; same rate card."
+    },
+    {
+      "model": "qwen3.7-max",
+      "vendor": "Alibaba Cloud / Qwen",
+      "input": 2.5,
+      "cachedInput": 0.25,
+      "output": 7.5,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "batch": {
+          "note": "50% batch inference discount available"
+        }
+      },
+      "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "checkedAt": "2026-10-27",
+      "note": "New this round. Singapore/International list. The aggregator's $1.25/$3.75 tracks the Beijing list instead."
+    },
+    {
+      "model": "inkling",
+      "vendor": "Thinking Machines",
+      "input": 1.0,
+      "cachedInput": 0.16999999999999998,
+      "output": 4.05,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "medium",
+      "variants": {},
+      "source": "https://openrouter.ai/thinkingmachines/inkling",
+      "checkedAt": "2026-10-27",
+      "note": "Current advertised OpenRouter rate; routed host and cache support can change. Not a first-party API rate card.",
+      "observedPricing": {
+        "prompt": "0.000001",
+        "completion": "0.00000405",
+        "input_cache_read": "0.00000017"
+      }
+    },
+    {
+      "model": "inkling-small",
+      "vendor": "Thinking Machines",
+      "input": 0.44999999999999996,
+      "cachedInput": 0.09999999999999999,
+      "output": 1.2,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "medium",
+      "variants": {},
+      "source": "https://openrouter.ai/thinkingmachines/inkling-small",
+      "checkedAt": "2026-10-27",
+      "note": "Current advertised OpenRouter rate; routed host and cache support can change. Not a first-party API rate card.",
+      "observedPricing": {
+        "prompt": "0.00000045",
+        "completion": "0.0000012",
+        "input_cache_read": "0.0000001"
+      }
+    },
+    {
+      "model": "muse-spark-1.2",
+      "vendor": "Muse",
+      "input": 1.25,
+      "cachedInput": 0.15,
+      "output": 4.25,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "medium",
+      "variants": {},
+      "source": "https://openrouter.ai/meta/muse-spark-1.2",
+      "checkedAt": "2026-10-27",
+      "note": "Current advertised OpenRouter rate; routed host and cache support can change. Not a first-party API rate card.",
+      "observedPricing": {
+        "prompt": "0.00000125",
+        "completion": "0.00000425",
+        "web_search": "0.0025",
+        "input_cache_read": "0.00000015"
+      }
+    },
+    {
+      "model": "muse-spark-1.2-contributor",
+      "vendor": "Muse",
+      "input": 0.09999999999999999,
+      "cachedInput": 0.002,
+      "output": 0.19999999999999998,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "medium",
+      "variants": {},
+      "source": "https://openrouter.ai/meta/muse-spark-1.2-contributor",
+      "checkedAt": "2026-10-27",
+      "note": "Current advertised OpenRouter rate; routed host and cache support can change. Not a first-party API rate card.",
+      "observedPricing": {
+        "prompt": "0.0000001",
+        "completion": "0.0000002",
+        "web_search": "0.0025",
+        "input_cache_read": "0.000000002"
+      }
+    },
+    {
+      "model": "muse-spark-1.3",
+      "vendor": "Meta",
+      "input": 1.25,
+      "cachedInput": 0.15,
+      "output": 4.25,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "medium",
+      "variants": {},
+      "source": "https://openrouter.ai/meta/muse-spark-1.3",
+      "checkedAt": "2026-10-27",
+      "note": "Current advertised OpenRouter rate; routed host and cache support can change. Not a first-party API rate card.",
+      "observedPricing": {
+        "prompt": "0.00000125",
+        "completion": "0.00000425",
+        "web_search": "0.0025",
+        "input_cache_read": "0.00000015"
+      }
+    },
+    {
+      "model": "muse-spark-1.3-contributor",
+      "vendor": "Meta",
+      "input": 0.09999999999999999,
+      "cachedInput": 0.002,
+      "output": 0.19999999999999998,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "medium",
+      "variants": {},
+      "source": "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+      "checkedAt": "2026-10-27",
+      "note": "Current advertised OpenRouter rate; routed host and cache support can change. Not a first-party API rate card.",
+      "observedPricing": {
+        "prompt": "0.0000001",
+        "completion": "0.0000002",
+        "web_search": "0.0025",
+        "input_cache_read": "0.000000002"
+      }
+    },
+    {
+      "model": "nemotron-3-ultra",
+      "vendor": "NVIDIA",
+      "input": 0.6,
+      "cachedInput": 0.12,
+      "output": 2.4,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "medium",
+      "variants": {},
+      "source": "https://openrouter.ai/nvidia/nemotron-3-ultra-550b-a55b",
+      "checkedAt": "2026-10-27",
+      "note": "Current advertised OpenRouter rate; routed host and cache support can change. Not a first-party API rate card.",
+      "observedPricing": {
+        "prompt": "0.0000006",
+        "completion": "0.0000024",
+        "input_cache_read": "0.00000012"
+      }
+    },
+    {
+      "model": "longcat-2.0",
+      "vendor": "Meituan",
+      "input": 0.3,
+      "cachedInput": 0.006,
+      "output": 1.2,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "medium",
+      "variants": {},
+      "source": "https://openrouter.ai/meituan/longcat-2.0",
+      "checkedAt": "2026-10-27",
+      "note": "Current advertised OpenRouter rate; routed host and cache support can change. Not a first-party API rate card.",
+      "observedPricing": {
+        "prompt": "0.0000003",
+        "completion": "0.0000012",
+        "input_cache_read": "0.000000006"
+      }
+    },
+    {
+      "model": "mimo-v2.5",
+      "vendor": "Xiaomi MiMo",
+      "input": 0.39999999999999997,
+      "cachedInput": 0.08,
+      "output": 2.0,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "medium",
+      "variants": {},
+      "source": "https://openrouter.ai/xiaomi/mimo-v2.5",
+      "checkedAt": "2026-10-27",
+      "note": "Current advertised OpenRouter rate; routed host and cache support can change. Not a first-party API rate card.",
+      "observedPricing": {
+        "prompt": "0.0000004",
+        "completion": "0.000002",
+        "input_cache_read": "0.00000008"
+      }
+    },
+    {
+      "model": "kimi-k2.5",
+      "vendor": "Moonshot / Kimi",
+      "input": 0.5,
+      "cachedInput": 0.15,
+      "output": 2.5,
+      "currency": "USD",
+      "priceTier": "third_party",
+      "priceConfidence": "medium",
+      "variants": {},
+      "source": "https://openrouter.ai/moonshotai/kimi-k2.5",
+      "checkedAt": "2026-10-27",
+      "note": "Current advertised OpenRouter rate; routed host and cache support can change. Not a first-party API rate card.",
+      "observedPricing": {
+        "prompt": "0.0000005",
+        "completion": "0.0000025",
+        "input_cache_read": "0.00000015"
+      }
+    },
+    {
+      "model": "ling-3.1-flash",
+      "input": 0.075,
+      "cachedInput": 0.015,
+      "output": 0.22499999999999998,
+      "currency": "USD",
+      "source": "https://openrouter.ai/inclusionai/ling-3.1-flash",
+      "checkedAt": "2026-10-27",
+      "priceTier": "third_party",
+      "priceConfidence": "medium",
+      "variants": {},
+      "note": "Current advertised OpenRouter rate; routed host and cache support can change. Not a first-party API rate card.",
+      "observedPricing": {
+        "prompt": "0.000000075",
+        "completion": "0.000000225",
+        "input_cache_read": "0.000000015"
+      }
+    },
+    {
+      "model": "gpt-6-sol",
+      "vendor": "OpenAI",
+      "input": 2.0,
+      "cachedInput": 0.2,
+      "output": 10.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": {
+          "input": 4.0,
+          "cachedInput": 0.4,
+          "output": 15.0,
+          "note": ">272K input"
+        }
+      },
+      "source": "https://developers.openai.com/api/docs/models/gpt-6-sol",
+      "checkedAt": "2026-10-27",
+      "note": "First archive entry. Matches the parity assumption used in earlier workload conversions."
+    },
+    {
+      "model": "gpt-5.5",
+      "vendor": "OpenAI",
+      "input": 5.0,
+      "cachedInput": 0.5,
+      "output": 30.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": {
+          "input": 10.0,
+          "cachedInput": 1.0,
+          "output": 45.0
+        },
+        "fast": {
+          "input": 12.5,
+          "cachedInput": 1.25,
+          "output": 75.0
+        },
+        "batch": {
+          "input": 2.5,
+          "cachedInput": 0.25,
+          "output": 15.0
+        },
+        "flex": {
+          "input": 2.5,
+          "cachedInput": 0.25,
+          "output": 15.0
+        }
+      },
+      "source": "https://developers.openai.com/api/docs/models/gpt-5.5",
+      "checkedAt": "2026-10-27",
+      "note": "Max 272K context."
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "vendor": "OpenAI",
+      "input": 2.0,
+      "cachedInput": 0.2,
+      "output": 12.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": {
+          "input": 4.0,
+          "cachedInput": 0.4,
+          "output": 18.0
+        },
+        "fast": {
+          "input": 4.0,
+          "cachedInput": 0.4,
+          "output": 24.0
+        },
+        "batch": {
+          "input": 1.0,
+          "cachedInput": 0.1,
+          "output": 6.0
+        },
+        "flex": {
+          "input": 1.0,
+          "cachedInput": 0.1,
+          "output": 6.0
+        }
+      },
+      "source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+      "checkedAt": "2026-10-27",
+      "note": ""
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "vendor": "OpenAI",
+      "input": 0.2,
+      "cachedInput": 0.02,
+      "output": 1.2,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": {
+          "input": 0.4,
+          "cachedInput": 0.04,
+          "output": 1.8
+        },
+        "fast": {
+          "input": 0.4,
+          "cachedInput": 0.04,
+          "output": 2.4
+        },
+        "batch": {
+          "input": 0.1,
+          "cachedInput": 0.01,
+          "output": 0.6
+        },
+        "flex": {
+          "input": 0.1,
+          "cachedInput": 0.01,
+          "output": 0.6
+        }
+      },
+      "source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+      "checkedAt": "2026-10-27",
+      "note": ""
+    },
+    {
+      "model": "grok-4.5",
+      "vendor": "xAI",
+      "input": 2.0,
+      "cachedInput": 0.3,
+      "output": 6.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": {
+          "input": 4.0,
+          "cachedInput": 0.6,
+          "output": 12.0
+        }
+      },
+      "source": "https://docs.x.ai/developers/models/grok-4.5",
+      "checkedAt": "2026-10-27",
+      "note": ""
+    },
+    {
+      "model": "grok-4.6",
+      "vendor": "xAI",
+      "input": 2.0,
+      "cachedInput": 0.5,
+      "output": 6.0,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {
+        "longContext": {
+          "input": 4.0,
+          "cachedInput": 1.0,
+          "output": 12.0,
+          "note": "prompt >= 200k; the higher rate applies to the whole request"
+        }
+      },
+      "source": "https://docs.x.ai/developers/models/grok-4.6",
+      "checkedAt": "2026-10-27",
+      "note": ""
+    },
+    {
+      "model": "mistral-medium-3.5",
+      "vendor": "Mistral",
+      "input": 1.5,
+      "cachedInput": 0.15,
+      "output": 7.5,
+      "currency": "USD",
+      "priceTier": "official",
+      "priceConfidence": "high",
+      "variants": {},
+      "source": "https://docs.mistral.ai/inference/pricing",
+      "checkedAt": "2026-10-27",
+      "note": "Current first-party card explicitly lists $0.15 cache reads; previously the same value came from the 0.1x fallback."
+    }
+  ],
+  "notRechecked": {
+    "models": [
+      "deepseek-v4-flash-fast",
+      "deepseek-v4.1-flash-fast",
+      "gemini-3.6-flash",
+      "gemini-3.7-flash",
+      "glm-5.2-fast",
+      "hy3",
+      "hy4-preview",
+      "kimi-k2.6",
+      "kimi-k2.7-code",
+      "kimi-k2.7-code-highspeed",
+      "mimo-v2.5-pro",
+      "mimo-v2.6-flash",
+      "mimo-v2.6-pro",
+      "mimo-v2.6-pro-ultraspeed",
+      "minimax-m2.5",
+      "minimax-m2.7",
+      "qwen3.6-max-preview",
+      "qwen3.6-plus",
+      "qwen3.7-flash",
+      "qwen3.7-plus",
+      "qwen3.8-27b",
+      "qwen3.8-flash",
+      "qwen3.8-omni-flash"
+    ],
+    "reason": "Earlier dated evidence carries forward. Current first-party card was unavailable, removed the legacy identifier, or requires a console read. These are not claimed as reverified."
+  }
+}
